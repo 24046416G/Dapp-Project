@@ -228,9 +228,9 @@ All members must submit the form on Blackboard under **“Project Declaration of
     - 链下：获取详细信息
 3. 返回验证结果
 
-## 第五点：区块链和后端交互实现的详细理论
+### 第五点：区块链和后端交互实现的详细理论
 
-### 1. Fabric SDK 工作原理
+#### 1. Fabric SDK 工作原理
 
 **Fabric SDK 核心组件：**
 
@@ -251,7 +251,7 @@ All members must submit the form on Blackboard under **“Project Declaration of
     - 交易提交
     - 状态查询
 
-### 2. 交易流程详解
+#### 2. 交易流程详解
 
 **提交交易流程：**
 
