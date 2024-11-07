@@ -199,8 +199,8 @@ All members must submit the form on Blackboard under **“Project Declaration of
         - 交易历史
 
     - **链下数据**
-        - 用户信息 (PostgreSQL)
-        - 产品详情 (PostgreSQL)
+        - 用户信息 (MySQL)
+        - 产品详情 (MySQL)
         - 缓存数据 (Redis)
 
 ### 第四点：数据流设计
