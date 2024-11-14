@@ -10,9 +10,9 @@ function Index() {
   };
 
   return (
-    <div className="app-container">
-      {isLogin ? <Login onSwitch={toggleForm} /> : <Register onSwitch={toggleForm} />}
-    </div>
+      <div className="app-container">
+        {isLogin ? <Login onSwitch={toggleForm} /> : <Register onSwitch={toggleForm} />}
+      </div>
   );
 }
 
