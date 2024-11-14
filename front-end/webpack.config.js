@@ -2,7 +2,7 @@ const path = require("path") //core module in nodejs, designed for solving path 
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: "./src/index.jsx", //require ralative path here.
+    entry: "./src/Index.jsx", //require ralative path here.
     output:{
         path: path.resolve(__dirname, "dist"), //require absolute path here.
         filename: "main.js"
