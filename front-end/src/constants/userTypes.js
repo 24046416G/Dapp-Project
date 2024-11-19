@@ -7,44 +7,20 @@ export const USER_TYPES = {
 
 // 定义每种用户类型可以访问的路由
 export const USER_ROUTES = {
-    [USER_TYPES.ADMIN]: [
-        {
-            path: '/dashboard',
-            name: 'Dashboard',
-            icon: 'FaChartLine'
-        },
-        {
-            path: '/inventory',
-            name: 'Inventory',
-            icon: 'FaBoxes'
-        },
-        {
-            path: '/users',
-            name: 'Users',
-            icon: 'FaUsers'
-        },
-        {
-            path: '/settings',
-            name: 'Settings',
-            icon: 'FaCog'
-        }
+    [USER_TYPES.CUTTING]: [
+        
     ],
     [USER_TYPES.MINER]: [
         {
             path: '/record',
             name: 'Mining Record',
             icon: 'FaGem'
-        },
-        {
-            path: '/profile',
-            name: 'Profile',
-            icon: 'FaUser'
         }
     ],
     [USER_TYPES.JEWELER]: [
         {
-            path: '/workshop',
-            name: 'Workshop',
+            path: '/store',
+            name: 'Diamond Store',
             icon: 'FaHammer'
         },
         {
@@ -57,13 +33,20 @@ export const USER_ROUTES = {
             name: 'Orders',
             icon: 'FaShoppingCart'
         },
-        {
-            path: '/profile',
-            name: 'Profile',
-            icon: 'FaUser'
-        }
     ],
     [USER_TYPES.CUSTOMER]: [
+        {
+            path: '/store',
+            name: 'Store',
+            icon: 'FaStore'
+        },
+        {
+            path: '/collections',
+            name: 'My Collections',
+            icon: 'FaGem'
+        },
+    ],
+    [USER_TYPES.GRADING]: [
         {
             path: '/store',
             name: 'Store',

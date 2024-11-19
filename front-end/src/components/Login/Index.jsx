@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes';
 import '../../css/login.css';
-import { USER_TYPES } from '../../constants/userTypes';
 
 const Login = ({ onLogin }) => {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
+    const [userType, setUserType] = useState(USER_TYPES.CUSTOMER);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         confirmPassword: ''
     });
-    const [userType, setUserType] = useState(USER_TYPES.CUSTOMER);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -29,12 +29,19 @@ const Login = ({ onLogin }) => {
             return;
         }
 
-        // 这里添加登录/注册逻辑
-        console.log('Form submitted:', formData);
-        
         // 调用登录回调
         onLogin(userType);
-        navigate('/inventory');
+
+        // 获取当前用户类型的路由列表
+        const userRoutes = USER_ROUTES[userType];
+        
+        // 如果存在路由，导航到第一个路由
+        if (userRoutes && userRoutes.length > 0) {
+            navigate(userRoutes[0].path);
+        } else {
+            // 如果没有找到路由，导航到默认路径
+            navigate('/');
+        }
     };
 
     return (
@@ -86,7 +93,8 @@ const Login = ({ onLogin }) => {
                             <option value={USER_TYPES.CUSTOMER}>Customer</option>
                             <option value={USER_TYPES.MINER}>Miner</option>
                             <option value={USER_TYPES.JEWELER}>Jeweler</option>
-                            <option value={USER_TYPES.ADMIN}>Admin</option>
+                            <option value={USER_TYPES.GRADING}>Grading</option>
+                            <option value={USER_TYPES.CUTTING}>Cutting</option>
                         </select>
                     </div>
                     <button type="submit" className="submit-button">
@@ -98,7 +106,7 @@ const Login = ({ onLogin }) => {
                         {isLogin ? "Don't have an account?" : "Already have an account?"}
                         <button
                             className="toggle-button"
-                            onClick={() => {setIsLogin(!isLogin);console.log("login status", isLogin)}}
+                            onClick={() => setIsLogin(!isLogin)}
                         >
                             {isLogin ? 'Register' : 'Login'}
                         </button>

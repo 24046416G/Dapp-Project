@@ -32,11 +32,11 @@ function App() {
                                 <Sidebar userType={userType} />
                                 <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
-                                        <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/store" element={<Store />} />
+                                        <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/collections" element={<Collection />} />
                                         <Route path="/record" element={<Record />} />
-                                        <Route path="/" element={<Inventory />} />
+                                        <Route path="/" element={<Store />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>
                                 </div>
