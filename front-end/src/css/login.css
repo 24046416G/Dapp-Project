@@ -1,18 +1,30 @@
+/* 重置默认边距 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    width: 100%;
+    background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .login-box {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 400px;
+    backdrop-filter: blur(10px);
 }
 
 .login-header {
@@ -36,7 +48,8 @@
     margin-bottom: 20px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #e0e0e0;
@@ -47,9 +60,14 @@
     box-sizing: border-box;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.user-type-select {
+    background-color: white;
 }
 
 .submit-button {
@@ -63,11 +81,12 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    margin-top: 10px;
 }
 
 .submit-button:hover {
     background: #2980b9;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .submit-button:active {
@@ -96,4 +115,11 @@
 
 .toggle-button:hover {
     text-decoration: underline;
+}
+
+/* 添加响应式设计 */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 30px 20px;
+    }
 } 
