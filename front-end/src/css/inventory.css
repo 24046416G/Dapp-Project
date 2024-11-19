@@ -1,55 +1,114 @@
 /* inventory.css */
 .search-bar {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
     box-sizing: border-box;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    outline: none;
+  }
+  
+  .search-bar:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
   }
   
   .products-container {
-    height: 60vh; 
+    height: calc(100vh - 250px);
     overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid #eaeaea;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   }
 
   .products {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 4px;
   }
   
   .product-card {
-    border: 1px solid #ccc;
+    position: relative;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
     padding: 20px;
-    margin: 10px;
-    width: calc(33.333% - 40px);
-    box-sizing: border-box;
-    transition: box-shadow 0.3s ease;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
   }
   
   .product-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   }
   
   .product-card h3 {
-    margin-top: 0;
+    margin: 10px 0;
+    color: #333;
+    font-size: 18px;
+  }
+
+  .product-card p {
+    color: #666;
+    margin: 8px 0;
+  }
+
+  .product-card input[type="checkbox"] {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4a90e2;
   }
 
   .make-jewelry-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    padding: 14px 28px;
+    background-color: #4a90e2;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    transition: all 0.3s ease;
   }
   
   .make-jewelry-button:hover {
-    background-color: #0056b3;
+    background-color: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+  }
+
+  .make-jewelry-button:active {
+    transform: translateY(0);
+  }
+
+  /* 添加滚动条样式 */
+  .products-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .products-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .products-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  .products-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
   }
