@@ -31,13 +31,13 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.MINER]: [
         {
-            path: '/mining',
-            name: 'Mining',
+            path: '/mining_record',
+            name: 'Mining Record',
             icon: 'FaGem'
         },
         {
             path: '/inventory',
-            name: 'My Diamonds',
+            name: 'Inventory',
             icon: 'FaBoxes'
         },
         {
@@ -70,24 +70,14 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.CUSTOMER]: [
         {
-            path: '/marketplace',
-            name: 'Marketplace',
+            path: '/store',
+            name: 'Store',
             icon: 'FaStore'
         },
         {
-            path: '/my-collection',
+            path: '/my_collection',
             name: 'My Collection',
             icon: 'FaGem'
         },
-        {
-            path: '/orders',
-            name: 'Orders',
-            icon: 'FaShoppingBag'
-        },
-        {
-            path: '/profile',
-            name: 'Profile',
-            icon: 'FaUser'
-        }
     ]
 }; 

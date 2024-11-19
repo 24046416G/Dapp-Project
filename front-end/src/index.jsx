@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Sidebar from './components/SideBar/Index.jsx';
 import Inventory from './components/Inventory/Index.jsx';
 import Login from './components/Login/Index.jsx';
+import Store from './components/Store/Index.jsx';
 import { USER_TYPES } from './constants/userTypes';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                                 <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
                                         <Route path="/inventory" element={<Inventory />} />
+                                        <Route path="/store" element={<Store />} />
                                         <Route path="/" element={<Inventory />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>
