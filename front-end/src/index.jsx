@@ -5,7 +5,9 @@ import Sidebar from './components/SideBar/Index.jsx';
 import Inventory from './components/Inventory/Index.jsx';
 import Login from './components/Login/Index.jsx';
 import Store from './components/Store/Index.jsx';
-import { USER_TYPES } from './constants/userTypes';
+import Collection from './components/Collection/Index.jsx';
+import Record from './components/Record/Index.jsx';
+import { USER_TYPES } from './constants/userTypes.js';
 
 function App() {
     // 这里可以添加登录状态检查
@@ -32,6 +34,8 @@ function App() {
                                     <Routes>
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/store" element={<Store />} />
+                                        <Route path="/collections" element={<Collection />} />
+                                        <Route path="/record" element={<Record />} />
                                         <Route path="/" element={<Inventory />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>

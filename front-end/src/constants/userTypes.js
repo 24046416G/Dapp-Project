@@ -31,14 +31,9 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.MINER]: [
         {
-            path: '/mining_record',
+            path: '/record',
             name: 'Mining Record',
             icon: 'FaGem'
-        },
-        {
-            path: '/inventory',
-            name: 'Inventory',
-            icon: 'FaBoxes'
         },
         {
             path: '/profile',
@@ -75,8 +70,8 @@ export const USER_ROUTES = {
             icon: 'FaStore'
         },
         {
-            path: '/my_collection',
-            name: 'My Collection',
+            path: '/collections',
+            name: 'My Collections',
             icon: 'FaGem'
         },
     ]
