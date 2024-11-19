@@ -1,28 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Sidebar from './components/SideBar/Index.jsx';
 import Inventory from './components/Inventory/Index.jsx';
 import Login from './components/Login/Index.jsx';
+import { USER_TYPES } from './constants/userTypes';
 
 function App() {
     // 这里可以添加登录状态检查
-    const isAuthenticated = True; // 临时变量，之后可以通过状态管理来处理
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userType, setUserType] = useState(USER_TYPES.CUSTOMER);
+
+    // 模拟登录处理函数
+    const handleLogin = (type) => {
+        setIsAuthenticated(true);
+        setUserType(type);
+    };
 
     return (
         <Router>
             <Routes>
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login onLogin={handleLogin} />} />
                 <Route
                     path="/*"
                     element={
                         isAuthenticated ? (
                             <div style={{ display: 'flex' }}>
-                                <Sidebar />
+                                <Sidebar userType={userType} />
                                 <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/" element={<Inventory />} />
+                                        {/* 在这里添加其他路由 */}
                                     </Routes>
                                 </div>
                             </div>

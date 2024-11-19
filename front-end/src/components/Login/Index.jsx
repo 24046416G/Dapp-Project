@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/login.css';
+import { USER_TYPES } from '../../constants/userTypes';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Login = () => {
         password: '',
         confirmPassword: ''
     });
+    const [userType, setUserType] = useState(USER_TYPES.CUSTOMER);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -30,7 +32,8 @@ const Login = () => {
         // 这里添加登录/注册逻辑
         console.log('Form submitted:', formData);
         
-        // 模拟成功登录后跳转
+        // 调用登录回调
+        onLogin(userType);
         navigate('/inventory');
     };
 
@@ -74,6 +77,18 @@ const Login = () => {
                             />
                         </div>
                     )}
+                    <div className="form-group">
+                        <select
+                            value={userType}
+                            onChange={(e) => setUserType(e.target.value)}
+                            className="user-type-select"
+                        >
+                            <option value={USER_TYPES.CUSTOMER}>Customer</option>
+                            <option value={USER_TYPES.MINER}>Miner</option>
+                            <option value={USER_TYPES.JEWELER}>Jeweler</option>
+                            <option value={USER_TYPES.ADMIN}>Admin</option>
+                        </select>
+                    </div>
                     <button type="submit" className="submit-button">
                         {isLogin ? 'Login' : 'Register'}
                     </button>
@@ -83,7 +98,7 @@ const Login = () => {
                         {isLogin ? "Don't have an account?" : "Already have an account?"}
                         <button
                             className="toggle-button"
-                            onClick={() => setIsLogin(!isLogin)}
+                            onClick={() => {setIsLogin(!isLogin);console.log("login status", isLogin)}}
                         >
                             {isLogin ? 'Register' : 'Login'}
                         </button>

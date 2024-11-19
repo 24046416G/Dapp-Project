@@ -1,33 +1,40 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaBoxes, FaCog } from 'react-icons/fa';
+import { 
+    FaChartLine, FaBoxes, FaUsers, FaCog, 
+    FaGem, FaUser, FaHammer, FaShoppingCart,
+    FaStore, FaShoppingBag
+} from 'react-icons/fa';
+import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes';
 import '../../css/sidebar.css';
 
-const Sidebar = () => {
-    const location = useLocation();
+const ICONS = {
+    FaChartLine,
+    FaBoxes,
+    FaUsers,
+    FaCog,
+    FaGem,
+    FaUser,
+    FaHammer,
+    FaShoppingCart,
+    FaStore,
+    FaShoppingBag
+};
 
-    const menuItems = [
-        {
-            path: '/',
-            name: 'Home',
-            icon: <FaHome className="sidebar-icon" />
-        },
-        {
-            path: '/inventory',
-            name: 'Inventory',
-            icon: <FaBoxes className="sidebar-icon" />
-        },
-        {
-            path: '/settings',
-            name: 'Settings',
-            icon: <FaCog className="sidebar-icon" />
-        }
-    ];
+const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {
+    const location = useLocation();
+    const menuItems = USER_ROUTES[userType] || [];
+
+    const getIcon = (iconName) => {
+        const IconComponent = ICONS[iconName];
+        return IconComponent ? <IconComponent className="sidebar-icon" /> : null;
+    };
 
     return (
         <div className="sidebar">
             <div className="sidebar-header">
                 <h1>Diamond App</h1>
+                <p className="user-type">{userType}</p>
             </div>
             <ul>
                 {menuItems.map((item) => (
@@ -36,11 +43,17 @@ const Sidebar = () => {
                         className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
                     >
                         <Link to={item.path}>
-                            {item.icon}
+                            {getIcon(item.icon)}
                             <span>{item.name}</span>
                         </Link>
                     </li>
                 ))}
+                <li className="sidebar-item">
+                    <Link to="/login" className="logout-link">
+                        <FaUser className="sidebar-icon" />
+                        <span>Logout</span>
+                    </Link>
+                </li>
             </ul>
         </div>
     );

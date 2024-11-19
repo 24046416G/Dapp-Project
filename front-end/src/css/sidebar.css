@@ -68,7 +68,7 @@
   font-size: 20px;
 }
 
-/* 添加响应式设计 */
+/* 添加响应��设计 */
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
@@ -79,4 +79,22 @@
   .sidebar.open {
     transform: translateX(0);
   }
+}
+
+.user-type {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 8px 0 0;
+    text-transform: capitalize;
+}
+
+.logout-link {
+    color: #ff6b6b !important;
+    margin-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+}
+
+.logout-link:hover {
+    color: #ff5252 !important;
 }
