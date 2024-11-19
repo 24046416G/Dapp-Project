@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
     FaChartLine, FaBoxes, FaUsers, FaCog, 
     FaGem, FaUser, FaHammer, FaShoppingCart,
-    FaStore, FaShoppingBag
+    FaStore, FaShoppingBag, FaSignOutAlt
 } from 'react-icons/fa';
 import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes';
 import '../../css/sidebar.css';
@@ -36,25 +36,27 @@ const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {
                 <h1>Diamond App</h1>
                 <p className="user-type">{userType}</p>
             </div>
-            <ul>
-                {menuItems.map((item) => (
-                    <li 
-                        key={item.path}
-                        className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
-                    >
-                        <Link to={item.path}>
-                            {getIcon(item.icon)}
-                            <span>{item.name}</span>
-                        </Link>
-                    </li>
-                ))}
-                <li className="sidebar-item">
+            <div className="sidebar-content">
+                <ul className="menu-items">
+                    {menuItems.map((item) => (
+                        <li 
+                            key={item.path}
+                            className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
+                        >
+                            <Link to={item.path}>
+                                {getIcon(item.icon)}
+                                <span>{item.name}</span>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+                <div className="logout-container">
                     <Link to="/login" className="logout-link">
-                        <FaUser className="sidebar-icon" />
+                        <FaSignOutAlt className="sidebar-icon" />
                         <span>Logout</span>
                     </Link>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     );
 };

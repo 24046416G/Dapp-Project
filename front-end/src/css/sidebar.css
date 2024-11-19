@@ -1,9 +1,10 @@
 /* sidebar.css */
 .sidebar {
+  display: flex;
+  flex-direction: column;
   width: 250px;
   height: 100vh;
   background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
-  padding: 32px 0;
   position: fixed;
   top: 0;
   left: 0;
@@ -24,7 +25,15 @@
   margin: 0;
 }
 
-.sidebar ul {
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.menu-items {
+  flex: 1;
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -68,7 +77,7 @@
   font-size: 20px;
 }
 
-/* 添加响应��设计 */
+/* 添加响应式设计 */
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
@@ -88,13 +97,42 @@
     text-transform: capitalize;
 }
 
+.logout-container {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
 .logout-link {
-    color: #ff6b6b !important;
-    margin-top: 32px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #ff6b6b !important;
+  font-size: 16px;
+  padding: 12px 0;
+  transition: all 0.3s ease;
 }
 
 .logout-link:hover {
-    color: #ff5252 !important;
+  color: #ff5252 !important;
+  transform: translateX(4px);
+}
+
+/* 修改滚动条样式 */
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
