@@ -8,7 +8,11 @@ export const USER_TYPES = {
 // 定义每种用户类型可以访问的路由
 export const USER_ROUTES = {
     [USER_TYPES.CUTTING]: [
-        
+        {
+            path: '/record',
+            name: 'Cutting Record',
+            icon: 'FaGem'
+        }
     ],
     [USER_TYPES.MINER]: [
         {
