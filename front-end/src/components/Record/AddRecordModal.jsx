@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../css/recordModal.css';
+import '../../css/record_modal.css';
 
 const AddRecordModal = ({ isOpen, onClose, onSubmit }) => {
     const [formData, setFormData] = useState({
