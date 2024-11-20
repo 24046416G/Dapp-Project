@@ -1,5 +1,6 @@
 export const USER_TYPES = {
-    ADMIN: 'ADMIN',
+    CUTTING: 'CUTTING',
+    GRADING: 'GRADING',
     MINER: 'MINER',
     JEWELER: 'JEWELER',
     CUSTOMER: 'CUSTOMER'
@@ -52,13 +53,8 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.GRADING]: [
         {
-            path: '/store',
-            name: 'Store',
-            icon: 'FaStore'
-        },
-        {
-            path: '/collections',
-            name: 'My Collections',
+            path: '/record',
+            name: 'Grading Record',
             icon: 'FaGem'
         },
     ]
