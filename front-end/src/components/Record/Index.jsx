@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../../css/record.css';
 import AddRecordModal from './AddRecordModal.jsx';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
 const recordData = [
     {
@@ -34,7 +35,7 @@ const recordData = [
     // 可以添加更多记录...
 ];
 
-const Record = () => {
+const Record = ({ userType = USER_TYPES.CUSTOMER }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
@@ -85,8 +86,13 @@ const Record = () => {
             <div className="record-header">
                 <div className="header-content">
                     <div>
-                        <h2>Mining Records</h2>
-                        <p>Track and manage your mining operations</p>
+                        <h2>
+                            {userType === USER_TYPES.MINER ? 'Mining Records' :
+                             userType === USER_TYPES.GRADING ? 'Grading Records' :
+                             userType === USER_TYPES.CUTTING ? 'Cutting Records' : 
+                             'Undefined Records'}
+                        </h2>
+                        <p>Track and manage your {userType.toLowerCase()} operations</p>
                     </div>
                     <button 
                         className="add-record-button"

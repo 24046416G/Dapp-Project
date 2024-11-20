@@ -35,7 +35,7 @@ function App() {
                                         <Route path="/store" element={<Store />} />
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/collections" element={<Collection />} />
-                                        <Route path="/record" element={<Record />} />
+                                        <Route path="/record" element={<Record userType={userType} />} />
                                         <Route path="/" element={<Store />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>
