@@ -143,11 +143,6 @@ const Collection = () => {
                     >
                         <div className="collection-image">
                             <img src={item.image} alt={item.name} />
-                            <div className="value-change">
-                                <span className={item.currentValue > item.purchasePrice ? 'positive' : 'negative'}>
-                                    {((item.currentValue - item.purchasePrice) / item.purchasePrice * 100).toFixed(1)}%
-                                </span>
-                            </div>
                         </div>
                         <div className="collection-info">
                             <h3>{item.name}</h3>
