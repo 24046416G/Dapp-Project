@@ -17,13 +17,50 @@ body, html {
     box-sizing: border-box;
 }
 
+.login-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-type-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px;
+    border-radius: 30px;
+    display: flex;
+    gap: 4px;
+    backdrop-filter: blur(10px);
+}
+
+.toggle-tab {
+    padding: 10px 24px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 25px;
+}
+
+.toggle-tab.active {
+    color: #2c3e50;
+    background: white;
+}
+
+.toggle-tab:hover:not(.active) {
+    color: white;
+}
+
 .login-box {
     background: rgba(255, 255, 255, 0.95);
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     width: 100%;
-    max-width: 400px;
     backdrop-filter: blur(10px);
 }
 
@@ -160,4 +197,9 @@ body, html {
     .login-box {
         padding: 30px 20px;
     }
+}
+
+.admin-login .login-header h2,
+.customer-login .login-header h2 {
+    color: #2c3e50;
 } 
