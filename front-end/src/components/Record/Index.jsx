@@ -35,7 +35,7 @@ const recordData = [
     // 可以添加更多记录...
 ];
 
-const Record = ({ userType = USER_TYPES.CUSTOMER }) => {
+const Record = ({ userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
@@ -193,6 +193,7 @@ const Record = ({ userType = USER_TYPES.CUSTOMER }) => {
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
                 onSubmit={handleAddRecord}
+                userType={userType}
             />
         </div>
     );

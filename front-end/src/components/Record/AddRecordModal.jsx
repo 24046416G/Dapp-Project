@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../css/record_modal.css';
 
-const AddRecordModal = ({ isOpen, onClose, onSubmit }) => {
+const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
     const [formData, setFormData] = useState({
         mineralType: '',
         location: '',
@@ -41,7 +41,12 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit }) => {
         <div className="modal-overlay">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h2>Add New Mining Record</h2>
+                    <h2>
+                        {userType === 'MINER' ? 'Add New Mining Record' :
+                         userType === 'GRADING' ? 'Add New Grading Record' :
+                         userType === 'CUTTING' ? 'Add New Cutting Record' :
+                         'Add New Undefined Record'}
+                    </h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
                 <form onSubmit={handleSubmit} className="record-form">

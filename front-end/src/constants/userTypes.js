@@ -33,11 +33,6 @@ export const USER_ROUTES = {
             name: 'Inventory',
             icon: 'FaBoxes'
         },
-        {
-            path: '/orders',
-            name: 'Orders',
-            icon: 'FaShoppingCart'
-        },
     ],
     [USER_TYPES.CUSTOMER]: [
         {
