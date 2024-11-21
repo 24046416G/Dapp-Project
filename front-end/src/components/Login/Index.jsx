@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes';
 import '../../css/login.css';
 
+// 模拟用户数据库
+const MOCK_USERS = {
+    'miner@test.com': { password: '123456', type: USER_TYPES.MINER },
+    'jeweler@test.com': { password: '123456', type: USER_TYPES.JEWELER },
+    'customer@test.com': { password: '123456', type: USER_TYPES.CUSTOMER },
+    'grading@test.com': { password: '123456', type: USER_TYPES.GRADING },
+    'cutting@test.com': { password: '123456', type: USER_TYPES.CUTTING }
+};
+
 const Login = ({ onLogin }) => {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +21,7 @@ const Login = ({ onLogin }) => {
         password: '',
         confirmPassword: ''
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -21,26 +31,77 @@ const Login = ({ onLogin }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         
-        if (!isLogin && formData.password !== formData.confirmPassword) {
-            alert("Passwords don't match!");
-            return;
-        }
+        try {
+            // 模拟API请求延迟
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // 调用登录回调
-        onLogin(userType);
+            if (isLogin) {
+                // 登录逻辑
+                const user = MOCK_USERS[formData.email];
+                
+                if (!user) {
+                    alert('User not found!');
+                    return;
+                }
 
-        // 获取当前用户类型的路由列表
-        const userRoutes = USER_ROUTES[userType];
-        
-        // 如果存在路由，导航到第一个路由
-        if (userRoutes && userRoutes.length > 0) {
-            navigate(userRoutes[0].path);
-        } else {
-            // 如果没有找到路由，导航到默认路径
-            navigate('/');
+                if (user.password !== formData.password) {
+                    alert('Incorrect password!');
+                    return;
+                }
+
+                // 设置用户类型为数据库中的类型
+                setUserType(user.type);
+                
+                // 登录成功
+                onLogin(user.type);
+
+                // 获取当前用户类型的路由列表
+                const userRoutes = USER_ROUTES[user.type];
+                
+                // 如果存在路由，导航到第一个路由
+                if (userRoutes && userRoutes.length > 0) {
+                    navigate(userRoutes[0].path);
+                } else {
+                    navigate('/');
+                }
+
+            } else {
+                // 注册逻辑
+                if (formData.password !== formData.confirmPassword) {
+                    alert("Passwords don't match!");
+                    return;
+                }
+
+                if (MOCK_USERS[formData.email]) {
+                    alert('Email already registered!');
+                    return;
+                }
+
+                // 模拟添加新用户
+                MOCK_USERS[formData.email] = {
+                    password: formData.password,
+                    type: userType
+                };
+
+                // 注册成功
+                alert('Registration successful! Please login.');
+                setIsLogin(true);
+                setFormData({
+                    email: '',
+                    password: '',
+                    confirmPassword: ''
+                });
+            }
+
+        } catch (error) {
+            console.error('Login/Register error:', error);
+            alert('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -97,8 +158,19 @@ const Login = ({ onLogin }) => {
                             <option value={USER_TYPES.CUTTING}>Cutting</option>
                         </select>
                     </div>
-                    <button type="submit" className="submit-button">
-                        {isLogin ? 'Login' : 'Register'}
+                    <button 
+                        type="submit" 
+                        className={`submit-button ${isLoading ? 'loading' : ''}`}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <div className="button-content">
+                                <span className="spinner"></span>
+                                <span>{isLogin ? 'Logging in...' : 'Registering...'}</span>
+                            </div>
+                        ) : (
+                            isLogin ? 'Login' : 'Register'
+                        )}
                     </button>
                 </form>
                 <div className="login-footer">
