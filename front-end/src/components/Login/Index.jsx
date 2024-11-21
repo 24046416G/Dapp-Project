@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { USER_TYPES } from '../../constants/userTypes';
+import { USER_TYPES } from '../../constants/userTypes.js';
 import BusinessLogin from './BusinessLogin.jsx';
 import CustomerLogin from './CustomerLogin.jsx';
 import '../../css/login.css';

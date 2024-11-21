@@ -1,4 +1,26 @@
-.product-modal-overlay {
+/* 添加动画关键帧 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 通用模态框样式 */
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,9 +32,10 @@
     align-items: center;
     z-index: 1000;
     padding: 20px;
+    animation: fadeIn 0.3s ease-out;
 }
 
-.product-modal-content {
+.modal-content {
     background: white;
     border-radius: 12px;
     width: 90%;
@@ -21,9 +44,10 @@
     overflow-y: auto;
     position: relative;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out;
 }
 
-.product-modal-header {
+.modal-header {
     padding: 20px;
     border-bottom: 1px solid #eaeaea;
     display: flex;
@@ -31,7 +55,7 @@
     align-items: center;
 }
 
-.product-modal-header h2 {
+.modal-header h2 {
     margin: 0;
     color: #2c3e50;
     font-size: 24px;
@@ -46,25 +70,27 @@
     padding: 4px 8px;
 }
 
-.product-modal-body {
+.modal-body {
+    padding: 20px;
     display: flex;
     gap: 30px;
-    padding: 20px;
 }
 
-.product-modal-image {
+/* 图片相关样式 */
+.modal-image {
     flex: 1;
     max-width: 400px;
 }
 
-.product-modal-image img {
+.modal-image img {
     width: 100%;
     height: auto;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.product-modal-info {
+/* 信息区域样式 */
+.modal-info {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -82,48 +108,82 @@
 
 .info-section h3 {
     color: #2c3e50;
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
     font-size: 18px;
 }
 
-.product-description {
-    color: #666;
-    line-height: 1.6;
-    margin: 0;
-}
-
-.specs-grid {
+/* 详情网格样式 */
+.detail-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
 
-.spec-item {
+.detail-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.spec-label {
+.detail-item span:first-child {
     color: #666;
 }
 
-.spec-value {
+.detail-item span:last-child {
     font-weight: 500;
     color: #2c3e50;
 }
 
-.product-price {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin: 0;
+/* 表单样式 */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
-.product-modal-actions {
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* 按钮样式 */
+.modal-actions {
     display: flex;
     gap: 12px;
-    margin-top: auto;
+    margin-top: 20px;
 }
 
 .action-button {
@@ -137,13 +197,12 @@
     transition: all 0.3s ease;
 }
 
-.add-to-cart {
-    background-color: #f8f9fa;
-    color: #2c3e50;
-    border: 2px solid #2c3e50;
+.cancel-button {
+    background-color: #e0e0e0;
+    color: #666;
 }
 
-.buy-now {
+.submit-button {
     background-color: #3498db;
     color: white;
 }
@@ -152,24 +211,35 @@
     transform: translateY(-2px);
 }
 
-.add-to-cart:hover {
-    background-color: #e9ecef;
+.cancel-button:hover {
+    background-color: #d0d0d0;
 }
 
-.buy-now:hover {
+.submit-button:hover {
     background-color: #2980b9;
 }
 
+/* 特殊状态样式 */
+.positive {
+    color: #2ecc71 !important;
+}
+
+.negative {
+    color: #e74c3c !important;
+}
+
+/* 响应式设计 */
 @media (max-width: 768px) {
-    .product-modal-body {
+    .modal-body {
         flex-direction: column;
     }
 
-    .product-modal-image {
+    .modal-image {
         max-width: 100%;
     }
 
-    .specs-grid {
+    .detail-grid,
+    .form-grid {
         grid-template-columns: 1fr;
     }
 } 

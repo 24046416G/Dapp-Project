@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../../css/collection.css';
+import CollectionDetailModal from './CollectionDetailModal.jsx';
 
 const collectionData = [
     { 
@@ -7,7 +8,7 @@ const collectionData = [
         name: 'Vintage Diamond Ring', 
         purchasePrice: 1500,
         currentValue: 1800,
-        image: 'https://via.placeholder.com/150',
+        image: '../../../../assets/jewelry/jewelry_01.png',
         description: 'A beautiful vintage diamond ring from 1950s',
         purchaseDate: '2023-10-15',
         carat: 1.2,
@@ -20,7 +21,7 @@ const collectionData = [
         name: 'Modern Diamond Necklace', 
         purchasePrice: 2500,
         currentValue: 2800,
-        image: 'https://via.placeholder.com/150',
+        image: '../../../../assets/jewelry/jewelry_02.png',
         description: 'Contemporary diamond necklace with platinum chain',
         purchaseDate: '2023-11-20',
         carat: 1.8,
@@ -35,6 +36,8 @@ const Collection = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('purchaseDate');
     const [filterBy, setFilterBy] = useState('all');
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -46,6 +49,11 @@ const Collection = () => {
 
     const handleFilterChange = (event) => {
         setFilterBy(event.target.value);
+    };
+
+    const handleItemClick = (item) => {
+        setSelectedItem(item);
+        setIsModalOpen(true);
     };
 
     const filteredAndSortedItems = collectionData
@@ -128,7 +136,11 @@ const Collection = () => {
 
             <div className="collection-grid">
                 {filteredAndSortedItems.map((item) => (
-                    <div key={item.id} className="collection-card">
+                    <div 
+                        key={item.id} 
+                        className="collection-card"
+                        onClick={() => handleItemClick(item)}
+                    >
                         <div className="collection-image">
                             <img src={item.image} alt={item.name} />
                             <div className="value-change">
@@ -167,6 +179,14 @@ const Collection = () => {
                     </div>
                 ))}
             </div>
+
+            {selectedItem && (
+                <CollectionDetailModal
+                    item={selectedItem}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
     );
 };

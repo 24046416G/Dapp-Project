@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../../css/record.css';
 import AddRecordModal from './AddRecordModal.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
+import RecordDetailModal from './RecordDetailModal.jsx';
 
 const recordData = [
     {
@@ -41,6 +42,8 @@ const Record = ({ userType }) => {
     const [sortBy, setSortBy] = useState('date');
     const [showAddModal, setShowAddModal] = useState(false);
     const [records, setRecords] = useState(recordData);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -56,6 +59,11 @@ const Record = ({ userType }) => {
 
     const handleAddRecord = (newRecord) => {
         setRecords(prevRecords => [newRecord, ...prevRecords]);
+    };
+
+    const handleRecordClick = (record) => {
+        setSelectedRecord(record);
+        setIsDetailModalOpen(true);
     };
 
     const filteredRecords = recordData
@@ -138,7 +146,12 @@ const Record = ({ userType }) => {
 
             <div className="records-grid">
                 {filteredRecords.map((record) => (
-                    <div key={record.id} className="record-card">
+                    <div 
+                        key={record.id} 
+                        className="record-card"
+                        onClick={() => handleRecordClick(record)}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="record-status">
                             <span className={`status-badge ${record.status.toLowerCase().replace(' ', '-')}`}>
                                 {record.status}
@@ -188,6 +201,14 @@ const Record = ({ userType }) => {
                     </div>
                 ))}
             </div>
+
+            {selectedRecord && (
+                <RecordDetailModal
+                    record={selectedRecord}
+                    isOpen={isDetailModalOpen}
+                    onClose={() => setIsDetailModalOpen(false)}
+                />
+            )}
 
             <AddRecordModal
                 isOpen={showAddModal}

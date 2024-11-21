@@ -5,7 +5,7 @@ import {
     FaGem, FaUser, FaHammer, FaShoppingCart,
     FaStore, FaShoppingBag, FaSignOutAlt
 } from 'react-icons/fa';
-import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes';
+import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
 import '../../css/sidebar.css';
 
 const ICONS = {

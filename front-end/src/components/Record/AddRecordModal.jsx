@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../css/record_modal.css';
+import '../../css/modal.css';
 
 const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
     const [formData, setFormData] = useState({
@@ -38,139 +38,141 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>
                         {userType === 'MINER' ? 'Add New Mining Record' :
                          userType === 'GRADING' ? 'Add New Grading Record' :
                          userType === 'CUTTING' ? 'Add New Cutting Record' :
-                         'Add New Undefined Record'}
+                         'Add New Record'}
                     </h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
-                <form onSubmit={handleSubmit} className="record-form">
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <label>Mineral Type</label>
-                            <input
-                                type="text"
-                                name="mineralType"
-                                value={formData.mineralType}
+                <div className="modal-body">
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <label>Mineral Type</label>
+                                <input
+                                    type="text"
+                                    name="mineralType"
+                                    value={formData.mineralType}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="e.g., Diamond"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Location</label>
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="e.g., Kimberley, South Africa"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Mining Date</label>
+                                <input
+                                    type="date"
+                                    name="mineDate"
+                                    value={formData.mineDate}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Weight (carats)</label>
+                                <input
+                                    type="number"
+                                    name="weight"
+                                    value={formData.weight}
+                                    onChange={handleChange}
+                                    required
+                                    step="0.01"
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Quality</label>
+                                <select name="quality" value={formData.quality} onChange={handleChange}>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Color</label>
+                                <input
+                                    type="text"
+                                    name="color"
+                                    value={formData.color}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="e.g., D"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Clarity</label>
+                                <select name="clarity" value={formData.clarity} onChange={handleChange}>
+                                    <option value="VVS1">VVS1</option>
+                                    <option value="VVS2">VVS2</option>
+                                    <option value="VS1">VS1</option>
+                                    <option value="VS2">VS2</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Status</label>
+                                <select name="status" value={formData.status} onChange={handleChange}>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Processing">In Processing</option>
+                                    <option value="Processed">Processed</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Coordinates</label>
+                                <input
+                                    type="text"
+                                    name="coordinates"
+                                    value={formData.coordinates}
+                                    onChange={handleChange}
+                                    placeholder="e.g., S 28°44′46″ E 24°46′46″"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group full-width">
+                            <label>Notes</label>
+                            <textarea
+                                name="notes"
+                                value={formData.notes}
                                 onChange={handleChange}
-                                required
-                                placeholder="e.g., Diamond"
+                                placeholder="Add any additional notes here..."
+                                rows="3"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label>Location</label>
-                            <input
-                                type="text"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                required
-                                placeholder="e.g., Kimberley, South Africa"
-                            />
+                        <div className="modal-actions">
+                            <button type="button" className="action-button cancel-button" onClick={onClose}>
+                                Cancel
+                            </button>
+                            <button type="submit" className="action-button submit-button">
+                                Add Record
+                            </button>
                         </div>
-
-                        <div className="form-group">
-                            <label>Mining Date</label>
-                            <input
-                                type="date"
-                                name="mineDate"
-                                value={formData.mineDate}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Weight (carats)</label>
-                            <input
-                                type="number"
-                                name="weight"
-                                value={formData.weight}
-                                onChange={handleChange}
-                                required
-                                step="0.01"
-                                min="0"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Quality</label>
-                            <select name="quality" value={formData.quality} onChange={handleChange}>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Color</label>
-                            <input
-                                type="text"
-                                name="color"
-                                value={formData.color}
-                                onChange={handleChange}
-                                required
-                                placeholder="e.g., D"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Clarity</label>
-                            <select name="clarity" value={formData.clarity} onChange={handleChange}>
-                                <option value="VVS1">VVS1</option>
-                                <option value="VVS2">VVS2</option>
-                                <option value="VS1">VS1</option>
-                                <option value="VS2">VS2</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Status</label>
-                            <select name="status" value={formData.status} onChange={handleChange}>
-                                <option value="Pending">Pending</option>
-                                <option value="In Processing">In Processing</option>
-                                <option value="Processed">Processed</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Coordinates</label>
-                            <input
-                                type="text"
-                                name="coordinates"
-                                value={formData.coordinates}
-                                onChange={handleChange}
-                                placeholder="e.g., S 28°44′46″ E 24°46′46″"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group full-width">
-                        <label>Notes</label>
-                        <textarea
-                            name="notes"
-                            value={formData.notes}
-                            onChange={handleChange}
-                            placeholder="Add any additional notes here..."
-                            rows="3"
-                        />
-                    </div>
-
-                    <div className="modal-actions">
-                        <button type="button" className="cancel-button" onClick={onClose}>
-                            Cancel
-                        </button>
-                        <button type="submit" className="submit-button">
-                            Add Record
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );
