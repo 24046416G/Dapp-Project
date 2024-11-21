@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProductDetailModal from './ProductDetailModal.jsx';
 import '../../css/store.css';
 
 const storeData = [
@@ -29,6 +30,8 @@ const Store = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [priceRange, setPriceRange] = useState([0, 5000]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -40,6 +43,11 @@ const Store = () => {
 
     const handlePriceChange = (event) => {
         setPriceRange([0, event.target.value]);
+    };
+
+    const handleProductClick = (product) => {
+        setSelectedProduct(product);
+        setIsModalOpen(true);
     };
 
     const filteredProducts = storeData.filter((product) => {
@@ -92,7 +100,11 @@ const Store = () => {
 
             <div className="products-grid">
                 {filteredProducts.map((product) => (
-                    <div key={product.id} className="product-card">
+                    <div 
+                        key={product.id} 
+                        className="product-card"
+                        onClick={() => handleProductClick(product)}
+                    >
                         <div className="product-image">
                             <img src={product.image} alt={product.name} />
                         </div>
@@ -106,12 +118,19 @@ const Store = () => {
                             </div>
                             <div className="product-footer">
                                 <span className="product-price">${product.price}</span>
-                                <button className="buy-button">Buy Now</button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {selectedProduct && (
+                <ProductDetailModal
+                    product={selectedProduct}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
     );
 };
