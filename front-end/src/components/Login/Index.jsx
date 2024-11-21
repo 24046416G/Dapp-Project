@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { USER_TYPES} from '../../constants/userTypes';
-import AdminLogin from './BusinessLogin.jsx';
+import { USER_TYPES } from '../../constants/userTypes';
+import BusinessLogin from './BusinessLogin.jsx';
 import CustomerLogin from './CustomerLogin.jsx';
 import '../../css/login.css';
 
@@ -34,7 +34,7 @@ const Login = ({ onLogin }) => {
                     </button>
                 </div>
                 {isAdminView ? (
-                    <AdminLogin onLogin={onLogin} MOCK_USERS={MOCK_USERS} />
+                    <BusinessLogin onLogin={onLogin} MOCK_USERS={MOCK_USERS} />
                 ) : (
                     <CustomerLogin onLogin={onLogin} MOCK_USERS={MOCK_USERS} />
                 )}

@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
 
-const AdminLogin = ({ onLogin, MOCK_USERS }) => {
+const BusinessLogin = ({ onLogin, MOCK_USERS }) => {
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true);
-    const [userType, setUserType] = useState(USER_TYPES.MINER);
     const [formData, setFormData] = useState({
         email: '',
-        password: '',
-        confirmPassword: '',
-        companyName: '',
-        businessId: ''
+        password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -22,26 +17,22 @@ const AdminLogin = ({ onLogin, MOCK_USERS }) => {
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            if (isLogin) {
-                const user = MOCK_USERS[formData.email];
-                
-                if (!user || user.type === USER_TYPES.CUSTOMER) {
-                    alert('Invalid business account!');
-                    return;
-                }
+            const user = MOCK_USERS[formData.email];
+            
+            if (!user || user.type === USER_TYPES.CUSTOMER) {
+                alert('Invalid business account!');
+                return;
+            }
 
-                if (user.password !== formData.password) {
-                    alert('Incorrect password!');
-                    return;
-                }
+            if (user.password !== formData.password) {
+                alert('Incorrect password!');
+                return;
+            }
 
-                onLogin(user.type);
-                const userRoutes = USER_ROUTES[user.type];
-                if (userRoutes?.length > 0) {
-                    navigate(userRoutes[0].path);
-                }
-            } else {
-                // 注册逻辑，添加公司验证等...
+            onLogin(user.type);
+            const userRoutes = USER_ROUTES[user.type];
+            if (userRoutes?.length > 0) {
+                navigate(userRoutes[0].path);
             }
         } catch (error) {
             console.error('Login error:', error);
@@ -52,9 +43,9 @@ const AdminLogin = ({ onLogin, MOCK_USERS }) => {
     };
 
     return (
-        <div className="login-box admin-login">
+        <div className="login-box business-login">
             <div className="login-header">
-                <h2>{isLogin ? 'Business Login' : 'Business Registration'}</h2>
+                <h2>Business Login</h2>
                 <p>Access your business dashboard</p>
             </div>
             <form onSubmit={handleSubmit}>
@@ -78,42 +69,6 @@ const AdminLogin = ({ onLogin, MOCK_USERS }) => {
                         required
                     />
                 </div>
-                {!isLogin && (
-                    <>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                name="companyName"
-                                placeholder="Company Name"
-                                value={formData.companyName}
-                                onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                name="businessId"
-                                placeholder="Business ID"
-                                value={formData.businessId}
-                                onChange={(e) => setFormData({...formData, businessId: e.target.value})}
-                                required
-                            />
-                        </div>
-                    </>
-                )}
-                <div className="form-group">
-                    <select
-                        value={userType}
-                        onChange={(e) => setUserType(e.target.value)}
-                        className="user-type-select"
-                    >
-                        <option value={USER_TYPES.MINER}>Mining Company</option>
-                        <option value={USER_TYPES.JEWELER}>Jewelry Company</option>
-                        <option value={USER_TYPES.GRADING}>Grading Lab</option>
-                        <option value={USER_TYPES.CUTTING}>Cutting Factory</option>
-                    </select>
-                </div>
                 <button 
                     type="submit" 
                     className={`submit-button ${isLoading ? 'loading' : ''}`}
@@ -122,26 +77,20 @@ const AdminLogin = ({ onLogin, MOCK_USERS }) => {
                     {isLoading ? (
                         <div className="button-content">
                             <span className="spinner"></span>
-                            <span>{isLogin ? 'Logging in...' : 'Registering...'}</span>
+                            <span>Logging in...</span>
                         </div>
                     ) : (
-                        isLogin ? 'Login' : 'Register'
+                        'Login'
                     )}
                 </button>
             </form>
             <div className="login-footer">
                 <p>
-                    {isLogin ? "Don't have a business account?" : "Already have an account?"}
-                    <button
-                        className="toggle-button"
-                        onClick={() => setIsLogin(!isLogin)}
-                    >
-                        {isLogin ? 'Register' : 'Login'}
-                    </button>
+                    For business account registration, please contact our support team.
                 </p>
             </div>
         </div>
     );
 };
 
-export default AdminLogin; 
+export default BusinessLogin; 
