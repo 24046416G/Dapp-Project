@@ -114,7 +114,7 @@ All members must submit the form on Blackboard under **“Project Declaration of
     - Go语言开发智能合约
 
 2. **后端开发**
-    - Go + Gin框架
+    - JS + Express.js
     - Fabric SDK for Go
 
 3. **前端开发**
@@ -122,8 +122,7 @@ All members must submit the form on Blackboard under **“Project Declaration of
     - Material-UI 组件库
 
 4. **数据库**
-    - 链下数据：MySQL（关系型数据库）
-    - 缓存：Redis (Optional)
+    - 链下数据：关系型数据库
 
 5. **开发工具**
     - Docker & Docker Compose（容器化）
@@ -274,3 +273,102 @@ All members must submit the form on Blackboard under **“Project Declaration of
 5. 事件监听
     - 区块事件
     - 链码事件
+
+## Hyperledger Fabric 项目开发工具与框架分析
+
+### 一、基于fabric-samples的实现分析 🔍
+
+从fabric-samples的结构来看，钻石追踪项目最适合参考以下示例：
+
+| 示例名称 | 用途说明 |
+|---------|---------|
+| asset-transfer-basic | 最基础的资产转移示例，可参考基本架构 |
+| asset-transfer-events | 适合实现钻石生命周期各阶段的事件追踪 |
+| commercial-paper | 展示了完整的业务流程实现 |
+
+#### 建议的实现方式 💡
+
+1️⃣ **智能合约设计**
+   - 创建Diamond资产类，包含以下属性：
+     ```
+     DiamondID     : 唯一标识
+     Status        : 当前阶段(开采/切割/认证/制造/销售)
+     CurrentOwner  : 当前所有者
+     History       : 所有权和状态变更历史
+     Certificates  : 认证信息
+     Specifications: 钻石规格
+     ```
+
+2️⃣ **业务流程实现**
+   - 参考commercial-paper的多组织协作模式
+   - 实现各个阶段的状态转换函数
+   - 使用Events记录重要操作
+
+### 二、所需技术栈及对应示例位置 🛠️
+
+#### 1. 区块链基础设施
+- **Hyperledger Fabric v2.x**
+  > 位置: `fabric-samples/config`
+
+#### 2. 智能合约开发
+- **Chaincode语言**: Node.js/TypeScript
+  > 位置: `fabric-samples/asset-transfer-basic/chaincode-typescript`
+- **合约测试框架**: Mocha
+  > 位置: `fabric-samples/test-network`
+
+#### 3. 后端开发
+- **Node.js + Express.js**
+  > 位置: `fabric-samples/asset-transfer-basic/application-gateway-typescript`
+- **Fabric SDK**: fabric-network
+  > 位置: `fabric-samples/asset-transfer-basic/application-gateway-typescript/package.json`
+- **API文档**: Swagger
+  > 位置: `fabric-samples/full-stack-asset-transfer-guide/applications/swagger`
+
+#### 4. 前端开发
+- **React.js**
+  > 位置: `fabric-samples/full-stack-asset-transfer-guide/applications/frontend`
+- **Web3.js** (区块链交互)
+  > 位置: `fabric-samples/asset-transfer-secured-agreement/application-javascript`
+
+#### 5. 数据库
+- **CouchDB** (状态数据库)
+  > 位置: `fabric-samples/test-network/docker/docker-compose-couch.yaml`
+- **MongoDB** (可选，用于存储额外信息)
+  > 位置: 需要自行添加
+
+#### 6. 开发工具
+- **Docker & Docker Compose**
+  > 位置: `fabric-samples/test-network/docker`
+- **Fabric CA** (证书管理)
+  > 位置: `fabric-samples/test-network/organizations/fabric-ca`
+- **Fabric CLI tools**
+  > 位置: `fabric-samples/bin`
+
+#### 7. 监控和管理工具
+- **Hyperledger Explorer**
+  > 位置: `fabric-samples/explorer`
+- **Logging**: Winston
+  > 位置: `fabric-samples/asset-transfer-basic/application-gateway-typescript`
+
+### 建议的项目结构 📁
+```
+diamond-tracking/
+├── chaincode/                 # 智能合约代码
+├── application/
+│   ├── backend/              # Express.js后端
+│   └── frontend/             # React前端
+├── network/                  # Fabric网络配置
+├── scripts/                  # 部署脚本
+└── docker/                   # Docker配置文件
+```
+```
+your-project/
+├── chaincode/
+│   └── lib/
+│       └── assetTransfer.js    # 链码实现
+├── backend/
+│   ├── app.js                  # Express 服务器
+│   └── fabric/
+│       └── gateway.js          # Fabric 连接逻辑
+└── frontend/                   # 前端代码
+```
