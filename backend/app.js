@@ -3,16 +3,27 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
+require('dotenv').config();
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var diamondsRouter = require('./routes/diamonds');
+var jewelryRouter = require('./routes/jewelry');
 
 var app = express();
+
+// 连接到 MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Successfully connected to MongoDB.'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -21,6 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/diamonds', diamondsRouter);
+app.use('/jewelry', jewelryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
