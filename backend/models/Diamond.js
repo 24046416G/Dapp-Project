@@ -1,3 +1,4 @@
+//create entity model for diamonds
 const mongoose = require('mongoose');
 
 const diamondSchema = new mongoose.Schema({

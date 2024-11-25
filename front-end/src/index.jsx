@@ -7,6 +7,7 @@ import Login from './components/Login/Index.jsx';
 import Store from './components/Store/Index.jsx';
 import Collection from './components/Collection/Index.jsx';
 import Record from './components/Record/Index.jsx';
+import AvailableStones from './components/AvailableStones/Index.jsx';
 import { USER_TYPES } from './constants/userTypes.js';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                                         <Route path="/collections" element={<Collection />} />
                                         <Route path="/record" element={<Record userType={userType} />} />
                                         <Route path="/" element={<Store />} />
+                                        <Route path="/available-stones" element={<AvailableStones />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>
                                 </div>

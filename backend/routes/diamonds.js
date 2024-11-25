@@ -1,3 +1,5 @@
+//backend/routes/diamonds.js
+//api for diamonds
 const express = require('express');
 const router = express.Router();
 const Diamond = require('../models/Diamond');

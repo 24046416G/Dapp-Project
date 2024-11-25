@@ -225,4 +225,8 @@
     .records-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.record-container .header-content h2 {
+    color: white;
 } 

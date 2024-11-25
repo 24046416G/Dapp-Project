@@ -42,4 +42,10 @@ module.exports = {
     ],
     //mode
     mode: "development",
+    devServer: {
+        static: './dist',
+        hot: true,
+        port: 8080,
+        historyApiFallback: true
+    }
 }

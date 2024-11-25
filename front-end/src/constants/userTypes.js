@@ -13,6 +13,11 @@ export const USER_ROUTES = {
             path: '/record',
             name: 'Cutting Record',
             icon: 'FaGem'
+        },
+        {
+            path: '/available-stones',
+            name: 'Available Stones',
+            icon: 'FaRocketchat'
         }
     ],
     [USER_TYPES.MINER]: [
