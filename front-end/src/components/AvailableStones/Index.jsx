@@ -14,7 +14,8 @@ const availableStonesData = [
         miningTime: '2024-02-15',
         miningPosition: 'S 25°52′48″ E 25°38′24″ (Jwaneng Mine)',
         price: 15000,
-        status: 'Available'
+        status: 'Available',
+        cuttingStatus: 'Confirmed'
     },
     {
         id: 2,
@@ -26,7 +27,8 @@ const availableStonesData = [
         miningTime: '2024-02-20',
         miningPosition: 'N 65°16′12″ E 112°19′48″ (Mir Mine)',
         price: 12000,
-        status: 'Available'
+        status: 'Available',
+        cuttingStatus: 'Pending'
     }
 ];
 
@@ -80,6 +82,11 @@ const AvailableStones = () => {
             <div className="stones-grid">
                 {filteredStones.map((stone) => (
                     <div key={stone.id} className="stone-card">
+                        <div className="stone-status">
+                            <span className={`status-badge ${stone.cuttingStatus.toLowerCase().replace(/ /g, '-')}`}>
+                                {stone.cuttingStatus}
+                            </span>
+                        </div>
                         <div className="stone-header">
                             <h3>{stone.mineralType}</h3>
                             <span className="batch-number">{stone.batchNumber}</span>
