@@ -24,7 +24,7 @@ const jewelrySchema = new mongoose.Schema({
                 const user = await mongoose.model('User').findById(value);
                 return user.role === 'JEWELRY_MAKER' || user.role === 'CUSTOMER';
             },
-            message: '珠宝只能由珠宝制造商或客户拥有'
+            message: 'Jewelry can only be owned by Jewelry Makers or Customers'
         }
     },
     price: {
