@@ -18,6 +18,11 @@ export const USER_ROUTES = {
             path: '/available-stones',
             name: 'Available Stones',
             icon: 'FaRocketchat'
+        },
+        {
+            path: '/buy-raw-stones',
+            name: 'Buy Raw Stones',
+            icon: 'FaShoppingCart'
         }
     ],
     [USER_TYPES.MINER]: [
