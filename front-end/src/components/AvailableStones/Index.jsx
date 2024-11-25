@@ -1,75 +1,76 @@
 import React, { useState } from 'react';
-import { FaSync } from 'react-icons/fa';
 import '../../css/availableStones.css';
+import CuttingModal from './CuttingModal.jsx';
 
-const mockStones = [
+// 模拟可用原石数据
+const availableStonesData = [
     {
         id: 1,
-        mineralType: 'Raw Diamond',
-        mineLocation: 'Kimberley, South Africa',
-        mineDate: '2024-03-15',
-        weight: 2.5,
+        batchNumber: 'RAW-2024-001',
+        mineralType: 'Diamond',
+        weight: 3.5,
         quality: 'High',
-        status: 'Available',
-        batchNumber: 'KMB-2024-001',
-        minerName: 'ABC Mining Corp'
+        miningCompany: 'DeBeers Mining Corp',
+        miningTime: '2024-02-15',
+        miningPosition: 'S 25°52′48″ E 25°38′24″ (Jwaneng Mine)',
+        price: 15000,
+        status: 'Available'
     },
     {
         id: 2,
-        mineralType: 'Raw Diamond',
-        mineLocation: 'Jwaneng, Botswana',
-        mineDate: '2024-03-14',
-        weight: 1.8,
+        batchNumber: 'RAW-2024-002',
+        mineralType: 'Diamond',
+        weight: 2.8,
         quality: 'Medium',
-        status: 'Available',
-        batchNumber: 'JWN-2024-045',
-        minerName: 'XYZ Minerals'
+        miningCompany: 'ALROSA',
+        miningTime: '2024-02-20',
+        miningPosition: 'N 65°16′12″ E 112°19′48″ (Mir Mine)',
+        price: 12000,
+        status: 'Available'
     }
 ];
 
 const AvailableStones = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [stones, setStones] = useState(mockStones);
+    const [selectedStone, setSelectedStone] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRefresh = () => {
-        // 将来可以添加刷新逻辑
-        console.log('Refresh clicked');
+    const handleCuttingClick = (stone) => {
+        setSelectedStone(stone);
+        setIsModalOpen(true);
     };
 
-    const filteredStones = stones.filter((stone) => {
-        return (
-            stone.mineralType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            stone.mineLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            stone.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            stone.minerName.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    });
+    const handleCuttingSubmit = (formData) => {
+        // 这里处理切割表单提交
+        console.log('Cutting process started for stone:', selectedStone);
+        console.log('Form data:', formData);
+        // 可以添加API调用等逻辑
+    };
+
+    const filteredStones = availableStonesData.filter((stone) =>
+        stone.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        stone.miningPosition.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="available-stones-container">
             <div className="stones-header">
                 <div className="header-content">
                     <div>
-                        <h2>Available Stones for Cutting</h2>
-                        <p>Browse and select stones for cutting process</p>
+                        <h2>Available Raw Materials</h2>
+                        <p>Select raw diamonds for cutting process</p>
                     </div>
-                    <button 
-                        className="refresh-button"
-                        onClick={handleRefresh}
-                    >
-                        <FaSync /> Refresh
-                    </button>
                 </div>
             </div>
-
+            
             <div className="stones-filters">
                 <input
                     type="text"
-                    placeholder="Search by type, location, batch number, or miner..."
+                    placeholder="Search by batch number or location..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className="search-bar"
@@ -85,14 +86,6 @@ const AvailableStones = () => {
                         </div>
                         <div className="stone-details">
                             <div className="detail-row">
-                                <span>Location:</span>
-                                <span>{stone.mineLocation}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Mine Date:</span>
-                                <span>{new Date(stone.mineDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="detail-row">
                                 <span>Weight:</span>
                                 <span>{stone.weight} carats</span>
                             </div>
@@ -101,16 +94,42 @@ const AvailableStones = () => {
                                 <span>{stone.quality}</span>
                             </div>
                             <div className="detail-row">
-                                <span>Miner:</span>
-                                <span>{stone.minerName}</span>
+                                <span>Mining Company:</span>
+                                <span>{stone.miningCompany}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Mining Time:</span>
+                                <span>{new Date(stone.miningTime).toLocaleDateString()}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Mining Position:</span>
+                                <span>{stone.miningPosition}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Price:</span>
+                                <span>${stone.price.toLocaleString()}</span>
                             </div>
                         </div>
                         <div className="stone-actions">
-                            <button className="action-button">View Details</button>
+                            <button 
+                                className="action-button"
+                                onClick={() => handleCuttingClick(stone)}
+                            >
+                                Cut This Raw Material
+                            </button>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {selectedStone && (
+                <CuttingModal
+                    stone={selectedStone}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleCuttingSubmit}
+                />
+            )}
         </div>
     );
 };
