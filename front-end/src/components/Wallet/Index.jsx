@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
+import { FaWallet, FaGem, FaCertificate } from 'react-icons/fa';
 import '../../css/wallet.css';
 
 const Wallet = () => {
@@ -71,12 +72,31 @@ const Wallet = () => {
                                 </p>
                             </>
                         ) : (
-                            <button 
-                                className="connect-wallet-button"
-                                onClick={connectWallet}
-                            >
-                                Connect MetaMask
-                            </button>
+                            <div className="wallet-connect-section">
+                                <div className="wallet-features">
+                                    <h3>通过连接您的 MetaMask 钱包，您可以：</h3>
+                                    <div className="feature-list">
+                                        <div className="feature-item">
+                                            <FaWallet className="feature-icon" />
+                                            <span>安全管理您的数字资产</span>
+                                        </div>
+                                        <div className="feature-item">
+                                            <FaGem className="feature-icon" />
+                                            <span>更好地管理您的珠宝珍藏</span>
+                                        </div>
+                                        <div className="feature-item">
+                                            <FaCertificate className="feature-icon" />
+                                            <span>获取珠宝详细的认证数据</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button 
+                                    className="connect-wallet-button"
+                                    onClick={connectWallet}
+                                >
+                                    Connect MetaMask
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
