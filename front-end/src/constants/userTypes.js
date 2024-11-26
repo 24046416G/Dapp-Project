@@ -46,14 +46,14 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.CUSTOMER]: [
         {
-            path: '/store',
-            name: 'Store',
-            icon: 'FaStore'
-        },
-        {
             path: '/collections',
             name: 'My Collections',
             icon: 'FaGem'
+        },
+        {
+            path: '/store',
+            name: 'Store',
+            icon: 'FaStore'
         },
         {
             path: '/wallet',

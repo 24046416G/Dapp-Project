@@ -8,6 +8,7 @@ import Collection from '../Collection/Index.jsx';
 import Record from '../Record/Index.jsx';
 import AvailableStones from '../AvailableStones/Index.jsx';
 import BuyRawStones from '../BuyRawStones/Index.jsx';
+import Wallet from '../Wallet/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
                                         <Route path="/" element={<Store />} />
                                         <Route path="/available-stones" element={<AvailableStones />} />
                                         <Route path="/buy-raw-stones" element={<BuyRawStones />} />
+                                        <Route path="/wallet" element={<Wallet />} />
                                         {/* 在这里添加其他路由 */}
                                     </Routes>
                                 </div>

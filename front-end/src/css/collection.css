@@ -12,7 +12,8 @@
     align-items: center;
 }
 
-.header-content h2 {
+.collection-header .header-content h2 {
+    color: white;
     font-size: 32px;
     margin: 0;
 }
