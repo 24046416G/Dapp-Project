@@ -61,32 +61,47 @@ const Wallet = () => {
             <div className="wallet-header">
                 <div className="header-content">
                     <div className="wallet-card">
-                        <h2>My Ethereum Wallet</h2>
+                        <h2>Connect Your Wallet</h2>
                         {isConnected ? (
-                            <>
+                            <div className="wallet-info">
+                                <div className="wallet-status">
+                                    <FaWallet className="wallet-icon" />
+                                    <span className="status-badge">Connected</span>
+                                </div>
                                 <p className="wallet-address">
-                                    Address: {`${account.slice(0, 6)}...${account.slice(-4)}`}
+                                    <span className="label">Address:</span>
+                                    <span className="value">{`${account.slice(0, 6)}...${account.slice(-4)}`}</span>
                                 </p>
                                 <p className="wallet-balance">
-                                    Balance: {Number(balance).toFixed(4)} ETH
+                                    <span className="label">Balance:</span>
+                                    <span className="value">{Number(balance).toFixed(4)} ETH</span>
                                 </p>
-                            </>
+                            </div>
                         ) : (
                             <div className="wallet-connect-section">
                                 <div className="wallet-features">
-                                    <h3>通过连接您的 MetaMask 钱包，您可以：</h3>
+                                    <h3>Connect MetaMask to Access Features</h3>
                                     <div className="feature-list">
                                         <div className="feature-item">
                                             <FaWallet className="feature-icon" />
-                                            <span>安全管理您的数字资产</span>
+                                            <div className="feature-text">
+                                                <span className="feature-title">Digital Asset Management</span>
+                                                <span className="feature-desc">Securely manage your digital assets</span>
+                                            </div>
                                         </div>
                                         <div className="feature-item">
                                             <FaGem className="feature-icon" />
-                                            <span>更好地管理您的珠宝珍藏</span>
+                                            <div className="feature-text">
+                                                <span className="feature-title">Jewelry Collection</span>
+                                                <span className="feature-desc">Better manage your jewelry collection</span>
+                                            </div>
                                         </div>
                                         <div className="feature-item">
                                             <FaCertificate className="feature-icon" />
-                                            <span>获取珠宝详细的认证数据</span>
+                                            <div className="feature-text">
+                                                <span className="feature-title">Certification Data</span>
+                                                <span className="feature-desc">Access detailed jewelry certification data</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -94,6 +109,7 @@ const Wallet = () => {
                                     className="connect-wallet-button"
                                     onClick={connectWallet}
                                 >
+                                    <FaWallet className="button-icon" />
                                     Connect MetaMask
                                 </button>
                             </div>
