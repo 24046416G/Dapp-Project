@@ -42,13 +42,18 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+  // 设置本地变量，仅在开发环境提供错误信息
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // 返回 JSON 格式的错误信息
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message,
+      status: err.status,
+      stack: req.app.get('env') === 'development' ? err.stack : undefined
+    }
+  });
 });
 
 module.exports = app;

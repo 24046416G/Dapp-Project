@@ -18,7 +18,7 @@ const diamondSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['MINED', 'CUT', 'GRADED', 'GRADED', 'JEWELRY', 'SOLD'],
+        enum: ['MINED', 'CUT', 'GRADED', 'JEWELRY', 'SOLD'],
         required: true
     },
     price: {
@@ -130,9 +130,9 @@ diamondSchema.pre('save', function(next) {
     const previousStatus = this._previousStatus || this.status;
     
     // 检查状态转换是否有效
-    if (!validStatusTransitions[previousStatus].includes(this.status)) {
-        return next(new Error(`Invalid status transition from ${previousStatus} to ${this.status}`));
-    }
+    // if (!validStatusTransitions[previousStatus].includes(this.status)) {
+    //     return next(new Error(`Invalid status transition from ${previousStatus} to ${this.status}`));
+    // }
 
     // 检查必要的证书是否存在
     const requiredCertificates = {
