@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import ProductDetailModal from './ProductDetailModal.jsx';
+import '../../css/layout.css';
+import '../../css/search.css';
+import '../../css/filter.css';
+import '../../css/card.css';
 import '../../css/store.css';
 
 const storeData = [
@@ -7,7 +11,7 @@ const storeData = [
         id: 1, 
         name: 'Diamond Ring', 
         price: 1000,
-        image: '../../../../assets/jewelry/jewelry_02.png',
+        image: '/assets/jewelry/jewelry_02.png',
         description: 'Beautiful diamond ring with 18K gold band',
         carat: 1.5,
         color: 'D',
@@ -17,7 +21,7 @@ const storeData = [
         id: 2, 
         name: 'Diamond Necklace', 
         price: 2000,
-        image: '../../../../assets/jewelry/jewelry_01.png',
+        image: '/assets/jewelry/jewelry_01.png',
         description: 'Elegant diamond necklace with platinum chain',
         carat: 2.0,
         color: 'E',
@@ -57,7 +61,7 @@ const Store = () => {
     });
 
     return (
-        <div className="store-container">
+        <div className="container">
             <div className="store-header">
                 <h2>Diamond Store</h2>
                 <p>Find your perfect diamond jewelry</p>
@@ -98,26 +102,29 @@ const Store = () => {
                 </div>
             </div>
 
-            <div className="products-grid">
+            <div className="collection-grid">
                 {filteredProducts.map((product) => (
                     <div 
                         key={product.id} 
-                        className="product-card"
+                        className="collection-card"
                         onClick={() => handleProductClick(product)}
                     >
-                        <div className="product-image">
+                        <div className="collection-image">
                             <img src={product.image} alt={product.name} />
                         </div>
-                        <div className="product-info">
+                        <div className="collection-info">
                             <h3>{product.name}</h3>
-                            <p className="product-description">{product.description}</p>
-                            <div className="product-specs">
+                            <p className="collection-description">{product.description}</p>
+                            <div className="collection-specs">
                                 <span>Carat: {product.carat}</span>
                                 <span>Color: {product.color}</span>
                                 <span>Clarity: {product.clarity}</span>
                             </div>
-                            <div className="product-footer">
-                                <span className="product-price">${product.price}</span>
+                            <div className="collection-details">
+                                <div className="detail-row">
+                                    <span>Price:</span>
+                                    <span>${product.price}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
