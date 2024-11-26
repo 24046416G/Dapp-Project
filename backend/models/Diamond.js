@@ -94,7 +94,10 @@ const diamondSchema = new mongoose.Schema({
         cut: String,
         polish: String,
         grading: String,
-        images: String,
+        images: {
+            type: String,
+            maxLength: 5 * 1024 * 1024  // 允许最大 5MB 的 Base64 字符串
+        }
     },
     history: [{
         status: String,
