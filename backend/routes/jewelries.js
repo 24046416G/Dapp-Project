@@ -5,23 +5,55 @@ const Diamond = require('../models/Diamond');
 const User = require('../models/User');
 
 // 创建新珠宝（仅限珠宝制造商）
-router.post('/', async (req, res) => {
+router.post('/make', async (req, res) => {
     try {
-        const { jewelryId, name, diamonds, price, metadata } = req.body;
+        const { 
+            jewelryId, 
+            name, 
+            authenticityCertificate, 
+            diamonds, 
+            currentOwner, 
+            price, 
+            image 
+        } = req.body;
         
+        // 验证必要字段
+        if (!jewelryId || !name || !diamonds || !currentOwner || !price) {
+            return res.status(400).json({ 
+                message: "JewelryId, name, diamonds, currentOwner and price are required" 
+            });
+        }
+
         // 验证当前用户是否为珠宝制造商
-        const user = await User.findById(req.user.userId);
-        if (user.role !== 'JEWELRY_MAKER') {
+        const user = await User.findById(currentOwner);
+        if (!user || user.role !== 'JEWELRY_MAKER') {
             return res.status(403).json({ message: "Only jewelry makers can create jewelry" });
         }
 
-        // 验证所有钻石是否属于该制造商且状态为CERTIFIED
+        // 验证所有钻石是否属于该制造商且状态为GRADED
         for (let diamondId of diamonds) {
             const diamond = await Diamond.findById(diamondId);
-            if (!diamond || diamond.currentOwner.toString() !== user._id.toString() || 
+            if (!diamond || diamond.currentOwner.toString() !== currentOwner || 
                 diamond.status !== 'GRADED') {
                 return res.status(400).json({ 
-                    message: "All diamonds must be owned by the jewelry maker and be certified" 
+                    message: "All diamonds must be owned by the jewelry maker and be graded" 
+                });
+            }
+        }
+
+        // 验证图片数据（如果提供）
+        if (image) {
+            // 验证是否是有效的 Base64 图片数据
+            if (!image.match(/^data:image\/(png|jpeg|jpg|gif);base64,/)) {
+                return res.status(400).json({ 
+                    message: "Invalid image format. Must be a Base64 encoded image" 
+                });
+            }
+
+            // 验证图片大小（Base64 字符串长度）
+            if (image.length > 10 * 1024 * 1024) {  // 5MB 限制
+                return res.status(400).json({ 
+                    message: "Image size too large. Maximum size is 5MB" 
                 });
             }
         }
@@ -29,10 +61,17 @@ router.post('/', async (req, res) => {
         const jewelry = new Jewelry({
             jewelryId,
             name,
+            authenticityCertificate,
             diamonds,
-            currentOwner: user._id,
+            currentOwner,
             price,
-            metadata
+            image,
+            history: [{
+                owner: currentOwner,
+                status: 'CREATED',
+                timestamp: new Date(),
+                transaction: authenticityCertificate || 'INITIAL_CREATION'
+            }]
         });
 
         await jewelry.save();
@@ -50,9 +89,23 @@ router.post('/', async (req, res) => {
         user.ownedJewelries.push(jewelry._id);
         await user.save();
 
-        res.status(201).json(jewelry);
+        // 返回创建的珠宝信息（带 populate）
+        const populatedJewelry = await Jewelry.findById(jewelry._id)
+            .populate('currentOwner')
+            .populate('diamonds')
+            .populate('history.owner');
+
+        res.status(201).json({
+            message: "Jewelry created successfully",
+            jewelry: populatedJewelry
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Jewelry creation error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 

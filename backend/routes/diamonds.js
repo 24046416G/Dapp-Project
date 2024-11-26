@@ -169,6 +169,11 @@ router.patch('/:id/transfer', async (req, res) => {
         diamond.status = newStatus;
         if (price) diamond.price = price;
 
+        // 如果状态不是 JEWELRY 或 SOLD，清除 jewelryId
+        if (newStatus !== 'JEWELRY' && newStatus !== 'SOLD') {
+            diamond.jewelryId = undefined;
+        }
+
         // 添加到历史记录
         diamond.history.push({
             status: newStatus,
@@ -195,16 +200,19 @@ router.patch('/:id/transfer', async (req, res) => {
         }
 
         // 保存钻石更新
-        await diamond.save();
-        
-        // 返回更新后的钻石信息（带 populate）
-        const updatedDiamond = await Diamond.findById(req.params.id)
-            .populate('currentOwner')
-            .populate('certificates.miningCertificate.companyId')
-            .populate('certificates.cuttingCertificate.companyId')
-            .populate('certificates.gradingCertificate.companyId')
-            .populate('certificates.jewelryCertificate.companyId')
-            .populate('history.owner');
+        const updatedDiamond = await Diamond.findByIdAndUpdate(
+            req.params.id,
+            diamond.toObject(),
+            { 
+                new: true, 
+                runValidators: false  // 禁用验证器，因为 jewelryId 会在后续的珠宝创建时设置
+            }
+        ).populate('currentOwner')
+         .populate('certificates.miningCertificate.companyId')
+         .populate('certificates.cuttingCertificate.companyId')
+         .populate('certificates.gradingCertificate.companyId')
+         .populate('certificates.jewelryCertificate.companyId')
+         .populate('history.owner');
 
         res.json({
             message: "Diamond transferred successfully",

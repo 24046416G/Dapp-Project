@@ -82,7 +82,7 @@ const diamondSchema = new mongoose.Schema({
     jewelryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Jewelry',
-        unique: true,
+        sparse: true,
         required: function() {
             return this.status === 'JEWELRY' || this.status === 'SOLD';
         }
