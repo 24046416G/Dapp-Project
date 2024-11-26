@@ -59,11 +59,6 @@ export const USER_ROUTES = {
             path: '/store',
             name: 'Store',
             icon: 'FaStore'
-        },
-        {
-            path: '/collections',
-            name: 'My Collections',
-            icon: 'FaGem'
         }
     ],
     [USER_TYPES.GRADING]: [
