@@ -67,5 +67,10 @@ export const USER_ROUTES = {
             name: 'Grading Record',
             icon: 'FaGem'
         },
+        {
+            path: '/wait-to-grade',
+            name: 'Wait to Grade',
+            icon: 'FaHourglassHalf'
+        }
     ]
 }; 

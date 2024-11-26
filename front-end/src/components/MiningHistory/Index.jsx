@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import '../../css/layout.css';
-import '../../css/search.css';
-import '../../css/filter.css';
-import '../../css/card.css';
 import '../../css/miningHistory.css';
 import MiningHistoryDetailModal from './MiningHistoryDetailModal.jsx';
 
@@ -10,30 +6,32 @@ const historyData = [
     {
         id: 1,
         mineralType: 'Diamond',
-        miningCompany: 'DeBeers Mining Corp',
-        miningDate: '2024-02-15',
-        miningPosition: 'S 28°44′46″ E 24°46′46″',
-        weight: 2.5,
-        transferDate: '2024-02-20',
-        transferredTo: 'ABC Cutting Corp',
         batchNumber: 'KMB-2024-001',
+        transferDate: '2024-03-20',
+        transferredTo: 'ABC Cutting Corp',
+        location: 'Kimberley, South Africa',
+        mineDate: '2024-03-15',
+        weight: 2.5,
+        quality: 'High',
+        color: 'D',
+        clarity: 'VVS1',
         status: 'Transferred',
-        category: 'Raw Diamond',
-        price: 15000
+        miningPosition: 'S 28°44′46″ E 24°46′46″'
     },
     {
         id: 2,
         mineralType: 'Diamond',
-        miningCompany: 'DeBeers Mining Corp',
-        miningDate: '2024-02-10',
-        miningPosition: 'S 25°43′60″ E 27°07′48″',
-        weight: 3.2,
-        transferDate: '2024-02-17',
+        batchNumber: 'JWN-2024-045',
+        transferDate: '2024-03-19',
         transferredTo: 'XYZ Cutting Corp',
-        batchNumber: 'KMB-2024-002',
+        location: 'Jwaneng, Botswana',
+        mineDate: '2024-03-14',
+        weight: 1.8,
+        quality: 'Medium',
+        color: 'F',
+        clarity: 'VS2',
         status: 'Transferred',
-        category: 'Raw Diamond',
-        price: 18000
+        miningPosition: 'N 65°16′12″ E 112°19′48″'
     }
 ];
 
@@ -67,8 +65,6 @@ const MiningHistory = () => {
                     return new Date(b.transferDate) - new Date(a.transferDate);
                 case 'weight':
                     return b.weight - a.weight;
-                case 'price':
-                    return b.price - a.price;
                 default:
                     return 0;
             }
@@ -102,7 +98,6 @@ const MiningHistory = () => {
                     >
                         <option value="date">Sort by Transfer Date</option>
                         <option value="weight">Sort by Weight</option>
-                        <option value="price">Sort by Price</option>
                     </select>
                 </div>
             </div>
@@ -111,7 +106,7 @@ const MiningHistory = () => {
                 {filteredHistory.map((history) => (
                     <div 
                         key={history.id} 
-                        className="collection-card"
+                        className="collection-card record-card"
                         onClick={() => handleHistoryClick(history)}
                     >
                         <div className="record-main-info">
@@ -126,10 +121,6 @@ const MiningHistory = () => {
 
                         <div className="record-details">
                             <div className="detail-row">
-                                <span>Mining Date:</span>
-                                <span>{new Date(history.miningDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="detail-row">
                                 <span>Transfer Date:</span>
                                 <span>{new Date(history.transferDate).toLocaleDateString()}</span>
                             </div>
@@ -138,16 +129,20 @@ const MiningHistory = () => {
                                 <span>{history.transferredTo}</span>
                             </div>
                             <div className="detail-row">
-                                <span>Mining Position:</span>
-                                <span>{history.miningPosition}</span>
+                                <span>Location:</span>
+                                <span>{history.location}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Mining Date:</span>
+                                <span>{new Date(history.mineDate).toLocaleDateString()}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Weight:</span>
                                 <span>{history.weight} carats</span>
                             </div>
                             <div className="detail-row">
-                                <span>Price:</span>
-                                <span>${history.price.toLocaleString()}</span>
+                                <span>Quality:</span>
+                                <span>{history.quality}</span>
                             </div>
                         </div>
 

@@ -1,32 +1,54 @@
 import React from 'react';
 import '../../css/modal.css';
 
-const MiningHistoryDetailModal = ({ history, isOpen, onClose }) => {
+const WaitToGradeDetailModal = ({ diamond, isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>{history.mineralType}</h2>
+                    <h2>{diamond.mineralType}</h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
                 <div className="modal-body">
                     <div className="modal-info">
                         <div className="info-section">
-                            <h3>Transfer Information</h3>
+                            <h3>Basic Information</h3>
                             <div className="detail-grid">
                                 <div className="detail-item">
-                                    <span>Transfer Date:</span>
-                                    <span>{new Date(history.transferDate).toLocaleDateString()}</span>
+                                    <span>Batch Number:</span>
+                                    <span>{diamond.batchNumber}</span>
                                 </div>
                                 <div className="detail-item">
-                                    <span>Transferred To:</span>
-                                    <span>{history.transferredTo}</span>
+                                    <span>From Company:</span>
+                                    <span>{diamond.fromCompany}</span>
                                 </div>
                                 <div className="detail-item">
-                                    <span>Status:</span>
-                                    <span>{history.status}</span>
+                                    <span>Received Date:</span>
+                                    <span>{new Date(diamond.receivedDate).toLocaleDateString()}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span>Weight:</span>
+                                    <span>{diamond.weight} carats</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="info-section">
+                            <h3>Cutting Information</h3>
+                            <div className="detail-grid">
+                                <div className="detail-item">
+                                    <span>Cutting Date:</span>
+                                    <span>{new Date(diamond.cuttingDate).toLocaleDateString()}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span>Cutting Tech:</span>
+                                    <span>{diamond.cuttingTech}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span>Polishing Tech:</span>
+                                    <span>{diamond.polishingTech}</span>
                                 </div>
                             </div>
                         </div>
@@ -35,42 +57,16 @@ const MiningHistoryDetailModal = ({ history, isOpen, onClose }) => {
                             <h3>Mining Information</h3>
                             <div className="detail-grid">
                                 <div className="detail-item">
-                                    <span>Location:</span>
-                                    <span>{history.location}</span>
+                                    <span>Mining Company:</span>
+                                    <span>{diamond.miningInfo.company}</span>
                                 </div>
                                 <div className="detail-item">
                                     <span>Mining Date:</span>
-                                    <span>{new Date(history.mineDate).toLocaleDateString()}</span>
+                                    <span>{new Date(diamond.miningInfo.date).toLocaleDateString()}</span>
                                 </div>
                                 <div className="detail-item">
                                     <span>Mining Position:</span>
-                                    <span>{history.miningPosition}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="info-section">
-                            <h3>Diamond Specifications</h3>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Weight:</span>
-                                    <span>{history.weight} carats</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Quality:</span>
-                                    <span>{history.quality}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Color:</span>
-                                    <span>{history.color}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Clarity:</span>
-                                    <span>{history.clarity}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Batch Number:</span>
-                                    <span>{history.batchNumber}</span>
+                                    <span>{diamond.miningInfo.position}</span>
                                 </div>
                             </div>
                         </div>
@@ -81,4 +77,4 @@ const MiningHistoryDetailModal = ({ history, isOpen, onClose }) => {
     );
 };
 
-export default MiningHistoryDetailModal; 
+export default WaitToGradeDetailModal; 
