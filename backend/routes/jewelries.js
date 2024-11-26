@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
         for (let diamondId of diamonds) {
             const diamond = await Diamond.findById(diamondId);
             if (!diamond || diamond.currentOwner.toString() !== user._id.toString() || 
-                diamond.status !== 'CERTIFIED') {
+                diamond.status !== 'GRADED') {
                 return res.status(400).json({ 
                     message: "All diamonds must be owned by the jewelry maker and be certified" 
                 });

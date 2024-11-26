@@ -3,18 +3,13 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     walletAddress: {
         type: String,
-        required: true,
-        unique: true
-    },
-    privateKey: {
-        type: String,
-        required: true,
-        unique: true
+        unique: true,
+        sparse: true
     },
     publicKey: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        sparse: true
     },
     role: {
         type: String,
@@ -63,7 +58,7 @@ const userSchema = new mongoose.Schema({
     },
     balance: {
         type: Number,
-        required: true
+        default: 0
     },
     ownedDiamonds: [{
         type: mongoose.Schema.Types.ObjectId,

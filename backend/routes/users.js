@@ -14,17 +14,13 @@ router.post('/register', async (req, res) => {
             companyId, 
             certificate, 
             customerName, 
-            customerId, 
-            balance,
-            privateKey,
-            publicKey,
-            walletAddress
+            customerId
         } = req.body;
 
         // 检查必填字段
-        if (!role || !password || !privateKey || !publicKey || !walletAddress) {
+        if (!role || !password) {
             return res.status(400).json({ 
-                message: "Role, password, privateKey, publicKey, and walletAddress are required" 
+                message: "Role and password are required" 
             });
         }
 
@@ -48,11 +44,7 @@ router.post('/register', async (req, res) => {
             companyId,
             certificate,
             customerName,
-            customerId,
-            balance: balance || 0,
-            privateKey,
-            publicKey,
-            walletAddress
+            customerId
         });
 
         // 保存用户
@@ -60,13 +52,61 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({
             message: "User registered successfully",
-            walletAddress: user.walletAddress,
             role: user.role,
-            userId: user._id,
-            balance: user.balance
+            userId: user._id
         });
     } catch (error) {
         console.error('Registration error:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// 新增：连接钱包
+router.patch('/:id/connect', async (req, res) => {
+    try {
+        const { walletAddress, publicKey, balance } = req.body;
+        const userId = req.params.id;
+
+        // 验证必要字段
+        if (!walletAddress || !publicKey) {
+            return res.status(400).json({ 
+                message: "Wallet address and public key are required" 
+            });
+        }
+
+        // 使用 MongoDB 的 _id 查找用户
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // 检查钱包地址是否已被使用
+        const existingWallet = await User.findOne({ walletAddress });
+        if (existingWallet && existingWallet._id.toString() !== user._id.toString()) {
+            return res.status(400).json({ message: "Wallet address already in use" });
+        }
+
+        // 更新用户信息
+        user.walletAddress = walletAddress;
+        user.publicKey = publicKey;
+        if (balance !== undefined) {
+            user.balance = balance;
+        }
+
+        await user.save();
+
+        res.json({
+            message: "Wallet connected successfully",
+            user: {
+                id: user._id,
+                role: user.role,
+                walletAddress: user.walletAddress,
+                balance: user.balance
+            }
+        });
+    } catch (error) {
+        console.error('Wallet connection error:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -125,7 +165,7 @@ router.get('/all', async (req, res) => {
     try {
         // 排除敏感信息
         const users = await User.find()
-            .select('-password -privateKey')
+            .select('-password')
             .populate('ownedDiamonds')
             .populate('ownedJewelries');
         
@@ -133,6 +173,7 @@ router.get('/all', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
@@ -163,6 +204,7 @@ router.get('/:id', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
@@ -189,6 +231,7 @@ router.get('/role/:role', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
