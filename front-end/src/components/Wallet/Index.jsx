@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import '../../css/wallet.css';
 import { BrowserProvider, formatEther } from 'ethers';
+import '../../css/wallet.css';
 
 const Wallet = () => {
-    const [balance, setBalance] = useState(null);
-    const [account, setAccount] = useState(null);
+    const [account, setAccount] = useState('');
+    const [balance, setBalance] = useState('');
     const [isConnected, setIsConnected] = useState(false);
+    const [provider, setProvider] = useState(null);
 
     const connectWallet = async () => {
         try {
             if (window.ethereum) {
-                // 请求用户授权
-                const accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                });
+                // 创建 provider
+                const ethersProvider = new BrowserProvider(window.ethereum);
+                setProvider(ethersProvider);
+
+                // 请求用户授权连接钱包
+                const accounts = await ethersProvider.send("eth_requestAccounts", []);
+                const account = accounts[0];
                 
-                const provider = new BrowserProvider(window.ethereum);
-                const balance = await provider.getBalance(accounts[0]);
+                // 获取账户余额
+                const balance = await ethersProvider.getBalance(account);
                 const ethBalance = formatEther(balance);
                 
-                setAccount(accounts[0]);
+                setAccount(account);
                 setBalance(ethBalance);
                 setIsConnected(true);
             } else {
@@ -33,13 +37,16 @@ const Wallet = () => {
     // 监听账户变化
     useEffect(() => {
         if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accounts) => {
+            window.ethereum.on('accountsChanged', async (accounts) => {
                 if (accounts.length > 0) {
                     setAccount(accounts[0]);
-                    updateBalance(accounts[0]);
+                    if (provider) {
+                        const balance = await provider.getBalance(accounts[0]);
+                        setBalance(formatEther(balance));
+                    }
                 } else {
-                    setAccount(null);
-                    setBalance(null);
+                    setAccount('');
+                    setBalance('');
                     setIsConnected(false);
                 }
             });
@@ -50,15 +57,7 @@ const Wallet = () => {
                 window.ethereum.removeListener('accountsChanged', () => {});
             }
         };
-    }, []);
-
-    const updateBalance = async (address) => {
-        if (window.ethereum) {
-            const provider = new BrowserProvider(window.ethereum);
-            const balance = await provider.getBalance(address);
-            setBalance(formatEther(balance));
-        }
-    };
+    }, [provider]);
 
     return (
         <div className="container">
@@ -68,26 +67,24 @@ const Wallet = () => {
                         <h2>My Ethereum Wallet</h2>
                         {isConnected ? (
                             <>
-                                <p className="wallet-address">Address: {account}</p>
-                                <p className="wallet-balance">Balance: {balance ? `${Number(balance).toFixed(4)} ETH` : 'Loading...'}</p>
+                                <p className="wallet-address">
+                                    Address: {`${account.slice(0, 6)}...${account.slice(-4)}`}
+                                </p>
+                                <p className="wallet-balance">
+                                    Balance: {Number(balance).toFixed(4)} ETH
+                                </p>
                             </>
                         ) : (
-                            <button className="connect-wallet-button" onClick={connectWallet}>
+                            <button 
+                                className="connect-wallet-button"
+                                onClick={connectWallet}
+                            >
                                 Connect MetaMask
                             </button>
                         )}
                     </div>
                 </div>
             </div>
-
-            {isConnected && (
-                <div className="transaction-section">
-                    <h3>Recent Transactions</h3>
-                    <div className="transaction-list">
-                        {/* 这里可以添加交易历史记录 */}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

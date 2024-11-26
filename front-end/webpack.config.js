@@ -5,8 +5,13 @@ module.exports = {
     entry: "./src/Index.jsx", //require ralative path here.
     output:{
         path: path.resolve(__dirname, "dist"), //require absolute path here.
-        filename: "main.js"
+        filename: "main.js",
+        publicPath: '/'
     },
+    resolve: {
+        extensions: ['.js', '.jsx', '.json']
+    },
+    target: 'web',
     module: {
         rules: [
             //loader configuration
@@ -43,9 +48,13 @@ module.exports = {
     //mode
     mode: "development",
     devServer: {
-        static: './public',
+        static: {
+            directory: path.join(__dirname, 'public'),
+        },
         hot: true,
         port: 8080,
-        historyApiFallback: true
+        historyApiFallback: true,
+        open: true,
+        compress: true
     }
 }
