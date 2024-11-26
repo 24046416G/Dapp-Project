@@ -167,32 +167,36 @@ const Record = ({ userType }) => {
 
                         <div className="record-details">
                             <div className="detail-row">
-                                <span>Location:</span>
-                                <span>{record.location}</span>
+                                <span>Mining Company:</span>
+                                <span>{record.miningCompany}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Mining Date:</span>
-                                <span>{new Date(record.mineDate).toLocaleDateString()}</span>
+                                <span>{new Date(record.miningDate).toLocaleDateString()}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Mining Position:</span>
+                                <span>{record.miningPosition}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Category:</span>
+                                <span>{record.category}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Cutting Date:</span>
+                                <span>{new Date(record.cuttingDate).toLocaleDateString()}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Polishing Tech:</span>
+                                <span>{record.polishingTech}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span>Cutting Tech:</span>
+                                <span>{record.cuttingTech}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Weight:</span>
                                 <span>{record.weight} carats</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Quality:</span>
-                                <span>{record.quality}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Color:</span>
-                                <span>{record.color}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Clarity:</span>
-                                <span>{record.clarity}</span>
-                            </div>
-                            <div className="detail-row coordinates">
-                                <span>Coordinates:</span>
-                                <span>{record.coordinates}</span>
                             </div>
                         </div>
 
@@ -203,15 +207,6 @@ const Record = ({ userType }) => {
                         )}
 
                         <div className="record-actions">
-                            <button 
-                                className="action-button edit"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    // 处理编辑操作
-                                }}
-                            >
-                                Edit
-                            </button>
                             <button 
                                 className="action-button view"
                                 onClick={(e) => {
