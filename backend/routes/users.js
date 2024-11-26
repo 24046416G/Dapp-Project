@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 // 用户注册
 router.post('/register', async (req, res) => {
@@ -107,55 +106,6 @@ router.patch('/:id/connect', async (req, res) => {
         });
     } catch (error) {
         console.error('Wallet connection error:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// 用户登录
-router.post('/login', async (req, res) => {
-    try {
-        const { walletAddress, password } = req.body;
-
-        const user = await User.findOne({ walletAddress });
-        if (!user) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        const token = jwt.sign(
-            { userId: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
-
-        res.json({ token, user: {
-            id: user._id,
-            role: user.role,
-            walletAddress: user.walletAddress
-        }});
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// 获取用户信息
-router.get('/profile', async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId)
-            .select('-password -privateKey')
-            .populate('ownedDiamonds')
-            .populate('ownedJewelries');
-        
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        res.json(user);
-    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });

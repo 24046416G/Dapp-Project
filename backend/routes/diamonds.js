@@ -237,4 +237,71 @@ router.get('/all/diamonds', async (req, res) => {
     }
 });
 
+// 5. 更新钻石切割和抛光信息
+router.patch('/:_id/cut', async (req, res) => {
+    try {
+        const { cut, polish } = req.body;
+
+        // 验证必要字段
+        if (!cut || !polish) {
+            return res.status(400).json({ 
+                message: "Cut and polish information are required" 
+            });
+        }
+
+        // 查找钻石
+        const diamond = await Diamond.findById(req.params.id);
+        if (!diamond) {
+            return res.status(404).json({ 
+                message: "Diamond not found",
+                providedId: req.params.id 
+            });
+        }
+
+        // 验证当前用户是否为切割公司且是钻石的当前所有者
+        const user = await User.findById(req.user.userId);
+        if (!user || user.role !== 'CUTTING_COMPANY' || 
+            diamond.currentOwner.toString() !== user.id.toString()) {
+            return res.status(403).json({ 
+                message: "Only the current cutting company owner can update cut information" 
+            });
+        }
+
+        // 验证钻石状态是否为CUT
+        if (diamond.status !== 'CUT') {
+            return res.status(400).json({ 
+                message: "Diamond must be in CUT status to update cut information",
+                currentStatus: diamond.status
+            });
+        }
+
+        // 更新切割和抛光信息
+        diamond.metadata.cut = cut;
+        diamond.metadata.polish = polish;
+
+        await diamond.save();
+
+        // 返回更新后的钻石信息
+        const updatedDiamond = await Diamond.findById(req.params.id)
+            .populate('currentOwner')
+            .populate('certificates.miningCertificate.companyId')
+            .populate('certificates.cuttingCertificate.companyId')
+            .populate('certificates.gradingCertificate.companyId')
+            .populate('certificates.jewelryCertificate.companyId')
+            .populate('history.owner');
+
+        res.json({
+            message: "Diamond cut information updated successfully",
+            diamond: updatedDiamond
+        });
+    } catch (error) {
+        console.error('Update cut information error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
 module.exports = router; 
