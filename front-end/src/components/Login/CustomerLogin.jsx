@@ -64,7 +64,7 @@ const CustomerLogin = ({ onLogin }) => {
                 alert('Registration failed. Please try again later.');
             }
         } else {
-            // Login according to the user type
+            // 登录逻辑保持不变
             onLogin(USER_TYPES.CUSTOMER);
             navigate('/');
         }
