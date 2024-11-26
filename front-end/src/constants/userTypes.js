@@ -30,6 +30,11 @@ export const USER_ROUTES = {
             path: '/record',
             name: 'Mining Record',
             icon: 'FaGem'
+        },
+        {
+            path: '/mining-history',
+            name: 'Mining History',
+            icon: 'FaHistory'
         }
     ],
     [USER_TYPES.JEWELER]: [

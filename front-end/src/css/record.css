@@ -70,12 +70,12 @@
     font-weight: 500;
 }
 
-.status-badge.processed {
+.status-badge.verified {
     background-color: #2ecc71;
     color: white;
 }
 
-.status-badge.in-processing {
+.status-badge.verifying {
     background-color: #f1c40f;
     color: #2c3e50;
 }
