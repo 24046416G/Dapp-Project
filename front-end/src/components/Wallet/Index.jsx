@@ -11,15 +11,12 @@ const Wallet = () => {
     const connectWallet = async () => {
         try {
             if (window.ethereum) {
-                // 创建 provider
                 const ethersProvider = new BrowserProvider(window.ethereum);
                 setProvider(ethersProvider);
 
-                // 请求用户授权连接钱包
                 const accounts = await ethersProvider.send("eth_requestAccounts", []);
                 const account = accounts[0];
                 
-                // 获取账户余额
                 const balance = await ethersProvider.getBalance(account);
                 const ethBalance = formatEther(balance);
                 
@@ -34,7 +31,6 @@ const Wallet = () => {
         }
     };
 
-    // 监听账户变化
     useEffect(() => {
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', async (accounts) => {
@@ -60,7 +56,7 @@ const Wallet = () => {
     }, [provider]);
 
     return (
-        <div className="container">
+        <>
             <div className="wallet-header">
                 <div className="header-content">
                     <div>
@@ -85,7 +81,7 @@ const Wallet = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

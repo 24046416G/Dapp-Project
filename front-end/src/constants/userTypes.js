@@ -51,9 +51,9 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.CUSTOMER]: [
         {
-            path: '/collections',
-            name: 'My Collections',
-            icon: 'FaGem'
+            path: '/personal',
+            name: 'Personal Center',
+            icon: 'FaUser'
         },
         {
             path: '/store',
@@ -61,10 +61,10 @@ export const USER_ROUTES = {
             icon: 'FaStore'
         },
         {
-            path: '/wallet',
-            name: 'My Wallet',
-            icon: 'FaWallet'
-        },
+            path: '/collections',
+            name: 'My Collections',
+            icon: 'FaGem'
+        }
     ],
     [USER_TYPES.GRADING]: [
         {

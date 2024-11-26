@@ -4,11 +4,10 @@ import Sidebar from '../SideBar/Index.jsx';
 import Inventory from '../Inventory/Index.jsx';
 import Login from '../Login/Index.jsx';
 import Store from '../Store/Index.jsx';
-import Collection from '../Collection/Index.jsx';
+import PersonalCenter from '../PersonalCenter/Index.jsx';
 import Record from '../Record/Index.jsx';
 import AvailableStones from '../AvailableStones/Index.jsx';
 import BuyRawStones from '../BuyRawStones/Index.jsx';
-import Wallet from '../Wallet/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
 
 function App() {
@@ -37,10 +36,9 @@ function App() {
                                 <Sidebar userType={userType} />
                                 <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
-                                        <Route path="/wallet" element={<Wallet />} />
+                                        <Route path="/personal" element={<PersonalCenter />} />
                                         <Route path="/store" element={<Store />} />
                                         <Route path="/inventory" element={<Inventory />} />
-                                        <Route path="/collections" element={<Collection />} />
                                         <Route path="/record" element={<Record userType={userType} />} />
                                         <Route path="/available-stones" element={<AvailableStones />} />
                                         <Route path="/buy-raw-stones" element={<BuyRawStones />} />
