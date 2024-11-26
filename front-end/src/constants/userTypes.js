@@ -19,11 +19,11 @@ export const USER_ROUTES = {
             name: 'Available Stones',
             icon: 'FaRocketchat'
         },
-        {
-            path: '/buy-raw-stones',
-            name: 'Buy Raw Stones',
-            icon: 'FaShoppingCart'
-        },
+        // {
+        //     path: '/buy-raw-stones',
+        //     name: 'Buy Raw Stones',
+        //     icon: 'FaShoppingCart'
+        // },
         {
             path: '/store',
             name: 'Cutting Store',
@@ -46,13 +46,14 @@ export const USER_ROUTES = {
             name: 'Miner Store',
             icon: 'FaStore'
         }
+
     ],
     [USER_TYPES.JEWELER]: [
-        {
-            path: '/store',
-            name: 'Diamond Store',
-            icon: 'FaHammer'
-        },
+        // {
+        //     path: '/store',
+        //     name: 'Diamond Store',
+        //     icon: 'FaHammer'
+        // },
         {
             path: '/inventory',
             name: 'Inventory',
@@ -60,7 +61,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Jeweler Store',
+            name: 'Diamond Store',
             icon: 'FaStore'
         }
     ],

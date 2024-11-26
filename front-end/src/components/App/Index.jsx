@@ -8,6 +8,8 @@ import PersonalCenter from '../PersonalCenter/Index.jsx';
 import Record from '../Record/Index.jsx';
 import AvailableStones from '../AvailableStones/Index.jsx';
 import BuyRawStones from '../BuyRawStones/Index.jsx';
+import MiningHistory from '../MiningHistory/Index.jsx';
+import WaitToGrade from '../WaitToGrade/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
 
 function App() {
@@ -41,7 +43,9 @@ function App() {
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/record" element={<Record userType={userType} />} />
                                         <Route path="/available-stones" element={<AvailableStones />} />
-                                        <Route path="/buy-raw-stones" element={<BuyRawStones />} />
+                                        
+                                        <Route path="/mining-history" element={<MiningHistory />} />
+                                        <Route path="/wait-to-grade" element={<WaitToGrade />} />
                                         <Route path="/wallet" element={<BuyRawStones />} />
                                         <Route path="/" element={<Navigate to="/store" replace />} />
                                     </Routes>
