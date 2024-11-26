@@ -8,10 +8,6 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var diamondsRouter = require('./routes/diamonds');
-var jewelryRouter = require('./routes/jewelry');
-
 var app = express();
 
 // 连接到 MongoDB
@@ -31,9 +27,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/diamonds', diamondsRouter);
-app.use('/jewelry', jewelryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
