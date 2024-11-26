@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
@@ -42,6 +42,37 @@ const Collection = () => {
     const [filterBy, setFilterBy] = useState('all');
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentAddress, setCurrentAddress] = useState('');
+
+    useEffect(() => {
+        const getAddress = async () => {
+            if (window.ethereum) {
+                try {
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+                    setCurrentAddress(accounts[0]);
+                } catch (error) {
+                    console.error('Error getting address:', error);
+                }
+            }
+        };
+
+        getAddress();
+
+        // 监听账户变化
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                setCurrentAddress(accounts[0] || '');
+            });
+        }
+
+        return () => {
+            if (window.ethereum) {
+                window.ethereum.removeListener('accountsChanged', () => {});
+            }
+        };
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -87,17 +118,15 @@ const Collection = () => {
                 <div className="header-content">
                     <div>
                         <h2>My Diamond Collection</h2>
-                        <p>Total Collection Value: ${totalValue.toLocaleString()}</p>
                     </div>
                     <div className="header-stats">
                         <div className="stat-item">
-                            <span className="stat-label">Total Items</span>
-                            <span className="stat-value">{filteredAndSortedItems.length}</span>
-                        </div>
-                        <div className="stat-item">
-                            <span className="stat-label">Avg. Value</span>
+                            <span className="stat-label">Current Address</span>
                             <span className="stat-value">
-                                ${(totalValue / filteredAndSortedItems.length || 0).toLocaleString()}
+                                {currentAddress ? 
+                                    `${currentAddress.slice(0, 6)}...${currentAddress.slice(-4)}` : 
+                                    'Not Connected'
+                                }
                             </span>
                         </div>
                     </div>
