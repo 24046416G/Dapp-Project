@@ -5,7 +5,8 @@ module.exports = {
     entry: "./src/Index.jsx", //require ralative path here.
     output:{
         path: path.resolve(__dirname, "dist"), //require absolute path here.
-        filename: "main.js"
+        filename: "main.js",
+        publicPath: '/'
     },
     module: {
         rules: [
@@ -40,6 +41,20 @@ module.exports = {
 			inject: true
 		})
     ],
+    resolve: {
+        extensions: ['.js', '.jsx']
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'public'),
+        },
+        historyApiFallback: true,
+        port: 3000,
+        hot: true,
+        open: true,
+        compress: true
+    },
     //mode
     mode: "development",
+    devtool: 'eval-source-map'
 }

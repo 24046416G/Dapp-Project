@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import '../../css/layout.css';
+import '../../css/search.css';
+import '../../css/filter.css';
+import '../../css/card.css';
 import '../../css/collection.css';
 import CollectionDetailModal from './CollectionDetailModal.jsx';
 
@@ -78,7 +82,7 @@ const Collection = () => {
     const totalValue = filteredAndSortedItems.reduce((sum, item) => sum + item.currentValue, 0);
 
     return (
-        <div className="collection-container">
+        <div className="container">
             <div className="collection-header">
                 <div className="header-content">
                     <div>

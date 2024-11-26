@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import '../../css/layout.css';
+import '../../css/search.css';
+import '../../css/filter.css';
+import '../../css/card.css';
 import '../../css/record.css';
 import AddRecordModal from './AddRecordModal.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
@@ -111,7 +115,7 @@ const Record = ({ userType }) => {
                 </div>
             </div>
 
-            <div className="record-filters">
+            <div className="filters">
                 <input
                     type="text"
                     placeholder="Search by type, location, or batch number..."
@@ -144,23 +148,23 @@ const Record = ({ userType }) => {
                 </div>
             </div>
 
-            <div className="records-grid">
+            <div className="collection-grid">
                 {filteredRecords.map((record) => (
                     <div 
                         key={record.id} 
-                        className="record-card"
+                        className="collection-card record-card"
                         onClick={() => handleRecordClick(record)}
-                        style={{ cursor: 'pointer' }}
                     >
-                        <div className="record-status">
+                        <div className="record-main-info">
+                            <div>
+                                <h3>{record.mineralType}</h3>
+                                <p className="batch-number">{record.batchNumber}</p>
+                            </div>
                             <span className={`status-badge ${record.status.toLowerCase().replace(' ', '-')}`}>
                                 {record.status}
                             </span>
                         </div>
-                        <div className="record-main-info">
-                            <h3>{record.mineralType}</h3>
-                            <p className="batch-number">{record.batchNumber}</p>
-                        </div>
+
                         <div className="record-details">
                             <div className="detail-row">
                                 <span>Location:</span>
@@ -191,12 +195,32 @@ const Record = ({ userType }) => {
                                 <span>{record.coordinates}</span>
                             </div>
                         </div>
-                        <div className="record-notes">
-                            <p>{record.notes}</p>
-                        </div>
+
+                        {record.notes && (
+                            <div className="record-notes">
+                                <p>{record.notes}</p>
+                            </div>
+                        )}
+
                         <div className="record-actions">
-                            <button className="action-button edit">Edit</button>
-                            <button className="action-button view">View Details</button>
+                            <button 
+                                className="action-button edit"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // 处理编辑操作
+                                }}
+                            >
+                                Edit
+                            </button>
+                            <button 
+                                className="action-button view"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRecordClick(record);
+                                }}
+                            >
+                                View Details
+                            </button>
                         </div>
                     </div>
                 ))}
