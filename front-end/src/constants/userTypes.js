@@ -57,7 +57,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Store',
+            name: 'Customer Store',
             icon: 'FaStore'
         }
     ],

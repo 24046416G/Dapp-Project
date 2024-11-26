@@ -30,7 +30,7 @@ const storeData = [
     // 添加更多商品...
 ];
 
-const Store = () => {
+const Store = ({ userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [priceRange, setPriceRange] = useState([0, 5000]);
@@ -63,7 +63,7 @@ const Store = () => {
     return (
         <div className="container">
             <div className="store-header">
-                <h2>Diamond Store</h2>
+                <h2>Diamond Store  {userType}</h2>
                 <p>Find your perfect diamond jewelry</p>
             </div>
             

@@ -34,17 +34,18 @@ function App() {
                         isAuthenticated ? (
                             <div style={{ display: 'flex' }}>
                                 <Sidebar userType={userType} />
-                                <div style={{ marginLeft: '250px', width: 'calc(100% - 250px)' }}>
+                                <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
                                         <Route path="/personal" element={<PersonalCenter />} />
-                                        <Route path="/store" element={<Store />} />
+                                        <Route path="/store" element={<Store userType={userType} />} />
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/record" element={<Record userType={userType} />} />
                                         <Route path="/available-stones" element={<AvailableStones />} />
                                         <Route path="/buy-raw-stones" element={<BuyRawStones />} />
+                                        <Route path="/wallet" element={<BuyRawStones />} />
                                         <Route path="/" element={<Navigate to="/store" replace />} />
                                     </Routes>
-                                </div>
+                                </div>  
                             </div>
                         ) : (
                             <Navigate to="/login" replace />
