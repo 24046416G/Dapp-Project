@@ -1,94 +1,66 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
-const BusinessLogin = ({ onLogin, MOCK_USERS }) => {
-    const navigate = useNavigate();
+const BusinessLogin = ({ onLogin }) => {
+    const [selectedType, setSelectedType] = useState(USER_TYPES.ADMIN);
     const [formData, setFormData] = useState({
-        email: '',
-        password: ''
+        username: '',
+        password: '',
+        email: ''
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const user = MOCK_USERS[formData.email];
-            
-            if (!user || user.type === USER_TYPES.CUSTOMER) {
-                alert('Invalid business account!');
-                return;
-            }
-
-            if (user.password !== formData.password) {
-                alert('Incorrect password!');
-                return;
-            }
-
-            onLogin(user.type);
-            const userRoutes = USER_ROUTES[user.type];
-            if (userRoutes?.length > 0) {
-                navigate(userRoutes[0].path);
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            alert('An error occurred. Please try again.');
-        } finally {
-            setIsLoading(false);
+    const handleLogin = () => {
+        if (!formData.username || !formData.password || !formData.email) {
+            alert('Please fill in all fields');
+            return;
         }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        onLogin(selectedType);
+        navigate('/');
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
     return (
-        <div className="login-box business-login">
-            <div className="login-header">
-                <h2>Business Login</h2>
-                <p>Access your business dashboard</p>
+        <div className="login-card">
+            <h2>Business Login</h2>
+            <div className="input-group">
+                <label>Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className="text-input"
+                />
             </div>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Business Email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        required
-                    />
-                </div>
-                <button 
-                    type="submit" 
-                    className={`submit-button ${isLoading ? 'loading' : ''}`}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <div className="button-content">
-                            <span className="spinner"></span>
-                            <span>Logging in...</span>
-                        </div>
-                    ) : (
-                        'Login'
-                    )}
-                </button>
-            </form>
-            <div className="login-footer">
-                <p>
-                    For business account registration, please contact our support team.
-                </p>
+            <div className="input-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="text-input"
+                />
             </div>
+            <button onClick={handleLogin} className="login-button">
+                Login
+            </button>
         </div>
     );
 };

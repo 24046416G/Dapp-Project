@@ -1,139 +1,137 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
-const CustomerLogin = ({ onLogin, MOCK_USERS }) => {
-    const navigate = useNavigate();
+const CustomerLogin = ({ onLogin }) => {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
+        username: '',
         email: '',
         password: '',
         confirmPassword: ''
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+    const handleSubmit = async () => {
+        if (!formData.username || !formData.password || (!isLogin && (!formData.email || !formData.confirmPassword))) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-            if (isLogin) {
-                const user = MOCK_USERS[formData.email];
-                
-                if (!user || user.type !== USER_TYPES.CUSTOMER) {
-                    alert('User not found!');
-                    return;
-                }
-
-                if (user.password !== formData.password) {
-                    alert('Incorrect password!');
-                    return;
-                }
-
-                onLogin(USER_TYPES.CUSTOMER);
-                const userRoutes = USER_ROUTES[USER_TYPES.CUSTOMER];
-                if (userRoutes?.length > 0) {
-                    navigate(userRoutes[0].path);
-                }
-            } else {
-                if (formData.password !== formData.confirmPassword) {
-                    alert("Passwords don't match!");
-                    return;
-                }
-
-                if (MOCK_USERS[formData.email]) {
-                    alert('Email already registered!');
-                    return;
-                }
-
-                MOCK_USERS[formData.email] = {
-                    password: formData.password,
-                    type: USER_TYPES.CUSTOMER
-                };
-
-                alert('Registration successful! Please login.');
-                setIsLogin(true);
-                setFormData({
-                    email: '',
-                    password: '',
-                    confirmPassword: ''
-                });
+        if (!isLogin) {
+            // 注册时的验证
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                alert('Please enter a valid email address');
+                return;
             }
-        } catch (error) {
-            console.error('Login error:', error);
-            alert('An error occurred. Please try again.');
-        } finally {
-            setIsLoading(false);
+
+            if (formData.password !== formData.confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customerName: formData.username,
+                        customerId: formData.email,
+                        password: formData.password,
+                        role: USER_TYPES.CUSTOMER
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Registration successful! Please login.');
+                    setIsLogin(true);  // 切换到登录界面
+                    setFormData({  // 清空表单
+                        username: '',
+                        email: '',
+                        password: '',
+                        confirmPassword: ''
+                    });
+                } else {
+                    alert(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed. Please try again later.');
+            }
+        } else {
+            // 登录逻辑保持不变
+            onLogin(USER_TYPES.CUSTOMER);
+            navigate('/');
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     return (
-        <div className="login-box customer-login">
-            <div className="login-header">
-                <h2>{isLogin ? 'Welcome Back' : 'Customer Registration'}</h2>
-                <p>Explore our diamond collection</p>
+        <div className="login-card">
+            <h2>{isLogin ? 'Customer Login' : 'Customer Register'}</h2>
+            <div className="input-group">
+                <label>Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className="text-input"
+                />
             </div>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
+            {!isLogin && (
+                <div className="input-group">
+                    <label>Email</label>
                     <input
                         type="email"
                         name="email"
-                        placeholder="Email"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        required
+                        onChange={handleInputChange}
+                        className="text-input"
+                        placeholder="your@email.com"
                     />
                 </div>
-                <div className="form-group">
+            )}
+            <div className="input-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="text-input"
+                />
+            </div>
+            {!isLogin && (
+                <div className="input-group">
+                    <label>Confirm Password</label>
                     <input
                         type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        required
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="text-input"
                     />
                 </div>
-                {!isLogin && (
-                    <div className="form-group">
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="Confirm Password"
-                            value={formData.confirmPassword}
-                            onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                            required
-                        />
-                    </div>
-                )}
-                <button 
-                    type="submit" 
-                    className={`submit-button ${isLoading ? 'loading' : ''}`}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <div className="button-content">
-                            <span className="spinner"></span>
-                            <span>{isLogin ? 'Logging in...' : 'Registering...'}</span>
-                        </div>
-                    ) : (
-                        isLogin ? 'Login' : 'Register'
-                    )}
-                </button>
-            </form>
-            <div className="login-footer">
-                <p>
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}
-                    <button
-                        className="toggle-button"
-                        onClick={() => setIsLogin(!isLogin)}
-                    >
-                        {isLogin ? 'Register' : 'Login'}
-                    </button>
-                </p>
-            </div>
+            )}
+            <button onClick={handleSubmit} className="login-button">
+                {isLogin ? 'Login' : 'Register'}
+            </button>
+            <p className="switch-mode" onClick={() => setIsLogin(!isLogin)}>
+                {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
+            </p>
         </div>
     );
 };
