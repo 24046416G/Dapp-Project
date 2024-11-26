@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserProvider } from 'ethers';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
@@ -48,9 +49,8 @@ const Collection = () => {
         const getAddress = async () => {
             if (window.ethereum) {
                 try {
-                    const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts'
-                    });
+                    const provider = new BrowserProvider(window.ethereum);
+                    const accounts = await provider.send("eth_requestAccounts", []);
                     setCurrentAddress(accounts[0]);
                 } catch (error) {
                     console.error('Error getting address:', error);
