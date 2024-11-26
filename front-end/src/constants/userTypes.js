@@ -11,7 +11,7 @@ export const USER_ROUTES = {
     [USER_TYPES.CUTTING]: [
         {
             path: '/record',
-            name: 'Cutting Record',
+            name: 'Cut Record',
             icon: 'FaGem'
         },
         {
