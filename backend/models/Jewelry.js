@@ -10,6 +10,9 @@ const jewelrySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    authenticityCertificate: {
+        type: String,  // IPFS哈希
+    },
     diamonds: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Diamond',
