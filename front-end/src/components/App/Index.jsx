@@ -34,7 +34,7 @@ function App() {
                         isAuthenticated ? (
                             <div style={{ display: 'flex' }}>
                                 <Sidebar userType={userType} />
-                                <div style={{ marginLeft: '250px', padding: '20px', width: 'calc(100% - 250px)' }}>
+                                <div style={{ marginLeft: '250px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
                                         <Route path="/personal" element={<PersonalCenter />} />
                                         <Route path="/store" element={<Store userType={userType} />} />

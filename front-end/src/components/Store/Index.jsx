@@ -63,7 +63,7 @@ const Store = ({ userType }) => {
     return (
         <div className="container">
             <div className="store-header">
-                <h2>Diamond Store  {userType}</h2>
+                <h2>Diamond Store </h2>
                 <p>Find your perfect diamond jewelry</p>
             </div>
             

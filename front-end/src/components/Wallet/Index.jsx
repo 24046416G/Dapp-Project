@@ -60,7 +60,7 @@ const Wallet = () => {
         <>
             <div className="wallet-header">
                 <div className="header-content">
-                    <div>
+                    <div className="wallet-card">
                         <h2>My Ethereum Wallet</h2>
                         {isConnected ? (
                             <>
