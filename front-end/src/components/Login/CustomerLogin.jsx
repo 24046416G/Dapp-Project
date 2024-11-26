@@ -65,7 +65,7 @@ const CustomerLogin = ({ onLogin }) => {
             }
         } else {
             // 登录逻辑保持不变
-            onLogin(USER_TYPES.CUSTOMER);
+            onLogin(USER_TYPES.JEWELER);
             navigate('/');
         }
     };

@@ -49,14 +49,14 @@ export const USER_ROUTES = {
 
     ],
     [USER_TYPES.JEWELER]: [
-        // {
-        //     path: '/store',
-        //     name: 'Diamond Store',
-        //     icon: 'FaHammer'
-        // },
+        {
+            path: '/jewelry-inventory',
+            name: 'Jewelry',
+            icon: 'FaGem'
+        },
         {
             path: '/inventory',
-            name: 'Inventory',
+            name: 'Diamond',
             icon: 'FaBoxes'
         },
         {
