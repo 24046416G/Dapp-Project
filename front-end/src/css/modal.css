@@ -331,4 +331,45 @@
     .modal-info {
         max-height: none;
     }
+}
+
+.qr-modal {
+    max-width: 400px !important;  /* 覆盖默认的 modal-content 宽度 */
+    width: 90% !important;
+}
+
+.qr-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-container img {
+    max-width: 200px;
+    height: auto;
+}
+
+.qr-header {
+    text-align: center;
+    position: relative;
+}
+
+.qr-header h2 {
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+}
+
+.qr-header .close-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 } 
