@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
     FaChartLine, FaBoxes, FaUsers, FaCog, 
     FaGem, FaUser, FaHammer, FaShoppingCart,
-    FaStore, FaShoppingBag, FaSignOutAlt
+    FaStore, FaShoppingBag, FaSignOutAlt, FaWallet
 } from 'react-icons/fa';
 import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
 import '../../css/sidebar.css';
@@ -18,7 +18,8 @@ const ICONS = {
     FaHammer,
     FaShoppingCart,
     FaStore,
-    FaShoppingBag
+    FaShoppingBag,
+    FaWallet
 };
 
 const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {

@@ -55,6 +55,11 @@ export const USER_ROUTES = {
             name: 'My Collections',
             icon: 'FaGem'
         },
+        {
+            path: '/wallet',
+            name: 'My Wallet',
+            icon: 'FaWallet'
+        },
     ],
     [USER_TYPES.GRADING]: [
         {
