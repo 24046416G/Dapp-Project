@@ -30,13 +30,14 @@ router.post('/make', async (req, res) => {
             return res.status(403).json({ message: "Only jewelry makers can create jewelry" });
         }
 
-        // 验证所有钻石是否属于该制造商且状态为GRADED
+        // 验证所有钻石是否属于该制造商且状态正确
         for (let diamondId of diamonds) {
             const diamond = await Diamond.findById(diamondId);
-            if (!diamond || diamond.currentOwner.toString() !== currentOwner || 
-                diamond.status !== 'GRADED') {
+            if (!diamond || 
+                diamond.currentOwner.toString() !== currentOwner || 
+                (diamond.status !== 'GRADED' && diamond.status !== 'JEWELRY')) {
                 return res.status(400).json({ 
-                    message: "All diamonds must be owned by the jewelry maker and be graded" 
+                    message: "All diamonds must be owned by the jewelry maker and be in GRADED or JEWELRY status" 
                 });
             }
         }
@@ -51,7 +52,7 @@ router.post('/make', async (req, res) => {
             }
 
             // 验证图片大小（Base64 字符串长度）
-            if (image.length > 10 * 1024 * 1024) {  // 5MB 限制
+            if (image.length > 5 * 1024 * 1024) {  // 5MB 限制
                 return res.status(400).json({ 
                     message: "Image size too large. Maximum size is 5MB" 
                 });
@@ -76,7 +77,7 @@ router.post('/make', async (req, res) => {
 
         await jewelry.save();
 
-        // 更新所有钻石的状态为JEWELRY
+        // 更新所有钻石的状态为JEWELRY并设置jewelryId
         await Diamond.updateMany(
             { _id: { $in: diamonds } },
             { 
@@ -86,8 +87,10 @@ router.post('/make', async (req, res) => {
         );
 
         // 更新用户的拥有珠宝列表
-        user.ownedJewelries.push(jewelry._id);
-        await user.save();
+        if (!user.ownedJewelries.includes(jewelry._id)) {
+            user.ownedJewelries.push(jewelry._id);
+            await user.save();
+        }
 
         // 返回创建的珠宝信息（带 populate）
         const populatedJewelry = await Jewelry.findById(jewelry._id)
