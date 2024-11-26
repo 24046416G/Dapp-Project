@@ -7,16 +7,17 @@ import '../../css/record.css';
 import AddRecordModal from './AddRecordModal.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
 import RecordDetailModal from './RecordDetailModal.jsx';
+import SendToGradingModal from './SendToGradingModal.jsx';
 
 const recordData = [
     {
         id: 1,
-        mineralType: 'Diamond',
+        mineralType: 'Cut Diamond',
         miningCompany: 'DeBeers Mining Corp',
         miningDate: '2024-03-15',
         miningPosition: 'S 28°44′46″ E 24°46′46″',
         weight: 2.5,
-        category: 'Raw Diamond',
+        category: 'Cut Diamond',
         cuttingDate: '2024-03-20',
         polishingTech: 'Traditional',
         cuttingTech: 'Laser',
@@ -25,12 +26,12 @@ const recordData = [
     },
     {
         id: 2,
-        mineralType: 'Raw Diamond',
+        mineralType: 'Cut Diamond',
         miningCompany: 'ALROSA',
         miningDate: '2024-03-14',
         miningPosition: 'N 65°16′12″ E 112°19′48″',
         weight: 1.8,
-        category: 'Raw Diamond',
+        category: 'Cut Diamond',
         cuttingDate: '2024-03-19',
         polishingTech: 'Modern',
         cuttingTech: 'Mechanical',
@@ -47,6 +48,8 @@ const Record = ({ userType }) => {
     const [records, setRecords] = useState(recordData);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [showSendToGradingModal, setShowSendToGradingModal] = useState(false);
+    const [selectedForGrading, setSelectedForGrading] = useState(null);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -67,6 +70,16 @@ const Record = ({ userType }) => {
     const handleRecordClick = (record) => {
         setSelectedRecord(record);
         setIsDetailModalOpen(true);
+    };
+
+    const handleSendToGrading = (record) => {
+        setSelectedForGrading(record);
+        setShowSendToGradingModal(true);
+    };
+
+    const handleConfirmSendToGrading = (recordId, gradingLab) => {
+        console.log(`Sending diamond ${recordId} to ${gradingLab}`);
+        alert(`Diamond successfully sent to ${gradingLab}`);
     };
 
     const filteredRecords = recordData
@@ -100,17 +113,19 @@ const Record = ({ userType }) => {
                         <h2>
                             {userType === USER_TYPES.MINER ? 'Mining Records' :
                              userType === USER_TYPES.GRADING ? 'Grading Records' :
-                             userType === USER_TYPES.CUTTING ? 'Cutting Records' : 
+                             userType === USER_TYPES.CUTTING ? 'Cut Records' : 
                              'Undefined Records'}
                         </h2>
                         <p>Track and manage your {userType.toLowerCase()} operations</p>
                     </div>
-                    <button 
-                        className="add-record-button"
-                        onClick={() => setShowAddModal(true)}
-                    >
-                        Add New Record
-                    </button>
+                    {userType === USER_TYPES.MINER && (
+                        <button 
+                            className="add-record-button"
+                            onClick={() => setShowAddModal(true)}
+                        >
+                            Add New Record
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -209,6 +224,15 @@ const Record = ({ userType }) => {
                             >
                                 View Details
                             </button>
+                            <button 
+                                className="action-button send-to-grading"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSendToGrading(record);
+                                }}
+                            >
+                                Send to Grading
+                            </button>
                         </div>
                     </div>
                 ))}
@@ -228,6 +252,18 @@ const Record = ({ userType }) => {
                 onSubmit={handleAddRecord}
                 userType={userType}
             />
+
+            {selectedForGrading && (
+                <SendToGradingModal
+                    record={selectedForGrading}
+                    isOpen={showSendToGradingModal}
+                    onClose={() => {
+                        setShowSendToGradingModal(false);
+                        setSelectedForGrading(null);
+                    }}
+                    onConfirm={handleConfirmSendToGrading}
+                />
+            )}
         </div>
     );
 };

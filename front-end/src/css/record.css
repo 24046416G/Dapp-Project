@@ -170,4 +170,25 @@
 
 .record-container .header-content h2 {
     color: white;
+}
+
+.action-button.send-to-grading {
+    background-color: #2ecc71;
+    color: white;
+    margin-left: 10px;
+}
+
+.action-button.send-to-grading:hover {
+    background-color: #27ae60;
+}
+
+.confirmation-details {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.confirmation-details p {
+    margin: 5px 0;
 } 
