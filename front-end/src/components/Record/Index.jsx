@@ -12,32 +12,31 @@ const recordData = [
     {
         id: 1,
         mineralType: 'Diamond',
-        location: 'Kimberley, South Africa',
-        mineDate: '2024-03-15',
+        miningCompany: 'DeBeers Mining Corp',
+        miningDate: '2024-03-15',
+        miningPosition: 'S 28°44′46″ E 24°46′46″',
         weight: 2.5,
-        quality: 'High',
-        color: 'D',
-        clarity: 'VVS1',
-        status: 'Processed',
-        batchNumber: 'KMB-2024-001',
-        notes: 'Exceptional clarity and color',
-        coordinates: 'S 28°44′46″ E 24°46′46″'
+        category: 'Raw Diamond',
+        cuttingDate: '2024-03-20',
+        polishingTech: 'Traditional',
+        cuttingTech: 'Laser',
+        status: 'Verified',
+        batchNumber: 'KMB-2024-001'
     },
     {
         id: 2,
         mineralType: 'Raw Diamond',
-        location: 'Jwaneng, Botswana',
-        mineDate: '2024-03-14',
+        miningCompany: 'ALROSA',
+        miningDate: '2024-03-14',
+        miningPosition: 'N 65°16′12″ E 112°19′48″',
         weight: 1.8,
-        quality: 'Medium',
-        color: 'F',
-        clarity: 'VS2',
-        status: 'In Processing',
-        batchNumber: 'JWN-2024-045',
-        notes: 'Minor inclusions present',
-        coordinates: 'S 24°31′59″ E 24°43′36″'
-    },
-    // 可以添加更多记录...
+        category: 'Raw Diamond',
+        cuttingDate: '2024-03-19',
+        polishingTech: 'Modern',
+        cuttingTech: 'Mechanical',
+        status: 'Verifying',
+        batchNumber: 'JWN-2024-045'
+    }
 ];
 
 const Record = ({ userType }) => {
@@ -199,12 +198,6 @@ const Record = ({ userType }) => {
                                 <span>{record.weight} carats</span>
                             </div>
                         </div>
-
-                        {record.notes && (
-                            <div className="record-notes">
-                                <p>{record.notes}</p>
-                            </div>
-                        )}
 
                         <div className="record-actions">
                             <button 
