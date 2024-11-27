@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaQrcode } from 'react-icons/fa';
 import QRCodeModal from '../QRCodeModal/Index.jsx';
 import { USER_TYPES } from '../../../constants/userTypes';
+import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
 
 const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
@@ -93,7 +94,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                     </div>
                 </>
             );
-        } else {
+        } else if (userType === USER_TYPES.CUSTOMER) {
             return (
                 <>
                     <div className="modal-image">
@@ -194,6 +195,10 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                                 </div>
                             </div>
                         ))}
+                        
+                        <div className="modal-footer">
+                            <Button className="buy-button" type="primary"> Buy Now </Button>
+                        </div>
                     </div>
                 </>
             );

@@ -286,3 +286,10 @@
     top: 50%;
     transform: translateY(-50%);
 }
+
+.modal-footer {
+    margin-top: 24px;
+    padding-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
