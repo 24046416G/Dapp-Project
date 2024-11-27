@@ -4,8 +4,9 @@ import '../../../css/card.css';
 
 const ProductCard = ({ product, onClick, userType }) => {
     const renderContent = () => {
-        if (userType === USER_TYPES.JEWELER) {
-            const diamond = product[0];
+        console.log('userType',userType);
+        if (userType === USER_TYPES.JEWELRY_MAKER) {
+            const jewelry = product[0];
             return (
                 <>
                     <div className="card-header">
@@ -23,17 +24,16 @@ const ProductCard = ({ product, onClick, userType }) => {
                             <div className="no-image">No Image Available</div>
                         )}
                         <div className="specs">
-                            <span>Carat: {diamond.metadata.carat}</span>
-                            <span>Color: {diamond.metadata.color}</span>
-                            <span>Cut: {diamond.metadata.cut}</span>
-                            <span>Polish: {diamond.metadata.polish}</span>
-                            <span>Grading: {diamond.metadata.grading}</span>
+                            <span>Carat: {jewelry.metadata.carat}</span>
+                            <span>Color: {jewelry.metadata.color}</span>
+                            <span>Cut: {jewelry.metadata.cut}</span>
+                            <span>Polish: {jewelry.metadata.polish}</span>
+                            <span>Grading: {jewelry.metadata.grading}</span>
                         </div>
                     </div>
                 </>
             );
-        } else {
-            // 原有的珠宝展示逻辑
+        } else if (userType === USER_TYPES.CUSTOMER) {
             return (
                 <>
                     <div className="card-header">

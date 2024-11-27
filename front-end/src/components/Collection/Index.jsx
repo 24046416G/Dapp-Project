@@ -36,7 +36,7 @@ const Collection = ({userType}) => {
                 }
 
                 const data = await response.json();
-                console.log(data);
+                console.log('collection data',data);
                 setCollectionData(data.jewelries);
                 setLoading(false);
             } catch (error) {
@@ -124,6 +124,7 @@ const Collection = ({userType}) => {
 
     const totalValue = filteredAndSortedItems.reduce((sum, item) => sum + item.currentValue, 0);
 
+    console.log('filteredAndSortedItems',filteredAndSortedItems);
     return (
         <div className="container">
             <div className="collection-header">
@@ -181,10 +182,12 @@ const Collection = ({userType}) => {
 
             <div className="data-grid">
                 {filteredAndSortedItems.map((item) => (
-                    <div className="data-grid-item" key={item.id}>
+                    <div className="data-grid-item" >
                         <ProductCard
+                            key={item.id}
                             product={item}
                             onClick={handleItemClick}
+                            userType={userType}
                         />
                     </div>
                 ))}
