@@ -36,11 +36,6 @@ export const USER_ROUTES = {
             name: 'Mining History',
             icon: 'FaHistory'
         },
-        {
-            path: '/store',
-            name: 'Miner Store',
-            icon: 'FaStore'
-        }
 
     ],
     [USER_TYPES.JEWELRY_MAKER]: [
