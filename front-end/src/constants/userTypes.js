@@ -1,8 +1,8 @@
 export const USER_TYPES = {
-    CUTTING: 'CUTTING',
-    GRADING: 'GRADING',
-    MINER: 'MINER',
-    JEWELER: 'JEWELER',
+    CUTTING: 'CUTTING_COMPANY',
+    GRADING: 'GRADING_LAB',
+    MINER: 'MINER_COMPANY',
+    JEWELER: 'JEWELRY_MAKER',
     CUSTOMER: 'CUSTOMER'
 };
 
@@ -11,7 +11,7 @@ export const USER_ROUTES = {
     [USER_TYPES.CUTTING]: [
         {
             path: '/record',
-            name: 'Cutting Record',
+            name: 'Cut Record',
             icon: 'FaGem'
         },
         {
@@ -20,9 +20,9 @@ export const USER_ROUTES = {
             icon: 'FaRocketchat'
         },
         {
-            path: '/buy-raw-stones',
-            name: 'Buy Raw Stones',
-            icon: 'FaShoppingCart'
+            path: '/store',
+            name: 'Cutting Store',
+            icon: 'FaStore'
         }
     ],
     [USER_TYPES.MINER]: [
@@ -30,31 +30,47 @@ export const USER_ROUTES = {
             path: '/record',
             name: 'Mining Record',
             icon: 'FaGem'
+        },
+        {
+            path: '/mining-history',
+            name: 'Mining History',
+            icon: 'FaHistory'
+        },
+        {
+            path: '/store',
+            name: 'Miner Store',
+            icon: 'FaStore'
         }
+
     ],
     [USER_TYPES.JEWELER]: [
         {
-            path: '/store',
-            name: 'Diamond Store',
-            icon: 'FaHammer'
+            path: '/jewelry-inventory',
+            name: 'Jewelry',
+            icon: 'FaGem'
         },
         {
             path: '/inventory',
-            name: 'Inventory',
+            name: 'Diamond',
             icon: 'FaBoxes'
         },
+        {
+            path: '/store',
+            name: 'Diamond Store',
+            icon: 'FaStore'
+        }
     ],
     [USER_TYPES.CUSTOMER]: [
         {
-            path: '/store',
-            name: 'Store',
-            icon: 'FaStore'
+            path: '/personal',
+            name: 'Customer Center',
+            icon: 'FaUser'
         },
         {
-            path: '/collections',
-            name: 'My Collections',
-            icon: 'FaGem'
-        },
+            path: '/store',
+            name: 'Customer Store',
+            icon: 'FaStore'
+        }
     ],
     [USER_TYPES.GRADING]: [
         {
@@ -62,5 +78,15 @@ export const USER_ROUTES = {
             name: 'Grading Record',
             icon: 'FaGem'
         },
+        {
+            path: '/wait-to-grade',
+            name: 'Wait to Grade',
+            icon: 'FaHourglassHalf'
+        },
+        {
+            path: '/store',
+            name: 'Grading Store',
+            icon: 'FaStore'
+        }
     ]
 }; 

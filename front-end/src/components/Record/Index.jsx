@@ -7,8 +7,10 @@ import '../../css/record.css';
 import AddRecordModal from './AddRecordModal.jsx';
 import { USER_TYPES } from '../../constants/userTypes.js';
 import RecordDetailModal from './RecordDetailModal.jsx';
+import SendToGradingModal from './SendToGradingModal.jsx';
 
-const recordData = [
+// 分别定义不同用户类型的数据
+const miningRecordData = [
     {
         id: 1,
         mineralType: 'Diamond',
@@ -18,10 +20,9 @@ const recordData = [
         quality: 'High',
         color: 'D',
         clarity: 'VVS1',
-        status: 'Processed',
+        status: 'Verified',
         batchNumber: 'KMB-2024-001',
-        notes: 'Exceptional clarity and color',
-        coordinates: 'S 28°44′46″ E 24°46′46″'
+        miningPosition: 'S 28°44′46″ E 24°46′46″'
     },
     {
         id: 2,
@@ -32,12 +33,41 @@ const recordData = [
         quality: 'Medium',
         color: 'F',
         clarity: 'VS2',
-        status: 'In Processing',
+        status: 'Verifying',
         batchNumber: 'JWN-2024-045',
-        notes: 'Minor inclusions present',
-        coordinates: 'S 24°31′59″ E 24°43′36″'
+        miningPosition: 'N 65°16′12″ E 112°19′48″'
+    }
+];
+
+const cuttingRecordData = [
+    {
+        id: 1,
+        mineralType: 'Cut Diamond',
+        miningCompany: 'DeBeers Mining Corp',
+        miningDate: '2024-03-15',
+        miningPosition: 'S 28°44′46″ E 24°46′46″',
+        weight: 2.5,
+        category: 'Cut Diamond',
+        cuttingDate: '2024-03-20',
+        polishingTech: 'Traditional',
+        cuttingTech: 'Laser',
+        status: 'Verified',
+        batchNumber: 'KMB-2024-001'
     },
-    // 可以添加更多记录...
+    {
+        id: 2,
+        mineralType: 'Cut Diamond',
+        miningCompany: 'ALROSA',
+        miningDate: '2024-03-14',
+        miningPosition: 'N 65°16′12″ E 112°19′48″',
+        weight: 1.8,
+        category: 'Cut Diamond',
+        cuttingDate: '2024-03-19',
+        polishingTech: 'Modern',
+        cuttingTech: 'Mechanical',
+        status: 'Verifying',
+        batchNumber: 'JWN-2024-045'
+    }
 ];
 
 const Record = ({ userType }) => {
@@ -45,9 +75,11 @@ const Record = ({ userType }) => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
     const [showAddModal, setShowAddModal] = useState(false);
-    const [records, setRecords] = useState(recordData);
+    const [records, setRecords] = useState(userType === USER_TYPES.MINER ? miningRecordData : cuttingRecordData);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [showSendToGradingModal, setShowSendToGradingModal] = useState(false);
+    const [selectedForGrading, setSelectedForGrading] = useState(null);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -70,7 +102,17 @@ const Record = ({ userType }) => {
         setIsDetailModalOpen(true);
     };
 
-    const filteredRecords = recordData
+    const handleSendToGrading = (record) => {
+        setSelectedForGrading(record);
+        setShowSendToGradingModal(true);
+    };
+
+    const handleConfirmSendToGrading = (recordId, gradingLab) => {
+        console.log(`Sending diamond ${recordId} to ${gradingLab}`);
+        alert(`Diamond successfully sent to ${gradingLab}`);
+    };
+
+    const filteredRecords = records
         .filter((record) => {
             const matchesSearch = 
                 record.mineralType.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,6 +135,81 @@ const Record = ({ userType }) => {
             }
         });
 
+    // 根据用户类型渲染不同的详情内容
+    const renderRecordDetails = (record) => {
+        if (userType === USER_TYPES.MINER) {
+            return (
+                <div className="record-details">
+                    <div className="detail-row">
+                        <span>Location:</span>
+                        <span>{record.location}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Mining Date:</span>
+                        <span>{new Date(record.mineDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Weight:</span>
+                        <span>{record.weight} carats</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Quality:</span>
+                        <span>{record.quality}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Color:</span>
+                        <span>{record.color}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Clarity:</span>
+                        <span>{record.clarity}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Mining Position:</span>
+                        <span>{record.miningPosition}</span>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="record-details">
+                    <div className="detail-row">
+                        <span>Mining Company:</span>
+                        <span>{record.miningCompany}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Mining Date:</span>
+                        <span>{new Date(record.miningDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Mining Position:</span>
+                        <span>{record.miningPosition}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Category:</span>
+                        <span>{record.category}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Cutting Date:</span>
+                        <span>{new Date(record.cuttingDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Polishing Tech:</span>
+                        <span>{record.polishingTech}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Cutting Tech:</span>
+                        <span>{record.cuttingTech}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span>Weight:</span>
+                        <span>{record.weight} carats</span>
+                    </div>
+                </div>
+            );
+        }
+    };
+
     return (
         <div className="record-container">
             <div className="record-header">
@@ -101,17 +218,19 @@ const Record = ({ userType }) => {
                         <h2>
                             {userType === USER_TYPES.MINER ? 'Mining Records' :
                              userType === USER_TYPES.GRADING ? 'Grading Records' :
-                             userType === USER_TYPES.CUTTING ? 'Cutting Records' : 
+                             userType === USER_TYPES.CUTTING ? 'Cut Records' : 
                              'Undefined Records'}
                         </h2>
                         <p>Track and manage your {userType.toLowerCase()} operations</p>
                     </div>
-                    <button 
-                        className="add-record-button"
-                        onClick={() => setShowAddModal(true)}
-                    >
-                        Add New Record
-                    </button>
+                    {userType === USER_TYPES.MINER && (
+                        <button 
+                            className="add-record-button"
+                            onClick={() => setShowAddModal(true)}
+                        >
+                            Add New Record
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -165,53 +284,9 @@ const Record = ({ userType }) => {
                             </span>
                         </div>
 
-                        <div className="record-details">
-                            <div className="detail-row">
-                                <span>Location:</span>
-                                <span>{record.location}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Mining Date:</span>
-                                <span>{new Date(record.mineDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Weight:</span>
-                                <span>{record.weight} carats</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Quality:</span>
-                                <span>{record.quality}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Color:</span>
-                                <span>{record.color}</span>
-                            </div>
-                            <div className="detail-row">
-                                <span>Clarity:</span>
-                                <span>{record.clarity}</span>
-                            </div>
-                            <div className="detail-row coordinates">
-                                <span>Coordinates:</span>
-                                <span>{record.coordinates}</span>
-                            </div>
-                        </div>
-
-                        {record.notes && (
-                            <div className="record-notes">
-                                <p>{record.notes}</p>
-                            </div>
-                        )}
+                        {renderRecordDetails(record)}
 
                         <div className="record-actions">
-                            <button 
-                                className="action-button edit"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    // 处理编辑操作
-                                }}
-                            >
-                                Edit
-                            </button>
                             <button 
                                 className="action-button view"
                                 onClick={(e) => {
@@ -240,6 +315,18 @@ const Record = ({ userType }) => {
                 onSubmit={handleAddRecord}
                 userType={userType}
             />
+
+            {selectedForGrading && (
+                <SendToGradingModal
+                    record={selectedForGrading}
+                    isOpen={showSendToGradingModal}
+                    onClose={() => {
+                        setShowSendToGradingModal(false);
+                        setSelectedForGrading(null);
+                    }}
+                    onConfirm={handleConfirmSendToGrading}
+                />
+            )}
         </div>
     );
 };

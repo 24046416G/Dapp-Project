@@ -12,9 +12,3 @@
     outline: none;
     min-width: 150px;
 }
-
-@media (max-width: 768px) {
-    .filter-controls {
-        flex-direction: column;
-    }
-} 
