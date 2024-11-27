@@ -135,14 +135,16 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                             <div key={index} className="info-section">
                                 <h3>Diamond {diamond.diamondId} Details</h3>
                                 {diamond.metadata.images && (
-                                    <div className="diamond-images">
-                                        <div className="diamond-image">
-                                            <img 
-                                                src={diamond.metadata.images}
-                                                alt={`Diamond ${index + 1}`}
-                                            />
-                                        </div>
-                                    </div>
+                                    <div className="modal-image">
+                                    {diamond.metadata.images ? (
+                                        <img 
+                                            src={diamond.metadata.images}
+                                            alt={diamond.diamondId}
+                                        />
+                                    ) : (
+                                        <div className="no-image">No Image Available</div>
+                                    )}
+                                </div>
                                 )}
                                 <div className="detail-grid">
                                     <div className="detail-item">
