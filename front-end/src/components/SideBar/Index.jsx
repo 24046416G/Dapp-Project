@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     FaChartLine, FaBoxes, FaUsers, FaCog, 
     FaGem, FaUser, FaHammer, FaShoppingCart,
@@ -28,7 +28,16 @@ const ICONS = {
 
 const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const menuItems = USER_ROUTES[userType] || [];
+
+    useEffect(() => {
+        console.log('location.pathname', location.pathname);
+        console.log('menuItems', menuItems);
+        if (menuItems.length > 0) {
+            navigate(menuItems[0].path);
+        }
+    }, [location.pathname, menuItems, navigate]);
 
     const getIcon = (iconName) => {
         const IconComponent = ICONS[iconName];
