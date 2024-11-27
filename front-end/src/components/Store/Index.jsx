@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ProductDetailModal from '../ProductDetailModal/Index.jsx';
-import ProductCard from '../ProductCard/Index.jsx';
+import ProductDetailModal from '../Common/ProductDetailModal/Index.jsx';
+import ProductCard from '../Common/ProductCard/Index.jsx';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';

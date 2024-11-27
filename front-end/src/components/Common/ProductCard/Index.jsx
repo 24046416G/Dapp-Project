@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/card.css';
+import '/src/css/card.css';
 import PropTypes from 'prop-types';
 
 const ProductCard = ({ product, onClick }) => {
