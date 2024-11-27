@@ -125,7 +125,7 @@ const Collection = () => {
     const totalValue = filteredAndSortedItems.reduce((sum, item) => sum + item.currentValue, 0);
 
     return (
-        <>
+        <div className="container">
             <div className="collection-header">
                 <div className="header-content">
                     <div>
@@ -197,7 +197,7 @@ const Collection = () => {
                     onClose={() => setIsModalOpen(false)}
                 />
             )}
-        </>
+        </div>
     );
 };
 

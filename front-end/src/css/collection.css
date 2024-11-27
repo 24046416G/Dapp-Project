@@ -2,12 +2,11 @@
     background: linear-gradient(180deg, #2c3e50 0%, #3498db 100%);
     padding: 32px;
     color: white;
-    margin: 32px;
     border-radius: 12px;
+    margin-bottom: 24px;
 }
 
 .collection-filters {
-    margin: 0 32px;
     margin-bottom: 32px;
 }
 
@@ -69,4 +68,8 @@
     padding: 40px;
     color: #e74c3c;
     font-size: 18px;
+}
+
+.collection-container {
+    padding: 24px;
 } 
