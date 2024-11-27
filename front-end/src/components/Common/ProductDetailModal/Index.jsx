@@ -16,7 +16,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
     };
 
     const renderContent = () => {
-        if (userType === USER_TYPES.JEWELRY_MAKER) {
+        if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
             const diamond = product.diamonds[0];
             return (
                 <>

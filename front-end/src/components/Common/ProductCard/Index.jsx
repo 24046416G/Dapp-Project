@@ -5,7 +5,8 @@ import '../../../css/card.css';
 const ProductCard = ({ product, onClick, userType }) => {
     const renderContent = () => {
         console.log('userType',userType);
-        if (userType === USER_TYPES.JEWELRY_MAKER) {
+        console.log('product',product);
+        if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
             const diamond = product.diamonds[0];
             return (
                 <>

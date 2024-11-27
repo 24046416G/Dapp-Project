@@ -22,7 +22,7 @@ const Store = ({ userType }) => {
             try {
                 let endpoint;
                 console.log('userType',userType);
-                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
                     endpoint = 'http://localhost:3000/diamonds/all/diamonds';
                 } else if (userType === USER_TYPES.CUSTOMER) {
                     endpoint = 'http://localhost:3000/jewelries/all';
@@ -37,7 +37,7 @@ const Store = ({ userType }) => {
                 const data = await response.json();
                 console.log('data',data);
                 console.log('userType',userType);
-                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
                     const formattedData = data.map(diamond => ({
                         id: diamond._id,
                         name: `Diamond ${diamond.diamondId}`,
@@ -108,7 +108,7 @@ const Store = ({ userType }) => {
             <div className="store-header">
                 <h2>
                     {userType === USER_TYPES.CUSTOMER ? 'Jewelry Market' : 
-                     userType === USER_TYPES.JEWELRY_MAKER ? 'Diamond Market' : 
+                     userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY ? 'Diamond Market' : 
                      'Store'}
                 </h2>
                 <p>
@@ -161,7 +161,7 @@ const Store = ({ userType }) => {
 
             <div className="data-grid">
                 {filteredProducts.map((product) => (
-                    <div className="data-grid-item">
+                    <div key={product.id} className="data-grid-item">
                         <ProductCard
                             key={product.id}
                             product={product}

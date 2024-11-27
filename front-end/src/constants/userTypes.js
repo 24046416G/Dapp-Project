@@ -21,7 +21,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Cutting Store',
+            name: 'Diamond Store',
             icon: 'FaStore'
         }
     ],
@@ -85,7 +85,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Grading Store',
+            name: 'Diamond Store',
             icon: 'FaStore'
         }
     ]
