@@ -64,7 +64,7 @@ const Collection = () => {
 
         getAddress();
 
-        // 监听账户变化
+        // 监听账户变
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', (accounts) => {
                 setCurrentAddress(accounts[0] || '');
@@ -179,24 +179,14 @@ const Collection = () => {
                 </div>
             </div>
 
-            <div className="collection-grid">
+            <div className="data-grid">
                 {filteredAndSortedItems.map((item) => (
-                    <ProductCard
-                        key={item.id}
-                        product={{
-                            ...item,
-                            price: item.currentValue,
-                            specs: {
-                                carat: item.carat,
-                                color: item.color,
-                                clarity: item.clarity,
-                                purchaseDate: new Date(item.purchaseDate).toLocaleDateString(),
-                                purchasePrice: item.purchasePrice,
-                                certificate: item.certificate
-                            }
-                        }}
-                        onClick={handleItemClick}
-                    />
+                    <div className="data-grid-item" key={item.id}>
+                        <ProductCard
+                            product={item}
+                            onClick={handleItemClick}
+                        />
+                    </div>
                 ))}
             </div>
 

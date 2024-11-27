@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Common/Button/Index';
 import '../../css/login.css';
-
+import { USER_TYPES } from '../../constants/userTypes';
 const Login = ({ onLogin }) => {
     const [isLogin, setIsLogin] = useState(true);
     const [isCustomer, setIsCustomer] = useState(true);
@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
                         customerName: formData.username,
                         customerId: formData.email,
                         password: formData.password,
-                        role: 'customer'
+                        role: USER_TYPES.CUSTOMER
                     })
                 });
 
