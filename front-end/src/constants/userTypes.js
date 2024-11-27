@@ -63,7 +63,7 @@ export const USER_ROUTES = {
     [USER_TYPES.CUSTOMER]: [
         {
             path: '/personal',
-            name: 'Personal Center',
+            name: 'Customer Center',
             icon: 'FaUser'
         },
         {

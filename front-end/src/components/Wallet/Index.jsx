@@ -21,14 +21,64 @@ const Wallet = () => {
                 const balance = await ethersProvider.getBalance(account);
                 const ethBalance = formatEther(balance);
                 
-                setAccount(account);
-                setBalance(ethBalance);
-                setIsConnected(true);
+                // 获取当前登录用户信息
+                const userStr = localStorage.getItem('user');
+                if (!userStr) {
+                    alert('Please login first!');
+                    return;
+                }
+                const user = JSON.parse(userStr);
+
+                // 获取公钥（这里使用简化方式，实际应该使用更安全的方法）
+                const publicKey = await window.ethereum.request({
+                    method: 'eth_getEncryptionPublicKey',
+                    params: [account],
+                }).catch((error) => {
+                    if (error.code === 4001) {
+                        // 用户拒绝了请求
+                        console.log('User denied account encryption');
+                        return null;
+                    }
+                });
+
+                // 发送钱包信息到后端
+                const response = await fetch(`http://localhost:3000/users/${user.id}/connect`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        walletAddress: account,
+                        publicKey: publicKey || account, // 如果获取公钥失败，使用地址作为备选
+                        balance: ethBalance
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setAccount(account);
+                    setBalance(ethBalance);
+                    setIsConnected(true);
+
+                    // 更新本地存储中的用户信息
+                    const updatedUser = {
+                        ...user,
+                        walletAddress: account,
+                        balance: ethBalance
+                    };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                    alert('Wallet connected successfully!');
+                } else {
+                    alert(data.message || 'Failed to connect wallet');
+                }
             } else {
                 alert('Please install MetaMask!');
             }
         } catch (error) {
             console.error('Error connecting to MetaMask:', error);
+            alert('Failed to connect wallet: ' + error.message);
         }
     };
 
@@ -39,7 +89,29 @@ const Wallet = () => {
                     setAccount(accounts[0]);
                     if (provider) {
                         const balance = await provider.getBalance(accounts[0]);
-                        setBalance(formatEther(balance));
+                        const ethBalance = formatEther(balance);
+                        setBalance(ethBalance);
+
+                        // 更新后端的钱包信息
+                        const userStr = localStorage.getItem('user');
+                        if (userStr) {
+                            const user = JSON.parse(userStr);
+                            try {
+                                await fetch(`http://localhost:3000/users/${user.id}/connect`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        walletAddress: accounts[0],
+                                        publicKey: accounts[0],
+                                        balance: ethBalance
+                                    })
+                                });
+                            } catch (error) {
+                                console.error('Error updating wallet info:', error);
+                            }
+                        }
                     }
                 } else {
                     setAccount('');
