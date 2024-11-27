@@ -167,6 +167,11 @@
     gap: 28px;
     overflow-y: auto;
     max-height: 400px;
+    padding: 0 24px;
+}
+
+.modal-info .info-section:first-child {
+    padding-top: 12px;
 }
 
 .info-section {
@@ -279,11 +284,12 @@
 
 /* 修改图片容器样式 */
 .modal-image {
-    flex: 0 0 400px;
-    height: 400px;
+    flex: 0 0 300px;
+    height: 300px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 12px 0;
 }
 
 .modal-image img {
@@ -323,9 +329,9 @@
     }
 
     .modal-image {
-        flex: 0 0 300px;
-        height: 300px;
-        margin: 0 auto;
+        flex: 0 0 200px;
+        height: 200px;
+        margin: 12px auto;
     }
 
     .modal-info {
@@ -375,9 +381,10 @@
 }
 
 .diamond-images {
-    margin: 0 -24px 20px -24px;  /* 保持负边距以延伸到卡片边缘 */
+    margin: 0;
     background: #f8f9fa;
-    overflow: hidden;  /* 添加溢出隐藏 */
+    overflow: hidden;
+    width: 100%;
 }
 
 .diamond-image {
@@ -390,7 +397,7 @@
 .diamond-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* 改为 cover 以填充整个容器 */
+    object-fit: cover;
     display: block;
 }
 
@@ -410,4 +417,14 @@
     border-bottom: 2px solid #3498db;
     padding-bottom: 8px;
     display: inline-block;
-} 
+}
+
+.collection-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    margin-top: 16px;
+}
+  

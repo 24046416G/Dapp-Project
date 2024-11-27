@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserProvider } from 'ethers';
+import ProductCard from '../ProductCard/Index.jsx';
+import ProductDetailModal from '../ProductDetailModal/Index.jsx';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
 import '../../css/card.css';
 import '../../css/collection.css';
-import CollectionDetailModal from './CollectionDetailModal.jsx';
 
 const Collection = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -180,48 +181,28 @@ const Collection = () => {
 
             <div className="collection-grid">
                 {filteredAndSortedItems.map((item) => (
-                    <div 
-                        key={item.id} 
-                        className="collection-card"
-                        onClick={() => handleItemClick(item)}
-                    >
-                        <div className="collection-image">
-                            <img src={item.image} alt={item.name} />
-                        </div>
-                        <div className="collection-info">
-                            <h3>{item.name}</h3>
-                            <p className="collection-description">{item.description}</p>
-                            <div className="collection-specs">
-                                <span>Carat: {item.carat}</span>
-                                <span>Color: {item.color}</span>
-                                <span>Clarity: {item.clarity}</span>
-                            </div>
-                            <div className="collection-details">
-                                <div className="detail-row">
-                                    <span>Purchase Date:</span>
-                                    <span>{new Date(item.purchaseDate).toLocaleDateString()}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span>Purchase Price:</span>
-                                    <span>${item.purchasePrice}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span>Current Value:</span>
-                                    <span>${item.currentValue}</span>
-                                </div>
-                                <div className="detail-row">
-                                    <span>Certificate:</span>
-                                    <span>{item.certificate}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ProductCard
+                        key={item.id}
+                        product={{
+                            ...item,
+                            price: item.currentValue,
+                            specs: {
+                                carat: item.carat,
+                                color: item.color,
+                                clarity: item.clarity,
+                                purchaseDate: new Date(item.purchaseDate).toLocaleDateString(),
+                                purchasePrice: item.purchasePrice,
+                                certificate: item.certificate
+                            }
+                        }}
+                        onClick={handleItemClick}
+                    />
                 ))}
             </div>
 
             {selectedItem && (
-                <CollectionDetailModal
-                    item={selectedItem}
+                <ProductDetailModal
+                    product={selectedItem}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                 />

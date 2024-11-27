@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import ProductDetailModal from './ProductDetailModal.jsx';
+import ProductDetailModal from '../ProductDetailModal/Index.jsx';
+import ProductCard from '../ProductCard/Index.jsx';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
-import '../../css/card.css';
 import '../../css/store.css';
 
 const Store = ({ userType }) => {
@@ -116,32 +116,11 @@ const Store = ({ userType }) => {
 
             <div className="collection-grid">
                 {filteredProducts.map((product) => (
-                    <div 
-                        key={product.name} 
-                        className="collection-card"
-                        onClick={() => handleProductClick(product)}
-                    >
-                        <div className="collection-image">
-                            {product.image ? (
-                                <img 
-                                    src={product.image} 
-                                    alt={product.name}
-                                />
-                            ) : (
-                                <div className="no-image">No Image Available</div>
-                            )}
-                        </div>
-                        <div className="collection-info">
-                            <h3>{product.name}</h3>
-                            <p className="collection-description">{product.description}</p>
-                            <div className="collection-details">
-                                <div className="detail-row">
-                                    <span>Price:</span>
-                                    <span>${product.price}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ProductCard
+                        key={product.name}
+                        product={product}
+                        onClick={handleProductClick}
+                    />
                 ))}
             </div>
 
