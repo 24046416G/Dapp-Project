@@ -18,13 +18,18 @@ function App() {
     const [userType, setUserType] = useState(USER_TYPES.CUSTOMER);
 
     useEffect(() => {
-        console.log('Authentication status:', isAuthenticated);
-        console.log('Current route:', window.location.pathname);
-    }, [isAuthenticated]);
+        // 检查本地存储中的用户信息
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            const user = JSON.parse(savedUser);
+            setIsAuthenticated(true);
+            setUserType(user.role);
+        }
+    }, []);
 
-    const handleLogin = (type) => {
+    const handleLogin = (role) => {
         setIsAuthenticated(true);
-        setUserType(type);
+        setUserType(role);
     };
 
     return (

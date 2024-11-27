@@ -64,9 +64,38 @@ const CustomerLogin = ({ onLogin }) => {
                 alert('Registration failed. Please try again later.');
             }
         } else {
-            // 登录逻辑保持不变
-            onLogin(USER_TYPES.CUSTOMER);
-            navigate('/');
+            // 登录逻辑
+            try {
+                const response = await fetch('http://localhost:3000/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customerId: formData.username,  // 使用 username 作为 customerId
+                        password: formData.password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // 登录成功
+                    alert('Login successful!');
+                    // 保存用户信息到本地存储
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    // 更新登录状态
+                    onLogin(data.user.role);
+                    // 跳转到首页
+                    navigate('/');
+                } else {
+                    // 登录失败
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again later.');
+            }
         }
     };
 
