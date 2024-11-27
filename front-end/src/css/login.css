@@ -115,15 +115,3 @@ body, html {
 .switch-mode:hover {
     text-decoration: underline;
 }
-
-@media (max-width: 480px) {
-    .login-card {
-        margin: 0 20px;
-        padding: 24px;
-    }
-
-    .type-button {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-} 

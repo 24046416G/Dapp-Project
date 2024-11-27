@@ -26,17 +26,6 @@
     accent-color: #3498db;
 }
 
-@media (max-width: 768px) {
-    .filter-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
-}
-
 .loading {
     text-align: center;
     padding: 40px;
