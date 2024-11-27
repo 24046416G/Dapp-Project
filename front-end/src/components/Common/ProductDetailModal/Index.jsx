@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaQrcode } from 'react-icons/fa';
-import QRCodeModal from './QRCodeModal.jsx';
-import '/src/css/modal.css';
+import QRCodeModal from '../QRCodeModal/Index.jsx';
+import '../../../css/modal.css';
 
 const ProductDetailModal = ({ product, isOpen, onClose }) => {
     const [showQRCode, setShowQRCode] = useState(false);

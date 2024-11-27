@@ -1,6 +1,6 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import '/src/css/modal.css';
+import '../../../css/modal.css';
 
 const QRCodeModal = ({ product, isOpen, onClose }) => {
     if (!isOpen) return null;
