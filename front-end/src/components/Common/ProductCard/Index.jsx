@@ -6,7 +6,7 @@ const ProductCard = ({ product, onClick, userType }) => {
     const renderContent = () => {
         console.log('userType',userType);
         if (userType === USER_TYPES.JEWELRY_MAKER) {
-            const jewelry = product[0];
+            const diamond = product.diamonds[0];
             return (
                 <>
                     <div className="card-header">
@@ -24,11 +24,9 @@ const ProductCard = ({ product, onClick, userType }) => {
                             <div className="no-image">No Image Available</div>
                         )}
                         <div className="specs">
-                            <span>Carat: {jewelry.metadata.carat}</span>
-                            <span>Color: {jewelry.metadata.color}</span>
-                            <span>Cut: {jewelry.metadata.cut}</span>
-                            <span>Polish: {jewelry.metadata.polish}</span>
-                            <span>Grading: {jewelry.metadata.grading}</span>
+                            <span>Cut: {diamond.metadata.cut}</span>
+                            <span>Polish: {diamond.metadata.polish}</span>
+                            <span>Grading: {diamond.metadata.grading}</span>
                         </div>
                     </div>
                 </>

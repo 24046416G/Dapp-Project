@@ -36,7 +36,7 @@ const Store = ({ userType }) => {
                 }
                 const data = await response.json();
                 console.log('data',data);
-                
+                console.log('userType',userType);
                 if (userType === USER_TYPES.JEWELRY_MAKER) {
                     const formattedData = data.map(diamond => ({
                         id: diamond._id,
@@ -52,6 +52,7 @@ const Store = ({ userType }) => {
                         currentOwner: diamond.currentOwner,
                         history: diamond.history
                     }));
+                    console.log('formattedData 1',formattedData);
                     setProducts(formattedData);
                 } else {
                     const jewelriesArray = Array.isArray(data) ? data : data.jewelries || [];
@@ -85,15 +86,12 @@ const Store = ({ userType }) => {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = Array.isArray(products) ? products.filter((product) => {
+    const filteredProducts = products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
-        const matchesSearch = userType === USER_TYPES.JEWELER ?
-            (product.diamonds[0]?.diamondId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             product.diamonds[0]?.metadata?.carat?.toString().includes(searchTerm)) :
-            product.name.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        return matchesPrice && matchesSearch;
-    }) : [];
+        // const matchesHistory = product.history.length <= 3;
+        // return matchesPrice && matchesHistory;
+        return matchesPrice;
+    });
 
     console.log('Filtered products:', filteredProducts);
 
@@ -163,8 +161,9 @@ const Store = ({ userType }) => {
 
             <div className="data-grid">
                 {filteredProducts.map((product) => (
-                    <div className="data-grid-item" key={product.id || product.name}>
+                    <div className="data-grid-item">
                         <ProductCard
+                            key={product.id}
                             product={product}
                             onClick={handleProductClick}
                             userType={userType}
