@@ -7,36 +7,6 @@ import '../../css/card.css';
 import '../../css/collection.css';
 import CollectionDetailModal from './CollectionDetailModal.jsx';
 
-const collectionData = [
-    { 
-        id: 1, 
-        name: 'Vintage Diamond Ring', 
-        purchasePrice: 1500,
-        currentValue: 1800,
-        image: '../../../../assets/jewelry/jewelry_01.png',
-        description: 'A beautiful vintage diamond ring from 1950s',
-        purchaseDate: '2023-10-15',
-        carat: 1.2,
-        color: 'D',
-        clarity: 'VVS1',
-        certificate: 'GIA-123456'
-    },
-    { 
-        id: 2, 
-        name: 'Modern Diamond Necklace', 
-        purchasePrice: 2500,
-        currentValue: 2800,
-        image: '../../../../assets/jewelry/jewelry_02.png',
-        description: 'Contemporary diamond necklace with platinum chain',
-        purchaseDate: '2023-11-20',
-        carat: 1.8,
-        color: 'E',
-        clarity: 'VS1',
-        certificate: 'GIA-789012'
-    },
-    // 可以添加更多收藏品...
-];
-
 const Collection = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('purchaseDate');
@@ -44,6 +14,39 @@ const Collection = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentAddress, setCurrentAddress] = useState('');
+    const [collectionData, setCollectionData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUserJewelries = async () => {
+            try {
+                // 从 localStorage 获取用户信息
+                const savedUser = localStorage.getItem('user');
+                if (!savedUser) {
+                    throw new Error('User not found');
+                }
+
+                const user = JSON.parse(savedUser);
+                const response = await fetch(`http://localhost:3000/jewelries/user/${user.id}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch jewelries');
+                }
+
+                const data = await response.json();
+                console.log(data);
+                setCollectionData(data.jewelries);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching user jewelries:', error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchUserJewelries();
+    }, []);
 
     useEffect(() => {
         const getAddress = async () => {
@@ -90,6 +93,14 @@ const Collection = () => {
         setSelectedItem(item);
         setIsModalOpen(true);
     };
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     const filteredAndSortedItems = collectionData
         .filter((item) => {
