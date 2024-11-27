@@ -1,6 +1,6 @@
 import React from 'react';
 import { USER_TYPES } from '../../../constants/userTypes';
-import '../../../css/card.css';
+import '../../../css/productCard.css';
 
 const ProductCard = ({ product, onClick, userType }) => {
     const renderContent = () => {

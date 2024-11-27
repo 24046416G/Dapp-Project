@@ -5,6 +5,7 @@ import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
+import '../../css/productCard.css';
 import '../../css/store.css';
 
 const Store = ({ userType }) => {

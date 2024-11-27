@@ -5,7 +5,7 @@ import ProductDetailModal from '../Common/ProductDetailModal/Index.jsx';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
-import '../../css/card.css';
+import '../../css/productCard.css';
 import '../../css/collection.css';
 
 const Collection = ({userType}) => {
