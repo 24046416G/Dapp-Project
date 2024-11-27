@@ -196,4 +196,71 @@ router.get('/role/:role', async (req, res) => {
     }
 });
 
+// 用户登录
+router.post('/login', async (req, res) => {
+    try {
+        const { companyId, customerId, password } = req.body;
+
+        // 验证必要字段
+        if ((!companyId && !customerId) || !password) {
+            return res.status(400).json({ 
+                message: "Either companyId or customerId, and password are required" 
+            });
+        }
+
+        // 根据 companyId 或 customerId 查找用户
+        let user;
+        if (companyId) {
+            user = await User.findOne({ companyId });
+        } else if (customerId) {
+            user = await User.findOne({ customerId });
+        }
+
+        // 验证用户是否存在
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 验证密码
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 返回用户信息
+        res.json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                role: user.role,
+                companyId: user.companyId,
+                companyName: user.companyName,
+                customerId: user.customerId,
+                customerName: user.customerName
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
+// 用户登出
+router.post('/logout', (req, res) => {
+    try {
+        res.json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
 module.exports = router; 
