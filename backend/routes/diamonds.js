@@ -169,6 +169,11 @@ router.patch('/:id/transfer', async (req, res) => {
         diamond.status = newStatus;
         if (price) diamond.price = price;
 
+        // 如果状态不是 JEWELRY 或 SOLD，清除 jewelryId
+        if (newStatus !== 'JEWELRY' && newStatus !== 'SOLD') {
+            diamond.jewelryId = undefined;
+        }
+
         // 添加到历史记录
         diamond.history.push({
             status: newStatus,
@@ -195,16 +200,19 @@ router.patch('/:id/transfer', async (req, res) => {
         }
 
         // 保存钻石更新
-        await diamond.save();
-        
-        // 返回更新后的钻石信息（带 populate）
-        const updatedDiamond = await Diamond.findById(req.params.id)
-            .populate('currentOwner')
-            .populate('certificates.miningCertificate.companyId')
-            .populate('certificates.cuttingCertificate.companyId')
-            .populate('certificates.gradingCertificate.companyId')
-            .populate('certificates.jewelryCertificate.companyId')
-            .populate('history.owner');
+        const updatedDiamond = await Diamond.findByIdAndUpdate(
+            req.params.id,
+            diamond.toObject(),
+            { 
+                new: true, 
+                runValidators: false  // 禁用验证器，因为 jewelryId 会在后续的珠宝创建时设置
+            }
+        ).populate('currentOwner')
+         .populate('certificates.miningCertificate.companyId')
+         .populate('certificates.cuttingCertificate.companyId')
+         .populate('certificates.gradingCertificate.companyId')
+         .populate('certificates.jewelryCertificate.companyId')
+         .populate('history.owner');
 
         res.json({
             message: "Diamond transferred successfully",
@@ -234,6 +242,182 @@ router.get('/all/diamonds', async (req, res) => {
         res.json(diamonds);
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+// 5. 更新钻石切割和抛光信息
+router.patch('/:id/cut', async (req, res) => {
+    try {
+        const { cut, polish, userId } = req.body;
+
+        // 验证必要字段
+        if (!cut || !polish || !userId) {
+            return res.status(400).json({ 
+                message: "Cut, polish and userId are required" 
+            });
+        }
+
+        // 查找钻石
+        const diamond = await Diamond.findById(req.params.id);
+        if (!diamond) {
+            return res.status(404).json({ 
+                message: "Diamond not found",
+                providedId: req.params.id 
+            });
+        }
+
+        // 验证用户是否存在且为切割公司
+        const user = await User.findById(userId);
+        if (!user || user.role !== 'CUTTING_COMPANY') {
+            return res.status(403).json({ 
+                message: "Only cutting companies can update cut information" 
+            });
+        }
+
+        // 验证钻石状态是否为CUT
+        if (diamond.status !== 'CUT') {
+            return res.status(400).json({ 
+                message: "Diamond must be in CUT status to update cut information",
+                currentStatus: diamond.status
+            });
+        }
+
+        // 验证用户是否是钻石的当前所有者
+        if (diamond.currentOwner.toString() !== userId) {
+            return res.status(403).json({ 
+                message: "Only the current owner can update cut information" 
+            });
+        }
+
+        // 更新切割和抛光信息
+        diamond.metadata.cut = cut;
+        diamond.metadata.polish = polish;
+
+        await diamond.save();
+
+        // 返回更新后的钻石信息
+        const updatedDiamond = await Diamond.findById(req.params.id)
+            .populate('currentOwner')
+            .populate('certificates.miningCertificate.companyId')
+            .populate('certificates.cuttingCertificate.companyId')
+            .populate('certificates.gradingCertificate.companyId')
+            .populate('certificates.jewelryCertificate.companyId')
+            .populate('history.owner');
+
+        res.json({
+            message: "Diamond cut information updated successfully",
+            diamond: updatedDiamond
+        });
+    } catch (error) {
+        console.error('Update cut information error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
+// 6. 更新钻石评级信息
+router.patch('/:id/grade', async (req, res) => {
+    try {
+        const { userId, grading, imageData } = req.body;  // imageData 是 Base64 编码的图片数据
+        console.log('Received request body:', {
+            userId,
+            grading,
+            hasImageData: !!imageData,
+            imageDataLength: imageData ? imageData.length : 0
+        });
+
+        // 验证必要字段
+        if (!userId || !grading) {
+            return res.status(400).json({ 
+                message: "UserId and grading information are required" 
+            });
+        }
+
+        // 验证图片数据（如果提供）
+        if (imageData) {
+            console.log('Validating image data...');
+            // 验证是否是有效的 Base64 图片数据
+            if (!imageData.match(/^data:image\/(png|jpeg|jpg|gif);base64,/)) {
+                return res.status(400).json({ 
+                    message: "Invalid image format. Must be a Base64 encoded image" 
+                });
+            }
+
+            // 验证图片大小（Base64 字符串长度）
+            if (imageData.length > 5 * 1024 * 1024) {  // 5MB 限制
+                return res.status(400).json({ 
+                    message: "Image size too large. Maximum size is 5MB" 
+                });
+            }
+            console.log('Image validation passed');
+        }
+
+        // 查找钻石
+        const diamond = await Diamond.findById(req.params.id);
+        if (!diamond) {
+            return res.status(404).json({ 
+                message: "Diamond not found",
+                providedId: req.params.id 
+            });
+        }
+
+        // 验证用户是否存在且为评级实验室
+        const user = await User.findById(userId);
+        if (!user || user.role !== 'GRADING_LAB') {
+            return res.status(403).json({ 
+                message: "Only grading labs can update grading information" 
+            });
+        }
+
+        // 验证钻石状态是否为GRADED
+        if (diamond.status !== 'GRADED') {
+            return res.status(400).json({ 
+                message: "Diamond must be in GRADED status to update grading information",
+                currentStatus: diamond.status
+            });
+        }
+
+        // 验证用户是否是钻石的当前所有者
+        if (diamond.currentOwner.toString() !== userId) {
+            return res.status(403).json({ 
+                message: "Only the current owner can update grading information" 
+            });
+        }
+
+        // 更新评级信息
+        console.log('Updating diamond metadata...');
+        diamond.metadata.grading = grading;
+        if (imageData) {
+            console.log('Setting image data...');
+            diamond.metadata.images = imageData;  // 直接存储 Base64 图片数据
+        }
+
+        await diamond.save();
+        console.log('Diamond saved successfully');
+
+        // 返回更新后的钻石信息
+        const updatedDiamond = await Diamond.findById(req.params.id)
+            .populate('currentOwner')
+            .populate('certificates.miningCertificate.companyId')
+            .populate('certificates.cuttingCertificate.companyId')
+            .populate('certificates.gradingCertificate.companyId')
+            .populate('certificates.jewelryCertificate.companyId')
+            .populate('history.owner');
+
+        res.json({
+            message: "Diamond grading information updated successfully",
+            diamond: updatedDiamond
+        });
+    } catch (error) {
+        console.error('Update grading information error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 
