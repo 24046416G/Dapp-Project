@@ -58,8 +58,11 @@ const Store = ({ userType }) => {
 
     const filteredProducts = Array.isArray(products) ? products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
+        console.log('Single product:', product);
         return matchesPrice;
     }) : [];
+
+    console.log('Filtered products:', filteredProducts);
 
     if (loading) {
         return <div className="loading">Loading...</div>;
@@ -114,21 +117,23 @@ const Store = ({ userType }) => {
             <div className="collection-grid">
                 {filteredProducts.map((product) => (
                     <div 
-                        key={product.jewelryId} 
+                        key={product.name} 
                         className="collection-card"
                         onClick={() => handleProductClick(product)}
                     >
                         <div className="collection-image">
-                            <img src={product.image} alt={product.jewelryName} />
+                            {product.image ? (
+                                <img 
+                                    src={product.image} 
+                                    alt={product.name}
+                                />
+                            ) : (
+                                <div className="no-image">No Image Available</div>
+                            )}
                         </div>
                         <div className="collection-info">
-                            <h3>{product.jewelryName}</h3>
+                            <h3>{product.name}</h3>
                             <p className="collection-description">{product.description}</p>
-                            <div className="collection-specs">
-                                <span>Carat: {product.carat}</span>
-                                <span>Color: {product.color}</span>
-                                <span>Clarity: {product.clarity}</span>
-                            </div>
                             <div className="collection-details">
                                 <div className="detail-row">
                                     <span>Price:</span>

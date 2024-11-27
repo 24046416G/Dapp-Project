@@ -13,36 +13,64 @@ const ProductDetailModal = ({ product, isOpen, onClose }) => {
                 </div>
                 <div className="modal-body">
                     <div className="modal-image">
-                        <img src={product.image} alt={product.name} />
+                        {product.image ? (
+                            <img 
+                                src={`data:image/jpeg;base64,${product.image}`} 
+                                alt={product.name}
+                            />
+                        ) : (
+                            <div className="no-image">No Image Available</div>
+                        )}
                     </div>
                     <div className="modal-info">
                         <div className="info-section">
                             <h3>Product Details</h3>
-                            <p>{product.description}</p>
-                        </div>
-                        <div className="info-section">
-                            <h3>Specifications</h3>
                             <div className="detail-grid">
                                 <div className="detail-item">
-                                    <span>Carat:</span>
-                                    <span>{product.carat}</span>
+                                    <span>Price:</span>
+                                    <span>${product.price}</span>
                                 </div>
                                 <div className="detail-item">
-                                    <span>Color:</span>
-                                    <span>{product.color}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Clarity:</span>
-                                    <span>{product.clarity}</span>
+                                    <span>Description:</span>
+                                    <span>{product.description}</span>
                                 </div>
                             </div>
                         </div>
+
                         <div className="info-section">
-                            <h3>Price</h3>
-                            <p className="product-price">${product.price}</p>
-                        </div>
-                        <div className="modal-actions">
-                            <button className="action-button submit-button">Buy Now</button>
+                            <h3>Diamonds Information</h3>
+                            {product.diamonds && product.diamonds.map((diamond, index) => (
+                                <div key={index} className="diamond-info">
+                                    <h4>Diamond {diamond.diamondId}</h4>
+                                    {diamond.metadata.images && (
+                                        <div className="diamond-images">
+                                            <div className="diamond-image">
+                                                <img 
+                                                    src={diamond.metadata.images}
+                                                    alt={`Diamond ${index + 1}`}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="collection-specs">
+                                        <span>Carat: {diamond.metadata.carat}</span>
+                                        <span>Color: {diamond.metadata.color}</span>
+                                        <span>Cut: {diamond.metadata.cut}</span>
+                                        <span>Polish: {diamond.metadata.polish}</span>
+                                        <span>Grading: {diamond.metadata.grading}</span>
+                                        <span>Origin: {diamond.metadata.origin}</span>
+                                    </div>
+                                    <div className="certificate-info">
+                                        <p>Certificates:</p>
+                                        <ul>
+                                            <li>Mining: {diamond.certificates.miningCertificate.status}</li>
+                                            <li>Cutting: {diamond.certificates.cuttingCertificate.status}</li>
+                                            <li>Grading: {diamond.certificates.gradingCertificate.status}</li>
+                                            <li>Jewelry: {diamond.certificates.jewelryCertificate.status}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
