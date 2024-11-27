@@ -5,7 +5,7 @@ import '../../../css/card.css';
 const ProductCard = ({ product, onClick, userType }) => {
     const renderContent = () => {
         if (userType === USER_TYPES.JEWELER) {
-            const diamond = product.diamonds[0];
+            const diamond = product[0];
             return (
                 <>
                     <div className="card-header">
@@ -43,7 +43,7 @@ const ProductCard = ({ product, onClick, userType }) => {
                     <div className="card-body">
                         {product.image ? (
                             <img 
-                                src={`data:image/jpeg;base64,${product.image}`} 
+                                src={product.image}
                                 alt={product.name}
                                 className="product-image"
                             />

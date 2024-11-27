@@ -21,21 +21,23 @@ const Store = ({ userType }) => {
         const fetchData = async () => {
             try {
                 let endpoint;
-                if (userType === USER_TYPES.JEWELER) {
+                console.log('userType',userType);
+                if (userType === USER_TYPES.JEWELRY_MAKER) {
                     endpoint = 'http://localhost:3000/diamonds/all/diamonds';
-                } else if (userType === USER_TYPES.COMPANY) {
-                    endpoint = 'http://localhost:3000/jewelries/company';
-                } else {
+                } else if (userType === USER_TYPES.CUSTOMER) {
                     endpoint = 'http://localhost:3000/jewelries/all';
+                } else {
+                    endpoint = '';
                 }
-                
+                console.log('endpoint',endpoint);
                 const response = await fetch(endpoint);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
                 const data = await response.json();
+                console.log('data',data);
                 
-                if (userType === USER_TYPES.JEWELER) {
+                if (userType === USER_TYPES.JEWELRY_MAKER) {
                     const formattedData = data.map(diamond => ({
                         id: diamond._id,
                         name: `Diamond ${diamond.diamondId}`,
@@ -107,23 +109,23 @@ const Store = ({ userType }) => {
         <div className="container">
             <div className="store-header">
                 <h2>
-                    {userType === USER_TYPES.JEWELER ? 'Diamond Market' : 
-                     userType === USER_TYPES.COMPANY ? 'Jewelry Management' : 
-                     'Diamond Store'}
+                    {userType === USER_TYPES.CUSTOMER ? 'Jewelry Market' : 
+                     userType === USER_TYPES.JEWELRY_MAKER ? 'Diamond Market' : 
+                     'Store'}
                 </h2>
                 <p>
-                    {userType === USER_TYPES.JEWELER ? 'Browse and purchase diamonds for jewelry making' : 
-                     userType === USER_TYPES.COMPANY ? 'Manage your jewelry collection and inventory' : 
-                     'Find your perfect diamond jewelry'}
+                    {userType === USER_TYPES.CUSTOMER ? 'Find your perfect diamond jewelry' : 
+                     userType === USER_TYPES.JEWELRY_MAKER ? 'Choose your favorite diamonds' : 
+                     'description'}
                 </p>
             </div>
             
             <div className="store-filters">
                 <input
                     type="text"
-                    placeholder={userType === USER_TYPES.JEWELER ? 
+                    placeholder={userType === USER_TYPES.CUSTOMER ? 
                         "Search by diamond ID or carat..." : 
-                        userType === USER_TYPES.COMPANY ? 
+                        userType === USER_TYPES.JEWELRY_MAKER ? 
                         "Search inventory..." : 
                         "Search products..."}
                     value={searchTerm}
@@ -177,6 +179,7 @@ const Store = ({ userType }) => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     userType={userType}
+                    showBuyButton={true}
                 />
             )}
         </div>

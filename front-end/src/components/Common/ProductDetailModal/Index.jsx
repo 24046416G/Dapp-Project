@@ -5,13 +5,18 @@ import { USER_TYPES } from '../../../constants/userTypes';
 import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
 
-const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
+const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false }) => {
     const [showQRCode, setShowQRCode] = useState(false);
     
     if (!isOpen) return null;
 
+    const handleBuy = () => {
+        console.log('Buying product:', product);
+        alert('Purchase functionality coming soon!');
+    };
+
     const renderContent = () => {
-        if (userType === USER_TYPES.JEWELER) {
+        if (userType === USER_TYPES.JEWELRY_MAKER) {
             const diamond = product.diamonds[0];
             return (
                 <>
@@ -110,7 +115,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                     <div className="modal-info">
                         <div className="info-section">
                             <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                Product Details
+                                Jewelry {product.jewelryId} Details
                                 <FaQrcode 
                                     style={{ fontSize: '1.2em', cursor: 'pointer' }} 
                                     onClick={() => setShowQRCode(true)}
@@ -124,10 +129,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                                 <div className="detail-item">
                                     <span>Price:</span>
                                     <span>${product.price}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Description:</span>
-                                    <span>{product.description}</span>
                                 </div>
                             </div>
                         </div>
@@ -195,9 +196,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                                 </div>
                             </div>
                         ))}
-                        <div className="modal-footer">
-                            <Button className="buy-button" type="primary"> Buy Now </Button>
-                        </div>
                     </div>
                 </>
             );
@@ -214,6 +212,17 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                     </div>
                     <div className="modal-body">
                         {renderContent()}
+                        {showBuyButton && (
+                            <div className="modal-footer">
+                                <Button 
+                                    onClick={handleBuy}
+                                    className="buy-button"
+                                    type="primary"
+                                >
+                                    Buy Now
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
