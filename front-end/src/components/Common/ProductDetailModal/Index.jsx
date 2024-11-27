@@ -96,6 +96,18 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                                 </div>
                             </div>
                         </div>
+
+                        <div className="info-section">
+                            <h3>History</h3>
+                            <div className="detail-grid">
+                                {product.history.map((history, index) => (
+                                    <div key={index} className="detail-item">
+                                        <span>Status:</span>
+                                        <span>{history.status}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </>
             );
