@@ -21,9 +21,12 @@ body, html {
     padding: 4px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    width: 100%;
 }
 
 .type-button {
+    flex: 1;
     padding: 12px 24px;
     border: none;
     background: none;
@@ -33,6 +36,11 @@ body, html {
     cursor: pointer;
     border-radius: 8px;
     transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.type-button + .type-button {
+    margin-left: 4px;
 }
 
 .type-button.active {

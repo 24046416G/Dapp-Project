@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { USER_TYPES } from '../../constants/userTypes.js';
 import Button from '../Common/Button/Index';
 import '../../css/login.css';
 
 const Login = ({ onLogin }) => {
     const [isLogin, setIsLogin] = useState(true);
+    const [isCustomer, setIsCustomer] = useState(true);
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -14,6 +14,12 @@ const Login = ({ onLogin }) => {
     });
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!isCustomer) {
+            setIsLogin(true);
+        }
+    }, [isCustomer]);
+
     const handleSubmit = async () => {
         if (!formData.username || !formData.password || (!isLogin && (!formData.email || !formData.confirmPassword))) {
             alert('Please fill in all fields');
@@ -21,18 +27,7 @@ const Login = ({ onLogin }) => {
         }
 
         if (!isLogin) {
-            // 注册时的验证
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(formData.email)) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
-            if (formData.password !== formData.confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-
+            // 注册逻辑
             try {
                 const response = await fetch('http://localhost:3000/users/register', {
                     method: 'POST',
@@ -43,7 +38,7 @@ const Login = ({ onLogin }) => {
                         customerName: formData.username,
                         customerId: formData.email,
                         password: formData.password,
-                        role: USER_TYPES.CUSTOMER
+                        role: 'customer'
                     })
                 });
 
@@ -74,7 +69,7 @@ const Login = ({ onLogin }) => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        customerId: formData.username,  // 使用 username 作为 customerId
+                        [isCustomer ? 'customerId' : 'companyId']: formData.username,
                         password: formData.password
                     })
                 });
@@ -112,7 +107,22 @@ const Login = ({ onLogin }) => {
     return (
         <div className="login-container">
             <div className="login-card">
-                <h2>{isLogin ? 'Customer Login' : 'Customer Register'}</h2>
+                <div className="login-type-selector">
+                    <button 
+                        className={`type-button ${isCustomer ? 'active' : ''}`}
+                        onClick={() => setIsCustomer(true)}
+                    >
+                        Customer
+                    </button>
+                    <button 
+                        className={`type-button ${!isCustomer ? 'active' : ''}`}
+                        onClick={() => setIsCustomer(false)}
+                    >
+                        Business Partner
+                    </button>
+                </div>
+
+                <h2>{isLogin ? `${isCustomer ? 'Customer' : 'Business Partner'} Login` : 'Customer Register'}</h2>
                 <div className="input-group">
                     <label>Username</label>
                     <input
@@ -121,6 +131,7 @@ const Login = ({ onLogin }) => {
                         value={formData.username}
                         onChange={handleInputChange}
                         className="text-input"
+                        placeholder={!isCustomer ? "Company ID" : "Username"}
                     />
                 </div>
                 {!isLogin && (
@@ -164,9 +175,11 @@ const Login = ({ onLogin }) => {
                 >
                     {isLogin ? 'Login' : 'Register'}
                 </Button>
-                <p className="switch-mode" onClick={() => setIsLogin(!isLogin)}>
-                    {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
-                </p>
+                {isCustomer && (
+                    <p className="switch-mode" onClick={() => setIsLogin(!isLogin)}>
+                        {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
+                    </p>
+                )}
             </div>
         </div>
     );

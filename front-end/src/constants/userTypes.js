@@ -1,8 +1,8 @@
 export const USER_TYPES = {
-    CUTTING: 'CUTTING',
-    GRADING: 'GRADING',
-    MINER: 'MINER',
-    JEWELER: 'JEWELER',
+    CUTTING: 'CUTTING_COMPANY',
+    GRADING: 'GRADING_LAB',
+    MINER: 'MINER_COMPANY',
+    JEWELER: 'JEWELERY_MAKER',
     CUSTOMER: 'CUSTOMER'
 };
 
@@ -19,11 +19,6 @@ export const USER_ROUTES = {
             name: 'Available Stones',
             icon: 'FaRocketchat'
         },
-        // {
-        //     path: '/buy-raw-stones',
-        //     name: 'Buy Raw Stones',
-        //     icon: 'FaShoppingCart'
-        // },
         {
             path: '/store',
             name: 'Cutting Store',
