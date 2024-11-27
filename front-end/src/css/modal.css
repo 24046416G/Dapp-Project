@@ -342,6 +342,7 @@
 .qr-modal {
     max-width: 400px !important;  /* 覆盖默认的 modal-content 宽度 */
     width: 90% !important;
+    z-index: 1100;  /* 添加更高的 z-index */
 }
 
 .qr-body {
