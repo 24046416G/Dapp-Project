@@ -1,14 +1,14 @@
 export const USER_TYPES = {
-    CUTTING: 'CUTTING_COMPANY',
-    GRADING: 'GRADING_LAB',
-    MINER: 'MINER_COMPANY',
-    JEWELER: 'JEWELRY_MAKER',
+    CUTTING_COMPANY: 'CUTTING_COMPANY',
+    JEWELRY_MAKER: 'JEWELRY_MAKER',
+    MINING_COMPANY: 'MINING_COMPANY',
+    GRADING_LAB: 'GRADING_LAB',
     CUSTOMER: 'CUSTOMER'
 };
 
 // 定义每种用户类型可以访问的路由
 export const USER_ROUTES = {
-    [USER_TYPES.CUTTING]: [
+    [USER_TYPES.CUTTING_COMPANY]: [
         {
             path: '/record',
             name: 'Cut Record',
@@ -25,7 +25,7 @@ export const USER_ROUTES = {
             icon: 'FaStore'
         }
     ],
-    [USER_TYPES.MINER]: [
+    [USER_TYPES.MINING_COMPANY]: [
         {
             path: '/record',
             name: 'Mining Record',
@@ -43,7 +43,7 @@ export const USER_ROUTES = {
         }
 
     ],
-    [USER_TYPES.JEWELER]: [
+    [USER_TYPES.JEWELRY_MAKER]: [
         {
             path: '/jewelry-inventory',
             name: 'Jewelry',
@@ -72,7 +72,7 @@ export const USER_ROUTES = {
             icon: 'FaStore'
         }
     ],
-    [USER_TYPES.GRADING]: [
+    [USER_TYPES.GRADING_LAB]: [
         {
             path: '/record',
             name: 'Grading Record',

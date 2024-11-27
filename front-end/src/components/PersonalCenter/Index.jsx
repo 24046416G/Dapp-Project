@@ -4,7 +4,7 @@ import Collection from '../Collection/Index.jsx';
 import { BrowserProvider } from 'ethers';
 import '../../css/personalCenter.css';
 
-const PersonalCenter = () => {
+const PersonalCenter = ({ userType }) => {
     const [isMetaMaskConnected, setIsMetaMaskConnected] = useState(false);
 
     // 检查 MetaMask 连接状态
@@ -48,7 +48,7 @@ const PersonalCenter = () => {
     }
 
     // 如果已连接 MetaMask，直接显示 Collection 组件
-    return <Collection />;
+    return <Collection userType={userType} />;
 };
 
 export default PersonalCenter; 

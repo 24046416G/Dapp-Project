@@ -8,7 +8,7 @@ import '../../css/filter.css';
 import '../../css/card.css';
 import '../../css/collection.css';
 
-const Collection = () => {
+const Collection = ({userType}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('purchaseDate');
     const [filterBy, setFilterBy] = useState('all');
@@ -195,6 +195,7 @@ const Collection = () => {
                     product={selectedItem}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                    userType={userType}
                 />
             )}
         </div>
