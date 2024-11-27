@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import RecordCard from '../Common/RecordCard/Index.jsx';
 import RecordDetailModal from '../Common/RecordDetailModal/Index.jsx';
+import Button from '../Common/Button/Index.jsx';
+import AddRecordModal from '../Common/AddRecordModal/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/recordCard.css';
 
@@ -10,6 +12,7 @@ const Record = ({ userType }) => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchRecords = async () => {
@@ -80,6 +83,44 @@ const Record = ({ userType }) => {
         setIsModalOpen(true);
     };
 
+    const handleAddRecord = () => {
+        setIsAddModalOpen(true);
+    };
+
+    const handleAddSubmit = async (formData) => {
+        try {
+            // 获取当前用户信息
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                throw new Error('User not found');
+            }
+            const user = JSON.parse(userStr);
+
+            // 发送请求到后端
+            const response = await fetch('http://localhost:3000/diamonds/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    userId: user.id
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add record');
+            }
+
+            // 刷新记录列表
+            fetchRecords();
+            alert('Record added successfully!');
+        } catch (error) {
+            console.error('Error adding record:', error);
+            alert('Failed to add record: ' + error.message);
+        }
+    };
+
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -107,7 +148,7 @@ const Record = ({ userType }) => {
             
             <div className="data-grid">
                 {records.map((record) => (
-                    <div key={record.index} className="data-grid-item">
+                    <div key={record.id} className="data-grid-item">
                         <RecordCard 
                             record={record}
                             onClick={handleRecordClick}
@@ -116,6 +157,17 @@ const Record = ({ userType }) => {
                 ))}
             </div>
 
+            {userType === USER_TYPES.MINING_COMPANY && (
+                <div className="add-record-button-container">
+                    <Button 
+                        onClick={handleAddRecord}
+                        type="primary"
+                    >
+                        Add New Mining Record
+                    </Button>
+                </div>
+            )}
+
             {selectedRecord && (
                 <RecordDetailModal
                     record={selectedRecord}
@@ -123,6 +175,12 @@ const Record = ({ userType }) => {
                     onClose={() => setIsModalOpen(false)}
                 />
             )}
+
+            <AddRecordModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddSubmit}
+            />
         </div>
     );
 };

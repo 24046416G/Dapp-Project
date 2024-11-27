@@ -98,4 +98,16 @@
     font-size: 24px;
     font-weight: 600;
     margin-top: 4px;
+}
+
+.add-record-button-container {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 100;
+}
+
+.add-record-button-container button {
+    padding: 12px 24px;
+    font-size: 16px;
 } 
