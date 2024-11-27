@@ -43,8 +43,7 @@ function App() {
                                         <Route path="/store" element={<Store userType={userType} />} />
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/record" element={<Record userType={userType} />} />
-                                        <Route path="/available-stones" element={<AvailableStones />} />
-                                        
+                                        <Route path="/available-stones" element={<AvailableStones />} />                                     
                                         <Route path="/mining-history" element={<MiningHistory />} />
                                         <Route path="/wait-to-grade" element={<WaitToGrade />} />
                                         <Route path="/wallet" element={<BuyRawStones />} />

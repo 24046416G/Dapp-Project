@@ -35,4 +35,18 @@
     .products-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 40px;
+    color: #e74c3c;
+    font-size: 18px;
 } 

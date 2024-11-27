@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductDetailModal from './ProductDetailModal.jsx';
 import '../../css/layout.css';
 import '../../css/search.css';
@@ -6,36 +6,38 @@ import '../../css/filter.css';
 import '../../css/card.css';
 import '../../css/store.css';
 
-const storeData = [
-    { 
-        id: 1, 
-        name: 'Diamond Ring', 
-        price: 1000,
-        image: '/assets/jewelry/jewelry_02.png',
-        description: 'Beautiful diamond ring with 18K gold band',
-        carat: 1.5,
-        color: 'D',
-        clarity: 'VS1'
-    },
-    { 
-        id: 2, 
-        name: 'Diamond Necklace', 
-        price: 2000,
-        image: '/assets/jewelry/jewelry_01.png',
-        description: 'Elegant diamond necklace with platinum chain',
-        carat: 2.0,
-        color: 'E',
-        clarity: 'VVS2'
-    },
-    // 添加更多商品...
-];
-
 const Store = ({ userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [priceRange, setPriceRange] = useState([0, 5000]);
+    const [priceRange, setPriceRange] = useState([0, 30000]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // 获取珠宝数据
+    useEffect(() => {
+        const fetchJewelries = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/jewelries/all');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch jewelries');
+                }
+                const data = await response.json();
+                console.log(data)
+                const jewelriesArray = Array.isArray(data) ? data : data.jewelries || [];
+                setProducts(jewelriesArray);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching jewelries:', error);
+                setError('Failed to load products');
+                setLoading(false);
+            }
+        };
+
+        fetchJewelries();
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -54,16 +56,23 @@ const Store = ({ userType }) => {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = storeData.filter((product) => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredProducts = Array.isArray(products) ? products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
-        return matchesSearch && matchesPrice;
-    });
+        return matchesPrice;
+    }) : [];
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
         <div className="container">
             <div className="store-header">
-                <h2>Diamond Store </h2>
+                <h2>Diamond Store</h2>
                 <p>Find your perfect diamond jewelry</p>
             </div>
             
@@ -93,7 +102,7 @@ const Store = ({ userType }) => {
                         <input
                             type="range"
                             min="0"
-                            max="5000"
+                            max="30000"
                             value={priceRange[1]}
                             onChange={handlePriceChange}
                             className="price-range"
@@ -105,15 +114,15 @@ const Store = ({ userType }) => {
             <div className="collection-grid">
                 {filteredProducts.map((product) => (
                     <div 
-                        key={product.id} 
+                        key={product.jewelryId} 
                         className="collection-card"
                         onClick={() => handleProductClick(product)}
                     >
                         <div className="collection-image">
-                            <img src={product.image} alt={product.name} />
+                            <img src={product.image} alt={product.jewelryName} />
                         </div>
                         <div className="collection-info">
-                            <h3>{product.name}</h3>
+                            <h3>{product.jewelryName}</h3>
                             <p className="collection-description">{product.description}</p>
                             <div className="collection-specs">
                                 <span>Carat: {product.carat}</span>
