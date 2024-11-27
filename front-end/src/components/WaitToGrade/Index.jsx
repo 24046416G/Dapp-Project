@@ -1,49 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/waitToGrade.css';
 import WaitToGradeDetailModal from './WaitToGradeDetailModal.jsx';
-
-const waitingDiamondsData = [
-    {
-        id: 1,
-        mineralType: 'Cut Diamond',
-        batchNumber: 'CUT-2024-001',
-        fromCompany: 'ABC Cutting Corp',
-        receivedDate: '2024-03-15',
-        cuttingDate: '2024-03-10',
-        weight: 2.5,
-        polishingTech: 'Traditional',
-        cuttingTech: 'Laser',
-        status: 'Pending',
-        miningInfo: {
-            company: 'DeBeers Mining Corp',
-            date: '2024-02-15',
-            position: 'S 28°44′46″ E 24°46′46″'
-        }
-    },
-    {
-        id: 2,
-        mineralType: 'Cut Diamond',
-        batchNumber: 'CUT-2024-002',
-        fromCompany: 'XYZ Cutting Corp',
-        receivedDate: '2024-03-16',
-        cuttingDate: '2024-03-12',
-        weight: 1.8,
-        polishingTech: 'Modern',
-        cuttingTech: 'Mechanical',
-        status: 'Pending',
-        miningInfo: {
-            company: 'ALROSA',
-            date: '2024-02-20',
-            position: 'N 65°16′12″ E 112°19′48″'
-        }
-    }
-];
 
 const WaitToGrade = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('date');
     const [selectedDiamond, setSelectedDiamond] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [waitingDiamonds, setWaitingDiamonds] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchDiamonds = async () => {
+            try {
+                // 获取当前登录用户信息
+                const userStr = localStorage.getItem('user');
+                if (!userStr) {
+                    throw new Error('User not found');
+                }
+                const user = JSON.parse(userStr);
+                console.log('Current user:', user);
+
+                // 获取所有钻石
+                const response = await fetch('http://localhost:3000/diamonds/all/diamonds', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch diamonds');
+                }
+
+                const data = await response.json();
+                console.log('Fetched diamonds:', data);
+
+                // 过滤出需要评级的钻石（状态为GRADED且没有评级和图片信息）
+                const diamondsToGrade = data.filter(diamond => 
+                    diamond.status === 'GRADED' && 
+                    (!diamond.metadata.grading || !diamond.metadata.images)
+                );
+
+                console.log('Filtered diamonds:', diamondsToGrade);
+                setWaitingDiamonds(diamondsToGrade);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching diamonds:', error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchDiamonds();
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -58,27 +69,70 @@ const WaitToGrade = () => {
         setIsDetailModalOpen(true);
     };
 
-    const startGrading = (diamond) => {
-        // 这里添加开始评级的逻辑
-        console.log(`Starting grading process for diamond ${diamond.batchNumber}`);
-        alert(`Started grading process for ${diamond.batchNumber}`);
+    const startGrading = async (diamond) => {
+        try {
+            // 获取当前用户信息
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                throw new Error('User not found');
+            }
+            const user = JSON.parse(userStr);
+
+            // 更新钻石的评级信息
+            const response = await fetch(`http://localhost:3000/diamonds/${diamond._id}/grade`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: user.id,
+                    grading: 'In Progress'  // 初始评级状态
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to start grading process');
+            }
+
+            // 刷新钻石列表
+            const updatedResponse = await fetch('http://localhost:3000/diamonds/all/diamonds');
+            const updatedData = await updatedResponse.json();
+            const updatedDiamondsToGrade = updatedData.filter(d => 
+                d.status === 'GRADED' && 
+                (!d.metadata.grading || !d.metadata.images)
+            );
+            setWaitingDiamonds(updatedDiamondsToGrade);
+
+            alert(`Started grading process for ${diamond.diamondId}`);
+        } catch (error) {
+            console.error('Error starting grading process:', error);
+            alert('Failed to start grading process: ' + error.message);
+        }
     };
 
-    const filteredDiamonds = waitingDiamondsData
+    const filteredDiamonds = waitingDiamonds
         .filter((diamond) => {
-            return diamond.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                   diamond.fromCompany.toLowerCase().includes(searchTerm.toLowerCase());
+            return diamond.diamondId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                   (diamond.metadata.origin && diamond.metadata.origin.toLowerCase().includes(searchTerm.toLowerCase()));
         })
         .sort((a, b) => {
             switch (sortBy) {
                 case 'date':
-                    return new Date(b.receivedDate) - new Date(a.receivedDate);
+                    return new Date(b.createdAt) - new Date(a.createdAt);
                 case 'weight':
-                    return b.weight - a.weight;
+                    return (b.metadata.carat || 0) - (a.metadata.carat || 0);
                 default:
                     return 0;
             }
         });
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">Error: {error}</div>;
+    }
 
     return (
         <div className="wait-to-grade-container">
@@ -115,14 +169,14 @@ const WaitToGrade = () => {
             <div className="diamonds-grid">
                 {filteredDiamonds.map((diamond) => (
                     <div 
-                        key={diamond.id} 
+                        key={diamond._id} 
                         className="diamond-card"
                         onClick={() => handleDiamondClick(diamond)}
                     >
                         <div className="diamond-main-info">
                             <div>
-                                <h3>{diamond.mineralType}</h3>
-                                <p className="batch-number">{diamond.batchNumber}</p>
+                                <h3>{diamond.diamondType || 'Diamond'}</h3>
+                                <p className="batch-number">{diamond.diamondId}</p>
                             </div>
                             <span className="status-badge pending">
                                 {diamond.status}
@@ -132,23 +186,25 @@ const WaitToGrade = () => {
                         <div className="diamond-details">
                             <div className="detail-row">
                                 <span>From Company:</span>
-                                <span>{diamond.fromCompany}</span>
+                                <span>{diamond.certificates?.cuttingCertificate?.companyId?.companyName || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
-                                <span>Received Date:</span>
-                                <span>{new Date(diamond.receivedDate).toLocaleDateString()}</span>
+                                <span>Cutting Date:</span>
+                                <span>{diamond.certificates?.cuttingCertificate?.timestamp ? 
+                                    new Date(diamond.certificates.cuttingCertificate.timestamp).toLocaleDateString() : 
+                                    'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Weight:</span>
-                                <span>{diamond.weight} carats</span>
+                                <span>{diamond.metadata?.carat || 'N/A'} carats</span>
                             </div>
                             <div className="detail-row">
-                                <span>Cutting Tech:</span>
-                                <span>{diamond.cuttingTech}</span>
+                                <span>Cut:</span>
+                                <span>{diamond.metadata?.cut || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
-                                <span>Polishing Tech:</span>
-                                <span>{diamond.polishingTech}</span>
+                                <span>Polish:</span>
+                                <span>{diamond.metadata?.polish || 'N/A'}</span>
                             </div>
                         </div>
 
