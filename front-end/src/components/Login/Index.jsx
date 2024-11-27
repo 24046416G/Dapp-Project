@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { USER_TYPES } from '../../constants/userTypes.js';
+import Button from '../Common/Button/Index';
 import '../../css/login.css';
 
 const Login = ({ onLogin }) => {
@@ -157,9 +158,12 @@ const Login = ({ onLogin }) => {
                         />
                     </div>
                 )}
-                <button onClick={handleSubmit} className="login-button">
+                <Button 
+                    onClick={handleSubmit} 
+                    className="login-button"
+                >
                     {isLogin ? 'Login' : 'Register'}
-                </button>
+                </Button>
                 <p className="switch-mode" onClick={() => setIsLogin(!isLogin)}>
                     {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
                 </p>

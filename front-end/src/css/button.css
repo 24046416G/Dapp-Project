@@ -1,0 +1,17 @@
+.common-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.common-button.primary {
+    background-color: #318bea;
+    color: white;
+}
+
+.common-button.primary:hover {
+    background-color: #195596;
+}
