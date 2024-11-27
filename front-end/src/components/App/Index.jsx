@@ -44,7 +44,7 @@ function App() {
                                 <Sidebar userType={userType} />
                                 <div style={{ marginLeft: '250px', width: 'calc(100% - 250px)' }}>
                                     <Routes>
-                                        <Route path="/personal" element={<PersonalCenter />} />
+                                        <Route path="/personal" element={<PersonalCenter userType={userType} />} />
                                         <Route path="/store" element={<Store userType={userType} />} />
                                         <Route path="/inventory" element={<Inventory />} />
                                         <Route path="/record" element={<Record userType={userType} />} />

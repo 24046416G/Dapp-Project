@@ -195,7 +195,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType }) => {
                                 </div>
                             </div>
                         ))}
-                        
                         <div className="modal-footer">
                             <Button className="buy-button" type="primary"> Buy Now </Button>
                         </div>
