@@ -5,63 +5,83 @@ import '../../css/inventory.css';
 const productsData = [
     { 
         id: 1, 
-        name: 'Elegant Solitaire Diamond Ring', 
-        price: 5999,
-        description: '1.2 Carat Round Brilliant Cut Diamond in 18K White Gold Setting'
+        name: 'Round Brilliant Diamond', 
+        price: 12999,
+        description: '2.1 Carat D Color VVS1 Clarity Excellent Cut',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.1,
+            color: 'D',
+            clarity: 'VVS1',
+            cut: 'Excellent',
+            polish: 'Excellent',
+            symmetry: 'Excellent',
+            origin: 'South Africa'
+        }
     },
     { 
         id: 2, 
-        name: 'Sapphire Halo Pendant', 
-        price: 3499,
-        description: 'Royal Blue Sapphire with Diamond Halo in 18K White Gold'
+        name: 'Oval Cut Diamond', 
+        price: 15499,
+        description: '2.5 Carat E Color VS1 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.5,
+            color: 'E',
+            clarity: 'VS1',
+            cut: 'Very Good',
+            polish: 'Excellent',
+            symmetry: 'Very Good',
+            origin: 'Botswana'
+        }
     },
     { 
         id: 3, 
-        name: 'Vintage Diamond Earrings', 
-        price: 4299,
-        description: 'Art Deco Style Diamond Drop Earrings in Platinum'
+        name: 'Princess Cut Diamond', 
+        price: 8999,
+        description: '1.5 Carat F Color VS2 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 1.5,
+            color: 'F',
+            clarity: 'VS2',
+            cut: 'Excellent',
+            polish: 'Very Good',
+            symmetry: 'Excellent',
+            origin: 'Canada'
+        }
     },
     { 
         id: 4, 
-        name: 'Three-Stone Diamond Ring', 
-        price: 7899,
-        description: 'Trilogy Ring with Center 1.5ct Diamond in 18K Yellow Gold'
+        name: 'Emerald Cut Diamond', 
+        price: 18999,
+        description: '3.0 Carat G Color VVS2 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 3.0,
+            color: 'G',
+            clarity: 'VVS2',
+            cut: 'Excellent',
+            polish: 'Excellent',
+            symmetry: 'Excellent',
+            origin: 'Russia'
+        }
     },
     { 
         id: 5, 
-        name: 'Diamond Tennis Bracelet', 
-        price: 8999,
-        description: '5.0 Carat Total Weight Diamond Bracelet in 14K White Gold'
-    },
-    { 
-        id: 6, 
-        name: 'Emerald Cut Diamond Necklace', 
-        price: 6599,
-        description: 'Emerald Cut Diamond Solitaire Pendant with 18" Chain'
-    },
-    { 
-        id: 7, 
-        name: 'Princess Cut Diamond Ring', 
-        price: 4799,
-        description: '1.0 Carat Princess Cut Diamond with Channel Set Band'
-    },
-    { 
-        id: 8, 
-        name: 'Diamond Eternity Band', 
-        price: 3299,
-        description: 'Full Eternity Ring with Round Brilliant Diamonds'
-    },
-    { 
-        id: 9, 
-        name: 'Oval Diamond Engagement Ring', 
-        price: 9299,
-        description: '2.0 Carat Oval Diamond with Pave Diamond Band'
-    },
-    { 
-        id: 10, 
-        name: 'Diamond Cluster Earrings', 
-        price: 2899,
-        description: 'Flower Design Diamond Cluster Studs in 14K White Gold'
+        name: 'Cushion Cut Diamond', 
+        price: 11499,
+        description: '2.0 Carat D Color VS1 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.0,
+            color: 'D',
+            clarity: 'VS1',
+            cut: 'Very Good',
+            polish: 'Excellent',
+            symmetry: 'Very Good',
+            origin: 'Australia'
+        }
     }
 ];
 
@@ -299,7 +319,9 @@ const Inventory = () => {
 
     return (
         <div>
-            <h2>Diamond Inventory</h2>
+            <div className="inventory-header">
+                <h2>Diamond Inventory</h2>
+            </div>
             <input
                 type="text"
                 placeholder="Search diamonds..."
@@ -317,8 +339,16 @@ const Inventory = () => {
                                 onChange={() => handleCheckboxChange(product.id)}
                             />
                             <h3>{product.name}</h3>
-                            <p>Price: ${product.price}</p>
+                            <p className="price">Price: ${product.price.toLocaleString()}</p>
+                            <div className="diamond-specs">
+                                <p><strong>Carat:</strong> {product.metadata.carat}</p>
+                                <p><strong>Color:</strong> {product.metadata.color}</p>
+                                <p><strong>Clarity:</strong> {product.metadata.clarity}</p>
+                                <p><strong>Cut:</strong> {product.metadata.cut}</p>
+                                <p><strong>Origin:</strong> {product.metadata.origin}</p>
+                            </div>
                             <p className="description">{product.description}</p>
+                            <span className="status-badge">{product.status}</span>
                         </div>
                     ))}
                 </div>

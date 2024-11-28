@@ -127,7 +127,6 @@ const RecordCard = ({ record, onClick, userType }) => {
         <div className="record-card" onClick={() => onClick(record)}>
             <div className="card-header">
                 <h3>{record.type} Record</h3>
-                <span className="record-date">{new Date(record.date).toLocaleDateString()}</span>
             </div>
             {renderContent()}
         </div>

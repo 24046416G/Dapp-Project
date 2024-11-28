@@ -78,16 +78,16 @@
     margin-top: 4px;
 }
 
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.status-badge.transferred {
-    background-color: #3498db;
+.collection-card .status-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #4a90e2;
     color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 500;
 }
 
 .record-details {
