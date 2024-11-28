@@ -150,3 +150,25 @@
 .sidebar-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+.logout-container button.logout-link {
+    width: 100%;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.logout-container button.logout-link:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.logout-container button.logout-link .sidebar-icon {
+    font-size: 20px;
+}

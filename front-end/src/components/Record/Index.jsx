@@ -145,8 +145,9 @@ const Record = ({ userType }) => {
             
             <div className="data-grid">
                 {records.map((record) => (
-                    <div key={record.id} className="data-grid-item">
+                    <div className="data-grid-item">
                         <RecordCard 
+                            key={record.id}
                             userType={userType}
                             record={record}
                             onClick={handleRecordClick}
