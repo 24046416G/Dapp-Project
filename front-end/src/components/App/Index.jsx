@@ -11,6 +11,7 @@ import BuyRawStones from '../BuyRawStones/Index.jsx';
 import MiningHistory from '../MiningHistory/Index.jsx';
 import WaitToGrade from '../WaitToGrade/Index.jsx';
 import JewelryInventory from '../JewelryInventory/Index.jsx';
+import Collection from '../Collection/Index.jsx';
 import { USER_TYPES, USER_ROUTES } from '../../constants/userTypes.js';
 
 function AppContent() {
@@ -66,6 +67,7 @@ function AppContent() {
                                     <Route path="/wait-to-grade" element={<WaitToGrade />} />
                                     <Route path="/wallet" element={<BuyRawStones />} />
                                     <Route path="/jewelry-inventory" element={<JewelryInventory />} />
+                                    <Route path="/collection" element={<Collection />} />
                                 </Routes>
                             </div>  
                         </div>

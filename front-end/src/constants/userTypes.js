@@ -45,8 +45,8 @@ export const USER_ROUTES = {
             icon: 'FaGem'
         },
         {
-            path: '/inventory',
-            name: 'Diamond',
+            path: '/collection',
+            name: 'Inventory',
             icon: 'FaBoxes'
         },
         {
