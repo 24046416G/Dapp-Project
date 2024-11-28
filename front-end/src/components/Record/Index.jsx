@@ -5,6 +5,7 @@ import Button from '../Common/Button/Index.jsx';
 import AddRecordModal from '../Common/AddRecordModal/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/recordCard.css';
+import '../../css/record.css';
 
 const Record = ({ userType }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,19 +23,9 @@ const Record = ({ userType }) => {
                     throw new Error('Failed to fetch records');
                 }
                 const data = await response.json();
-                
-                // 从钻石数据中提取历史记录
-                const allRecords = data.flatMap(diamond => 
-                    diamond.history.map(record => ({
-                        ...record,
-                        diamondId: diamond.diamondId,
-                        id: `${diamond._id}-${record.date}`,  // 创建唯一ID
-                        metadata: diamond.metadata
-                    }))
-                );
 
-                setRecords(allRecords);
-                console.log('allRecords',allRecords);
+                setRecords(data);
+                console.log('records',records);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching records:', error);
@@ -47,6 +38,7 @@ const Record = ({ userType }) => {
     }, []);
 
     const renderHeader = () => {
+        console.log('userType', userType);
         switch(userType) {
             case USER_TYPES.JEWELRY_MAKER:
                 return {
@@ -67,6 +59,11 @@ const Record = ({ userType }) => {
                 return {
                     title: "Purchase Records",
                     description: "View your jewelry purchase history"
+                };
+            case USER_TYPES.MINING_COMPANY:
+                return {
+                    title: "Mining Records",
+                    description: "View your mining history"
                 };
             default:
                 return {
@@ -150,6 +147,7 @@ const Record = ({ userType }) => {
                 {records.map((record) => (
                     <div key={record.id} className="data-grid-item">
                         <RecordCard 
+                            userType={userType}
                             record={record}
                             onClick={handleRecordClick}
                         />
