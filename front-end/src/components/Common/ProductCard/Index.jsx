@@ -42,14 +42,14 @@ const ProductCard = ({ product, onClick, userType }) => {
                     <div className="card-body">
                         {product.image ? (
                             <img 
-                                src={product.image}
+                                src={"assets/jewelry/jewelry_01.png"}
                                 alt={product.name}
                                 className="product-image"
                             />
                         ) : (
                             <div className="no-image">No Image Available</div>
                         )}
-                        <p className="description">{product.description}</p>
+                        <p className="description">{product.description}Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
                     </div>
                 </>
             );
