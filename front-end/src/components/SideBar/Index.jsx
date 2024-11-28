@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     FaChartLine, FaBoxes, FaUsers, FaCog, 
     FaGem, FaUser, FaHammer, FaShoppingCart,

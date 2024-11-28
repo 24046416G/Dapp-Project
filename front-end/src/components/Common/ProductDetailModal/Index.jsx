@@ -16,7 +16,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
     };
 
     const renderContent = () => {
-        if (userType === USER_TYPES.JEWELRY_MAKER) {
+        if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
             const diamond = product.diamonds[0];
             return (
                 <>
@@ -94,6 +94,18 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                                     <span>Grading:</span>
                                     <span>{diamond.certificates.gradingCertificate.status}</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="info-section">
+                            <h3>History</h3>
+                            <div className="detail-grid">
+                                {product.history.map((history, index) => (
+                                    <div key={index} className="detail-item">
+                                        <span>Status:</span>
+                                        <span>{history.status}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>

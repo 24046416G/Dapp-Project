@@ -21,7 +21,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Cutting Store',
+            name: 'Diamond Store',
             icon: 'FaStore'
         }
     ],
@@ -36,11 +36,6 @@ export const USER_ROUTES = {
             name: 'Mining History',
             icon: 'FaHistory'
         },
-        {
-            path: '/store',
-            name: 'Miner Store',
-            icon: 'FaStore'
-        }
 
     ],
     [USER_TYPES.JEWELRY_MAKER]: [
@@ -85,7 +80,7 @@ export const USER_ROUTES = {
         },
         {
             path: '/store',
-            name: 'Grading Store',
+            name: 'Diamond Store',
             icon: 'FaStore'
         }
     ]

@@ -1,41 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/availableStones.css';
 import CuttingModal from './CuttingModal.jsx';
-
-// 模拟可用原石数据
-const availableStonesData = [
-    {
-        id: 1,
-        batchNumber: 'RAW-2024-001',
-        mineralType: 'Diamond',
-        weight: 3.5,
-        quality: 'High',
-        miningCompany: 'DeBeers Mining Corp',
-        miningTime: '2024-02-15',
-        miningPosition: 'S 25°52′48″ E 25°38′24″ (Jwaneng Mine)',
-        price: 15000,
-        status: 'Available',
-        cuttingStatus: 'Confirmed'
-    },
-    {
-        id: 2,
-        batchNumber: 'RAW-2024-002',
-        mineralType: 'Diamond',
-        weight: 2.8,
-        quality: 'Medium',
-        miningCompany: 'ALROSA',
-        miningTime: '2024-02-20',
-        miningPosition: 'N 65°16′12″ E 112°19′48″ (Mir Mine)',
-        price: 12000,
-        status: 'Available',
-        cuttingStatus: 'Pending'
-    }
-];
 
 const AvailableStones = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStone, setSelectedStone] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [availableStones, setAvailableStones] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchStones = async () => {
+            try {
+                // 获取当前登录用户信息
+                const userStr = localStorage.getItem('user');
+                if (!userStr) {
+                    throw new Error('User not found');
+                }
+                const user = JSON.parse(userStr);
+                console.log('Current user:', user);
+
+                // 获取所有钻石
+                const response = await fetch('http://localhost:3000/diamonds/all/diamonds', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch diamonds');
+                }
+
+                const data = await response.json();
+                console.log('Fetched diamonds:', data);
+
+                // 过滤出需要切割的钻石（状态为CUT且没有切割和抛光信息）
+                const stonesToCut = data.filter(diamond => 
+                    diamond.status === 'CUT' && 
+                    (!diamond.metadata.cut || !diamond.metadata.polish)
+                );
+
+                console.log('Filtered stones:', stonesToCut);
+                setAvailableStones(stonesToCut);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching stones:', error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchStones();
+    }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -46,17 +64,60 @@ const AvailableStones = () => {
         setIsModalOpen(true);
     };
 
-    const handleCuttingSubmit = (formData) => {
-        // 这里处理切割表单提交
-        console.log('Cutting process started for stone:', selectedStone);
-        console.log('Form data:', formData);
-        // 可以添加API调用等逻辑
+    const handleCuttingSubmit = async (formData) => {
+        try {
+            // 获取当前用户信息
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                throw new Error('User not found');
+            }
+            const user = JSON.parse(userStr);
+
+            // 更新钻石的切割信息
+            const response = await fetch(`http://localhost:3000/diamonds/${selectedStone._id}/cut`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: user.id,
+                    cut: formData.cuttingTechnology,
+                    polish: formData.polishingTechnology
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update diamond cutting information');
+            }
+
+            // 刷新钻石列表
+            const updatedResponse = await fetch('http://localhost:3000/diamonds/all/diamonds');
+            const updatedData = await updatedResponse.json();
+            const updatedStonesToCut = updatedData.filter(diamond => 
+                diamond.status === 'CUT' && 
+                (!diamond.metadata.cut || !diamond.metadata.polish)
+            );
+            setAvailableStones(updatedStonesToCut);
+
+            alert('Cutting process started successfully!');
+        } catch (error) {
+            console.error('Error updating cutting information:', error);
+            alert('Failed to start cutting process: ' + error.message);
+        }
     };
 
-    const filteredStones = availableStonesData.filter((stone) =>
-        stone.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        stone.miningPosition.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredStones = availableStones.filter((stone) =>
+        stone.diamondId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (stone.metadata.origin && stone.metadata.origin.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">Error: {error}</div>;
+    }
 
     return (
         <div className="available-stones-container">
@@ -81,40 +142,42 @@ const AvailableStones = () => {
 
             <div className="stones-grid">
                 {filteredStones.map((stone) => (
-                    <div key={stone.id} className="stone-card">
+                    <div key={stone._id} className="stone-card">
                         <div className="stone-status">
-                            <span className={`status-badge ${stone.cuttingStatus.toLowerCase().replace(/ /g, '-')}`}>
-                                {stone.cuttingStatus}
+                            <span className={`status-badge ${stone.certificates?.cuttingCertificate?.status?.toLowerCase() || 'pending'}`}>
+                                {stone.certificates?.cuttingCertificate?.status || 'Pending'}
                             </span>
                         </div>
                         <div className="stone-header">
-                            <h3>{stone.mineralType}</h3>
-                            <span className="batch-number">{stone.batchNumber}</span>
+                            <h3>{stone.diamondType || 'Diamond'}</h3>
+                            <span className="batch-number">{stone.diamondId}</span>
                         </div>
                         <div className="stone-details">
                             <div className="detail-row">
                                 <span>Weight:</span>
-                                <span>{stone.weight} carats</span>
+                                <span>{stone.metadata?.carat || 'N/A'} carats</span>
                             </div>
                             <div className="detail-row">
                                 <span>Quality:</span>
-                                <span>{stone.quality}</span>
+                                <span>{stone.metadata?.quality || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Mining Company:</span>
-                                <span>{stone.miningCompany}</span>
+                                <span>{stone.certificates?.miningCertificate?.companyId?.companyName || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Mining Time:</span>
-                                <span>{new Date(stone.miningTime).toLocaleDateString()}</span>
+                                <span>{stone.certificates?.miningCertificate?.timestamp ? 
+                                    new Date(stone.certificates.miningCertificate.timestamp).toLocaleDateString() : 
+                                    'N/A'}</span>
                             </div>
                             <div className="detail-row">
-                                <span>Mining Position:</span>
-                                <span>{stone.miningPosition}</span>
+                                <span>Origin:</span>
+                                <span>{stone.metadata?.origin || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Price:</span>
-                                <span>${stone.price.toLocaleString()}</span>
+                                <span>${stone.price?.toLocaleString() || 'N/A'}</span>
                             </div>
                         </div>
                         <div className="stone-actions">

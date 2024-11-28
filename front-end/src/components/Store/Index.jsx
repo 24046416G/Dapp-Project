@@ -5,6 +5,7 @@ import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
+import '../../css/productCard.css';
 import '../../css/store.css';
 
 const Store = ({ userType }) => {
@@ -22,22 +23,21 @@ const Store = ({ userType }) => {
             try {
                 let endpoint;
                 console.log('userType',userType);
-                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
                     endpoint = 'http://localhost:3000/diamonds/all/diamonds';
                 } else if (userType === USER_TYPES.CUSTOMER) {
                     endpoint = 'http://localhost:3000/jewelries/all';
                 } else {
                     endpoint = '';
                 }
-                console.log('endpoint',endpoint);
                 const response = await fetch(endpoint);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
                 const data = await response.json();
                 console.log('data',data);
-                
-                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                console.log('userType',userType);
+                if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
                     const formattedData = data.map(diamond => ({
                         id: diamond._id,
                         name: `Diamond ${diamond.diamondId}`,
@@ -50,11 +50,14 @@ const Store = ({ userType }) => {
                             certificates: diamond.certificates
                         }],
                         currentOwner: diamond.currentOwner,
-                        history: diamond.history
+                        history: diamond.history,
+                        status: diamond.status
                     }));
+                    console.log('formattedData 1',formattedData);
                     setProducts(formattedData);
                 } else {
                     const jewelriesArray = Array.isArray(data) ? data : data.jewelries || [];
+                    console.log('jewelriesArray',jewelriesArray);
                     setProducts(jewelriesArray);
                 }
                 setLoading(false);
@@ -85,15 +88,33 @@ const Store = ({ userType }) => {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = Array.isArray(products) ? products.filter((product) => {
+    const filteredProducts = products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
-        const matchesSearch = userType === USER_TYPES.JEWELER ?
-            (product.diamonds[0]?.diamondId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-             product.diamonds[0]?.metadata?.carat?.toString().includes(searchTerm)) :
-            product.name.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        return matchesPrice && matchesSearch;
-    }) : [];
+        let matchedStatus = false;
+        console.log('productstatus',product.status);
+        switch(userType) {
+            case USER_TYPES.JEWELRY_MAKER:
+                // 珠宝商只能看到经过切割和抛光的钻石
+                matchedStatus = product.status == "GRADED"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            case USER_TYPES.CUTTING_COMPANY:
+                // 切割公司只能看到未切割的钻石
+                matchedStatus = product.status == "MINED"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            case USER_TYPES.GRADING_LAB:
+                // 评级机构只能看到已切割但未评级的钻石
+                matchedStatus = product.status == "CUT"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            default:
+                return true;
+        }
+    });
 
     console.log('Filtered products:', filteredProducts);
 
@@ -110,7 +131,7 @@ const Store = ({ userType }) => {
             <div className="store-header">
                 <h2>
                     {userType === USER_TYPES.CUSTOMER ? 'Jewelry Market' : 
-                     userType === USER_TYPES.JEWELRY_MAKER ? 'Diamond Market' : 
+                     userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY ? 'Diamond Market' : 
                      'Store'}
                 </h2>
                 <p>
@@ -163,8 +184,9 @@ const Store = ({ userType }) => {
 
             <div className="data-grid">
                 {filteredProducts.map((product) => (
-                    <div className="data-grid-item" key={product.id || product.name}>
+                    <div key={product.id} className="data-grid-item">
                         <ProductCard
+                            key={product.id}
                             product={product}
                             onClick={handleProductClick}
                             userType={userType}

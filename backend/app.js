@@ -23,7 +23,12 @@ mongoose.connect(process.env.MONGODB_URI)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8080', // 允许前端域名
+    credentials: true, // 允许携带凭证
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
 app.use(logger('dev'));
 app.use(express.json({limit: '10mb'}));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
