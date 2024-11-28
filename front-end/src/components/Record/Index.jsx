@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import RecordCard from '../Common/RecordCard/Index.jsx';
 import RecordDetailModal from '../Common/RecordDetailModal/Index.jsx';
+import Button from '../Common/Button/Index.jsx';
+import AddRecordModal from '../Common/AddRecordModal/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/recordCard.css';
+import '../../css/record.css';
 
 const Record = ({ userType }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,6 +13,7 @@ const Record = ({ userType }) => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchRecords = async () => {
@@ -19,19 +23,9 @@ const Record = ({ userType }) => {
                     throw new Error('Failed to fetch records');
                 }
                 const data = await response.json();
-                
-                // 从钻石数据中提取历史记录
-                const allRecords = data.flatMap(diamond => 
-                    diamond.history.map(record => ({
-                        ...record,
-                        diamondId: diamond.diamondId,
-                        id: `${diamond._id}-${record.date}`,  // 创建唯一ID
-                        metadata: diamond.metadata
-                    }))
-                );
 
-                setRecords(allRecords);
-                console.log('allRecords',allRecords);
+                setRecords(data);
+                console.log('records',records);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching records:', error);
@@ -44,6 +38,7 @@ const Record = ({ userType }) => {
     }, []);
 
     const renderHeader = () => {
+        console.log('userType', userType);
         switch(userType) {
             case USER_TYPES.JEWELRY_MAKER:
                 return {
@@ -65,6 +60,11 @@ const Record = ({ userType }) => {
                     title: "Purchase Records",
                     description: "View your jewelry purchase history"
                 };
+            case USER_TYPES.MINING_COMPANY:
+                return {
+                    title: "Mining Records",
+                    description: "View your mining history"
+                };
             default:
                 return {
                     title: "Transaction Records",
@@ -78,6 +78,44 @@ const Record = ({ userType }) => {
     const handleRecordClick = (record) => {
         setSelectedRecord(record);
         setIsModalOpen(true);
+    };
+
+    const handleAddRecord = () => {
+        setIsAddModalOpen(true);
+    };
+
+    const handleAddSubmit = async (formData) => {
+        try {
+            // 获取当前用户信息
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                throw new Error('User not found');
+            }
+            const user = JSON.parse(userStr);
+
+            // 发送请求到后端
+            const response = await fetch('http://localhost:3000/diamonds/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    userId: user.id
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add record');
+            }
+
+            // 刷新记录列表
+            fetchRecords();
+            alert('Record added successfully!');
+        } catch (error) {
+            console.error('Error adding record:', error);
+            alert('Failed to add record: ' + error.message);
+        }
     };
 
     if (loading) {
@@ -107,14 +145,26 @@ const Record = ({ userType }) => {
             
             <div className="data-grid">
                 {records.map((record) => (
-                    <div key={record.index} className="data-grid-item">
+                    <div key={record.id} className="data-grid-item">
                         <RecordCard 
+                            userType={userType}
                             record={record}
                             onClick={handleRecordClick}
                         />
                     </div>
                 ))}
             </div>
+
+            {userType === USER_TYPES.MINING_COMPANY && (
+                <div className="add-record-button-container">
+                    <Button 
+                        onClick={handleAddRecord}
+                        type="primary"
+                    >
+                        Add New Mining Record
+                    </Button>
+                </div>
+            )}
 
             {selectedRecord && (
                 <RecordDetailModal
@@ -123,6 +173,12 @@ const Record = ({ userType }) => {
                     onClose={() => setIsModalOpen(false)}
                 />
             )}
+
+            <AddRecordModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddSubmit}
+            />
         </div>
     );
 };

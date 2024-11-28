@@ -7,9 +7,18 @@
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     min-height: 250px;
+    width: 100%;
+    max-width: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.record-header {
+.record-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -20,6 +29,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.header-content > div:first-child {
+    flex: 1;
+}
+
+.header-stats {
+    flex-shrink: 0;
+    margin-left: 24px;
 }
 
 .header-content h2 {
@@ -70,7 +90,7 @@
 
 .data-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
     padding: 0;
@@ -86,6 +106,7 @@
     text-align: center;
     padding: 12px 24px;
     border-radius: 8px;
+    margin-right: 16px;
 }
 
 .stat-label {
@@ -98,4 +119,16 @@
     font-size: 24px;
     font-weight: 600;
     margin-top: 4px;
+}
+
+.add-record-button-container {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 100;
+}
+
+.add-record-button-container button {
+    padding: 12px 24px;
+    font-size: 16px;
 } 

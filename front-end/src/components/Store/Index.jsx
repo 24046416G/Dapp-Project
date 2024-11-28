@@ -30,7 +30,6 @@ const Store = ({ userType }) => {
                 } else {
                     endpoint = '';
                 }
-                console.log('endpoint',endpoint);
                 const response = await fetch(endpoint);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
@@ -51,12 +50,14 @@ const Store = ({ userType }) => {
                             certificates: diamond.certificates
                         }],
                         currentOwner: diamond.currentOwner,
-                        history: diamond.history
+                        history: diamond.history,
+                        status: diamond.status
                     }));
                     console.log('formattedData 1',formattedData);
                     setProducts(formattedData);
                 } else {
                     const jewelriesArray = Array.isArray(data) ? data : data.jewelries || [];
+                    console.log('jewelriesArray',jewelriesArray);
                     setProducts(jewelriesArray);
                 }
                 setLoading(false);
@@ -89,9 +90,30 @@ const Store = ({ userType }) => {
 
     const filteredProducts = products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
-        // const matchesHistory = product.history.length <= 3;
-        // return matchesPrice && matchesHistory;
-        return matchesPrice;
+        let matchedStatus = false;
+        console.log('productstatus',product.status);
+        switch(userType) {
+            case USER_TYPES.JEWELRY_MAKER:
+                // 珠宝商只能看到经过切割和抛光的钻石
+                matchedStatus = product.status == "GRADED"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            case USER_TYPES.CUTTING_COMPANY:
+                // 切割公司只能看到未切割的钻石
+                matchedStatus = product.status == "MINED"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            case USER_TYPES.GRADING_LAB:
+                // 评级机构只能看到已切割但未评级的钻石
+                matchedStatus = product.status == "CUT"
+                console.log('matchedStatus',matchedStatus);
+                return matchesPrice && matchedStatus
+
+            default:
+                return true;
+        }
     });
 
     console.log('Filtered products:', filteredProducts);
