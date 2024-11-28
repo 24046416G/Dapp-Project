@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 // 用户注册
 router.post('/register', async (req, res) => {
@@ -14,17 +13,13 @@ router.post('/register', async (req, res) => {
             companyId, 
             certificate, 
             customerName, 
-            customerId, 
-            balance,
-            privateKey,
-            publicKey,
-            walletAddress
+            customerId
         } = req.body;
 
         // 检查必填字段
-        if (!role || !password || !privateKey || !publicKey || !walletAddress) {
+        if (!role || !password) {
             return res.status(400).json({ 
-                message: "Role, password, privateKey, publicKey, and walletAddress are required" 
+                message: "Role and password are required" 
             });
         }
 
@@ -48,11 +43,7 @@ router.post('/register', async (req, res) => {
             companyId,
             certificate,
             customerName,
-            customerId,
-            balance: balance || 0,
-            privateKey,
-            publicKey,
-            walletAddress
+            customerId
         });
 
         // 保存用户
@@ -60,10 +51,8 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({
             message: "User registered successfully",
-            walletAddress: user.walletAddress,
             role: user.role,
-            userId: user._id,
-            balance: user.balance
+            userId: user._id
         });
     } catch (error) {
         console.error('Registration error:', error);
@@ -71,51 +60,52 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// 用户登录
-router.post('/login', async (req, res) => {
+// 新增：连接钱包
+router.patch('/:id/connect', async (req, res) => {
     try {
-        const { walletAddress, password } = req.body;
+        const { walletAddress, publicKey, balance } = req.body;
+        const userId = req.params.id;
 
-        const user = await User.findOne({ walletAddress });
-        if (!user) {
-            return res.status(401).json({ message: "Invalid credentials" });
+        // 验证必要字段
+        if (!walletAddress || !publicKey) {
+            return res.status(400).json({ 
+                message: "Wallet address and public key are required" 
+            });
         }
 
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
+        // 使用 MongoDB 的 _id 查找用户
+        const user = await User.findById(userId);
 
-        const token = jwt.sign(
-            { userId: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
-
-        res.json({ token, user: {
-            id: user._id,
-            role: user.role,
-            walletAddress: user.walletAddress
-        }});
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// 获取用户信息
-router.get('/profile', async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId)
-            .select('-password -privateKey')
-            .populate('ownedDiamonds')
-            .populate('ownedJewelries');
-        
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        res.json(user);
+        // 检查钱包地址是否已被使用
+        const existingWallet = await User.findOne({ walletAddress });
+        if (existingWallet && existingWallet._id.toString() !== user._id.toString()) {
+            return res.status(400).json({ message: "Wallet address already in use" });
+        }
+
+        // 更新用户信息
+        user.walletAddress = walletAddress;
+        user.publicKey = publicKey;
+        if (balance !== undefined) {
+            user.balance = balance;
+        }
+
+        await user.save();
+
+        res.json({
+            message: "Wallet connected successfully",
+            user: {
+                id: user._id,
+                role: user.role,
+                walletAddress: user.walletAddress,
+                balance: user.balance
+            }
+        });
     } catch (error) {
+        console.error('Wallet connection error:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -125,7 +115,7 @@ router.get('/all', async (req, res) => {
     try {
         // 排除敏感信息
         const users = await User.find()
-            .select('-password -privateKey')
+            .select('-password')
             .populate('ownedDiamonds')
             .populate('ownedJewelries');
         
@@ -133,6 +123,7 @@ router.get('/all', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
@@ -163,6 +154,7 @@ router.get('/:id', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
@@ -189,6 +181,7 @@ router.get('/role/:role', async (req, res) => {
             id: user._id,
             role: user.role,
             walletAddress: user.walletAddress,
+            publicKey: user.publicKey,
             companyName: user.companyName,
             companyId: user.companyId,
             customerName: user.customerName,
@@ -200,6 +193,73 @@ router.get('/role/:role', async (req, res) => {
         })));
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+// 用户登录
+router.post('/login', async (req, res) => {
+    try {
+        const { companyId, customerId, password } = req.body;
+
+        // 验证必要字段
+        if ((!companyId && !customerId) || !password) {
+            return res.status(400).json({ 
+                message: "Either companyId or customerId, and password are required" 
+            });
+        }
+
+        // 根据 companyId 或 customerId 查找用户
+        let user;
+        if (companyId) {
+            user = await User.findOne({ companyId });
+        } else if (customerId) {
+            user = await User.findOne({ customerId });
+        }
+
+        // 验证用户是否存在
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 验证密码
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 返回用户信息
+        res.json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                role: user.role,
+                companyId: user.companyId,
+                companyName: user.companyName,
+                customerId: user.customerId,
+                customerName: user.customerName
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+    }
+});
+
+// 用户登出
+router.post('/logout', (req, res) => {
+    try {
+        res.json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
 

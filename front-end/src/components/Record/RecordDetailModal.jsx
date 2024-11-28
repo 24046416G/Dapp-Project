@@ -14,52 +14,50 @@ const RecordDetailModal = ({ record, isOpen, onClose }) => {
                 <div className="modal-body">
                     <div className="modal-info">
                         <div className="info-section">
-                            <h3>Record Details</h3>
+                            <h3>Mining Information</h3>
                             <div className="detail-grid">
                                 <div className="detail-item">
-                                    <span>Batch Number:</span>
-                                    <span>{record.batchNumber}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Location:</span>
-                                    <span>{record.location}</span>
+                                    <span>Mining Company:</span>
+                                    <span>{record.miningCompany}</span>
                                 </div>
                                 <div className="detail-item">
                                     <span>Mining Date:</span>
-                                    <span>{new Date(record.mineDate).toLocaleDateString()}</span>
+                                    <span>{new Date(record.miningDate).toLocaleDateString()}</span>
                                 </div>
                                 <div className="detail-item">
-                                    <span>Status:</span>
-                                    <span>{record.status}</span>
+                                    <span>Mining Position:</span>
+                                    <span>{record.miningPosition}</span>
                                 </div>
                             </div>
                         </div>
                         <div className="info-section">
-                            <h3>Specifications</h3>
+                            <h3>Cutting Information</h3>
                             <div className="detail-grid">
+                                <div className="detail-item">
+                                    <span>Category:</span>
+                                    <span>{record.category}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span>Cutting Date:</span>
+                                    <span>{new Date(record.cuttingDate).toLocaleDateString()}</span>
+                                </div>
                                 <div className="detail-item">
                                     <span>Weight:</span>
                                     <span>{record.weight} carats</span>
                                 </div>
-                                <div className="detail-item">
-                                    <span>Quality:</span>
-                                    <span>{record.quality}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Color:</span>
-                                    <span>{record.color}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Clarity:</span>
-                                    <span>{record.clarity}</span>
-                                </div>
                             </div>
                         </div>
                         <div className="info-section">
-                            <h3>Location Details</h3>
-                            <div className="detail-item">
-                                <span>Coordinates:</span>
-                                <span>{record.coordinates}</span>
+                            <h3>Technical Specifications</h3>
+                            <div className="detail-grid">
+                                <div className="detail-item">
+                                    <span>Polishing Tech:</span>
+                                    <span>{record.polishingTech}</span>
+                                </div>
+                                <div className="detail-item">
+                                    <span>Cutting Tech:</span>
+                                    <span>{record.cuttingTech}</span>
+                                </div>
                             </div>
                         </div>
                         {record.notes && (

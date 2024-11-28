@@ -1,41 +1,72 @@
-import React, { useState } from 'react';
-import ProductDetailModal from './ProductDetailModal.jsx';
+import React, { useState, useEffect } from 'react';
+import ProductDetailModal from '../Common/ProductDetailModal/Index.jsx';
+import ProductCard from '../Common/ProductCard/Index.jsx';
+import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/layout.css';
 import '../../css/search.css';
 import '../../css/filter.css';
-import '../../css/card.css';
 import '../../css/store.css';
 
-const storeData = [
-    { 
-        id: 1, 
-        name: 'Diamond Ring', 
-        price: 1000,
-        image: '/assets/jewelry/jewelry_02.png',
-        description: 'Beautiful diamond ring with 18K gold band',
-        carat: 1.5,
-        color: 'D',
-        clarity: 'VS1'
-    },
-    { 
-        id: 2, 
-        name: 'Diamond Necklace', 
-        price: 2000,
-        image: '/assets/jewelry/jewelry_01.png',
-        description: 'Elegant diamond necklace with platinum chain',
-        carat: 2.0,
-        color: 'E',
-        clarity: 'VVS2'
-    },
-    // 添加更多商品...
-];
-
-const Store = () => {
+const Store = ({ userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [priceRange, setPriceRange] = useState([0, 5000]);
+    const [priceRange, setPriceRange] = useState([0, 30000]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let endpoint;
+                console.log('userType',userType);
+                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                    endpoint = 'http://localhost:3000/diamonds/all/diamonds';
+                } else if (userType === USER_TYPES.CUSTOMER) {
+                    endpoint = 'http://localhost:3000/jewelries/all';
+                } else {
+                    endpoint = '';
+                }
+                console.log('endpoint',endpoint);
+                const response = await fetch(endpoint);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+                console.log('data',data);
+                
+                if (userType === USER_TYPES.JEWELRY_MAKER) {
+                    const formattedData = data.map(diamond => ({
+                        id: diamond._id,
+                        name: `Diamond ${diamond.diamondId}`,
+                        price: diamond.price || 0,
+                        description: `${diamond.metadata.carat} Carat Diamond`,
+                        image: diamond.metadata.images,
+                        diamonds: [{
+                            diamondId: diamond.diamondId,
+                            metadata: diamond.metadata,
+                            certificates: diamond.certificates
+                        }],
+                        currentOwner: diamond.currentOwner,
+                        history: diamond.history
+                    }));
+                    setProducts(formattedData);
+                } else {
+                    const jewelriesArray = Array.isArray(data) ? data : data.jewelries || [];
+                    setProducts(jewelriesArray);
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('Failed to load data');
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [userType]);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -54,23 +85,49 @@ const Store = () => {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = storeData.filter((product) => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredProducts = Array.isArray(products) ? products.filter((product) => {
         const matchesPrice = product.price <= priceRange[1];
-        return matchesSearch && matchesPrice;
-    });
+        const matchesSearch = userType === USER_TYPES.JEWELER ?
+            (product.diamonds[0]?.diamondId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             product.diamonds[0]?.metadata?.carat?.toString().includes(searchTerm)) :
+            product.name.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return matchesPrice && matchesSearch;
+    }) : [];
+
+    console.log('Filtered products:', filteredProducts);
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
         <div className="container">
             <div className="store-header">
-                <h2>Diamond Store</h2>
-                <p>Find your perfect diamond jewelry</p>
+                <h2>
+                    {userType === USER_TYPES.CUSTOMER ? 'Jewelry Market' : 
+                     userType === USER_TYPES.JEWELRY_MAKER ? 'Diamond Market' : 
+                     'Store'}
+                </h2>
+                <p>
+                    {userType === USER_TYPES.CUSTOMER ? 'Find your perfect diamond jewelry' : 
+                     userType === USER_TYPES.JEWELRY_MAKER ? 'Choose your favorite diamonds' : 
+                     'description'}
+                </p>
             </div>
             
             <div className="store-filters">
                 <input
                     type="text"
-                    placeholder="Search products..."
+                    placeholder={userType === USER_TYPES.CUSTOMER ? 
+                        "Search by diamond ID or carat..." : 
+                        userType === USER_TYPES.JEWELRY_MAKER ? 
+                        "Search inventory..." : 
+                        "Search products..."}
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className="search-bar"
@@ -88,45 +145,30 @@ const Store = () => {
                         <option value="earrings">Earrings</option>
                     </select>
 
-                    <div className="price-filter">
-                        <span>Max Price: ${priceRange[1]}</span>
-                        <input
-                            type="range"
-                            min="0"
-                            max="5000"
-                            value={priceRange[1]}
-                            onChange={handlePriceChange}
-                            className="price-range"
-                        />
-                    </div>
+                    {userType !== USER_TYPES.COMPANY && (
+                        <div className="price-filter">
+                            <span>Max Price: ${priceRange[1]}</span>
+                            <input
+                                type="range"
+                                min="0"
+                                max="30000"
+                                value={priceRange[1]}
+                                onChange={handlePriceChange}
+                                className="price-range"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className="collection-grid">
+            <div className="data-grid">
                 {filteredProducts.map((product) => (
-                    <div 
-                        key={product.id} 
-                        className="collection-card"
-                        onClick={() => handleProductClick(product)}
-                    >
-                        <div className="collection-image">
-                            <img src={product.image} alt={product.name} />
-                        </div>
-                        <div className="collection-info">
-                            <h3>{product.name}</h3>
-                            <p className="collection-description">{product.description}</p>
-                            <div className="collection-specs">
-                                <span>Carat: {product.carat}</span>
-                                <span>Color: {product.color}</span>
-                                <span>Clarity: {product.clarity}</span>
-                            </div>
-                            <div className="collection-details">
-                                <div className="detail-row">
-                                    <span>Price:</span>
-                                    <span>${product.price}</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="data-grid-item" key={product.id || product.name}>
+                        <ProductCard
+                            product={product}
+                            onClick={handleProductClick}
+                            userType={userType}
+                        />
                     </div>
                 ))}
             </div>
@@ -136,6 +178,8 @@ const Store = () => {
                     product={selectedProduct}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                    userType={userType}
+                    showBuyButton={true}
                 />
             )}
         </div>

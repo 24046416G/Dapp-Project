@@ -1,17 +1,17 @@
 export const USER_TYPES = {
-    CUTTING: 'CUTTING',
-    GRADING: 'GRADING',
-    MINER: 'MINER',
-    JEWELER: 'JEWELER',
+    CUTTING_COMPANY: 'CUTTING_COMPANY',
+    JEWELRY_MAKER: 'JEWELRY_MAKER',
+    MINING_COMPANY: 'MINING_COMPANY',
+    GRADING_LAB: 'GRADING_LAB',
     CUSTOMER: 'CUSTOMER'
 };
 
 // 定义每种用户类型可以访问的路由
 export const USER_ROUTES = {
-    [USER_TYPES.CUTTING]: [
+    [USER_TYPES.CUTTING_COMPANY]: [
         {
             path: '/record',
-            name: 'Cutting Record',
+            name: 'Cut Record',
             icon: 'FaGem'
         },
         {
@@ -20,47 +20,73 @@ export const USER_ROUTES = {
             icon: 'FaRocketchat'
         },
         {
-            path: '/buy-raw-stones',
-            name: 'Buy Raw Stones',
-            icon: 'FaShoppingCart'
+            path: '/store',
+            name: 'Cutting Store',
+            icon: 'FaStore'
         }
     ],
-    [USER_TYPES.MINER]: [
+    [USER_TYPES.MINING_COMPANY]: [
         {
             path: '/record',
             name: 'Mining Record',
             icon: 'FaGem'
-        }
-    ],
-    [USER_TYPES.JEWELER]: [
+        },
+        {
+            path: '/mining-history',
+            name: 'Mining History',
+            icon: 'FaHistory'
+        },
         {
             path: '/store',
-            name: 'Diamond Store',
-            icon: 'FaHammer'
+            name: 'Miner Store',
+            icon: 'FaStore'
+        }
+
+    ],
+    [USER_TYPES.JEWELRY_MAKER]: [
+        {
+            path: '/jewelry-inventory',
+            name: 'Jewelry',
+            icon: 'FaGem'
         },
         {
             path: '/inventory',
-            name: 'Inventory',
+            name: 'Diamond',
             icon: 'FaBoxes'
         },
+        {
+            path: '/store',
+            name: 'Diamond Store',
+            icon: 'FaStore'
+        }
     ],
     [USER_TYPES.CUSTOMER]: [
         {
-            path: '/store',
-            name: 'Store',
-            icon: 'FaStore'
+            path: '/personal',
+            name: 'Customer Center',
+            icon: 'FaUser'
         },
         {
-            path: '/collections',
-            name: 'My Collections',
-            icon: 'FaGem'
-        },
+            path: '/store',
+            name: 'Customer Store',
+            icon: 'FaStore'
+        }
     ],
-    [USER_TYPES.GRADING]: [
+    [USER_TYPES.GRADING_LAB]: [
         {
             path: '/record',
             name: 'Grading Record',
             icon: 'FaGem'
         },
+        {
+            path: '/wait-to-grade',
+            name: 'Wait to Grade',
+            icon: 'FaHourglassHalf'
+        },
+        {
+            path: '/store',
+            name: 'Grading Store',
+            icon: 'FaStore'
+        }
     ]
 }; 
