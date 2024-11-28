@@ -126,7 +126,7 @@ const RecordCard = ({ record, onClick, userType }) => {
     return (
         <div className="record-card" onClick={() => onClick(record)}>
             <div className="card-header">
-                <h3>{record.type} Record</h3>
+                <h3>{userType} Record</h3>
             </div>
             {renderContent()}
         </div>
