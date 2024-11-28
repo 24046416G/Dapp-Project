@@ -1,19 +1,21 @@
 {
   "name": "smart-contracts",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "type": "module",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
+  "scripts": {
+    "test": "node test/caRegistration.test.js",
+    "deploy": "node scripts/deploy-ganache.js",
+    "generate-keys": "node scripts/generateCAKeys.js",
+    "test-registration": "node scripts/test-registration.js",
+    "test-query": "node scripts/test-query.js"
+  },
+  "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
-    "hardhat": "^2.22.16"
+    "ethers": "^6.11.1",
+    "hardhat": "^2.22.16",
+    "ipfs-http-client": "^60.0.1"
   }
 }
