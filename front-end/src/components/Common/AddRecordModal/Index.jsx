@@ -57,26 +57,19 @@ const AddRecordModal = ({ isOpen, onClose, userType }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitting form data for user type:", userType);
-        
-        // 数据类型转换
-        const parsedData = {
-            ...formData,
-            price: parseFloat(formData.price) || 0,
-            weight: parseFloat(formData.weight) || 0
-        };
-        
-        // 整理数据格式用于注册
+
         const submitData = {
             diamondData: {
-                id: parsedData.diamondId,
-                carat: parsedData.weight,  // 已转换为数字
-                color: parsedData.color,
-                clarity: parsedData.quality,
-                origin: parsedData.origin,
+                id: formData.diamondId,
+                carat: formData.weight,
+                color: formData.color,
+                clarity: formData.quality,
+                origin: formData.origin,
+                price: formData.price,
                 miningDate: new Date().toISOString()
             },
-            minerSignature: parsedData.minerSignature,
-            certificateIpfsHash: parsedData.certificateIpfsHash
+            minerSignature: formData.minerSignature,
+            certificateIpfsHash: formData.certificateIpfsHash
         };
 
         console.log("Formatted data for register:", submitData);
@@ -102,13 +95,13 @@ const AddRecordModal = ({ isOpen, onClose, userType }) => {
             const mineData = {
                 diamondId: submitData.diamondData.id,
                 diamondType: 'NATURAL',
-                currentOwner: 'TESTCurrentMiningOwner',
-                price: parsedData.price,  // 已转换为数字
+                currentOwner: '6745abc3e7833eee1ef7c997',
+                price: submitData.diamondData.price,
                 certificateHash: registerResult.data.diamondHash,
                 metadata: {
                     origin: submitData.diamondData.origin,
                     color: submitData.diamondData.color,
-                    carat: submitData.diamondData.carat  // 已转换为数字
+                    carat: submitData.diamondData.carat  
                 }
             };
 
