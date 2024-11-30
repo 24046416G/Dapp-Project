@@ -13,7 +13,8 @@ const __dirname = dirname(__filename);
 // 然后再定义 contractPath
 const contractPath = path.join(__dirname, '../artifacts/contracts/DiamondCertificate.sol/DiamondRegistry.json');
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY = '0xf8be79e123792c0d8f21bce55e989fde3f373cec78733bc9d2793434bf65f636';
+console.log("PRIVATE_KEY:", PRIVATE_KEY);
 if (!PRIVATE_KEY) {
     throw new Error("Please set the PRIVATE_KEY in .env file");
 }
