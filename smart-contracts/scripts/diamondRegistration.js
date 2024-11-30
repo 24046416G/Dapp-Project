@@ -22,7 +22,7 @@ async function main() {
     // 获取 Ganache 的测试账户
     const accounts = await provider.listAccounts();
     // 使用第一个测试账户的私钥（这是 Ganache 默认的第一个账户）
-    const privateKey = "0x9efff87e39174b9b72f853c371a5834cd4bd0fec36b9712d518d89cc89c6c556"; // Ganache 默认的第一个账户私钥
+    const privateKey = "0xf8be79e123792c0d8f21bce55e989fde3f373cec78733bc9d2793434bf65f636"; // Ganache 默认的第一个账户私钥
     const wallet = new ethers.Wallet(privateKey, provider);
 
     console.log("Using account:", wallet.address);
@@ -33,7 +33,7 @@ async function main() {
     const contractJson = JSON.parse(fs.readFileSync(contractPath, 'utf8'));
     
     // 使用已部署的合约地址
-    const contractAddress = '0xa67BFff3fa48F5067043aD03F275C3E2DE42F01A'; // 替换为实际的合约地址
+    const contractAddress = '0x5f39BEC750B2A740A06215fC7B3f5C5Da36E0a57'; // 替换为实际的合约地址
     console.log("\nUsing deployed contract at:", contractAddress);
 
     // 创建一个新的合约实例

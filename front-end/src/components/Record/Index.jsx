@@ -179,6 +179,7 @@ const Record = ({ userType }) => {
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleAddSubmit}
+                userType={userType}
             />
         </div>
     );
