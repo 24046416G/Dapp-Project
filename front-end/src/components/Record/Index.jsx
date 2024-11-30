@@ -84,40 +84,6 @@ const Record = ({ userType }) => {
         setIsAddModalOpen(true);
     };
 
-    const handleAddSubmit = async (formData) => {
-        try {
-            // 获取当前用户信息
-            const userStr = localStorage.getItem('user');
-            if (!userStr) {
-                throw new Error('User not found');
-            }
-            const user = JSON.parse(userStr);
-
-            // 发送请求到后端
-            const response = await fetch('http://localhost:3000/diamonds/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    userId: user.id
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add record');
-            }
-
-            // 刷新记录列表
-            fetchRecords();
-            alert('Record added successfully!');
-        } catch (error) {
-            console.error('Error adding record:', error);
-            alert('Failed to add record: ' + error.message);
-        }
-    };
-
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -178,7 +144,6 @@ const Record = ({ userType }) => {
             <AddRecordModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                onSubmit={handleAddSubmit}
                 userType={userType}
             />
         </div>
