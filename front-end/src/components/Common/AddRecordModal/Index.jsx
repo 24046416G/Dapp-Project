@@ -3,7 +3,7 @@ import Button from '../Button/Index.jsx';
 import { USER_TYPES } from '../../../constants/userTypes';
 import '../../../css/modal.css';
 
-const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
+const AddRecordModal = ({ isOpen, onClose, userType }) => {
     const getInitialFormData = () => {
         switch(userType) {
             case USER_TYPES.MINING_COMPANY:
@@ -13,8 +13,9 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                     quality: '',
                     origin: '',
                     price: '',
-                    miningLocation: '',
-                    miningDate: ''
+                    miningDate: '',
+                    minerSignature: '',
+                    certificateIpfsHash: ''
                 };
             case USER_TYPES.CUTTING_COMPANY:
                 return {
@@ -56,18 +57,77 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitting form data for user type:", userType);
-        console.log("Form data:", formData);
-        
-        try {
-            console.log("Fetching IPFS data...");
-            const response = await fetch('http://localhost:8080/ipfs/Qmbm5bUsJF9TQdrZbzYvyVpVgcB5w3TBDXiJVu7DCZJWC3');
-            const data = await response.text();
-            console.log('IPFS Data:', data);
 
-            onSubmit(formData);
+        const submitData = {
+            diamondData: {
+                id: formData.diamondId,
+                carat: formData.weight,
+                color: formData.color,
+                clarity: formData.quality,
+                origin: formData.origin,
+                price: formData.price,
+                miningDate: new Date().toISOString()
+            },
+            minerSignature: formData.minerSignature,
+            certificateIpfsHash: formData.certificateIpfsHash
+        };
+
+        console.log("Formatted data for register:", submitData);
+
+        try {
+            // 调用注册接口
+            const registerResponse = await fetch('http://localhost:3001/api/diamond/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submitData)
+            });
+
+            if (!registerResponse.ok) {
+                throw new Error('Failed to register diamond');
+            }
+
+            const registerResult = await registerResponse.json();
+            console.log('Register API Response:', registerResult);
+
+            // 准备 mine 接口的数据
+            const mineData = {
+                diamondId: submitData.diamondData.id,
+                diamondType: 'NATURAL',
+                currentOwner: '6745abc3e7833eee1ef7c997',
+                price: submitData.diamondData.price,
+                certificateHash: registerResult.data.diamondHash,
+                metadata: {
+                    origin: submitData.diamondData.origin,
+                    color: submitData.diamondData.color,
+                    carat: submitData.diamondData.carat  
+                }
+            };
+
+            console.log("Formatted data for mine:", mineData);
+
+            // 调用 mine 接口
+            const mineResponse = await fetch('http://localhost:3000/diamonds/mine', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(mineData)
+            });
+
+            if (!mineResponse.ok) {
+                throw new Error('Failed to mine diamond');
+            }
+
+            const mineResult = await mineResponse.json();
+            console.log('Mine API Response:', mineResult);
+
+            // 成功后关闭模态框
             onClose();
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error processing diamond:', error);
+            alert('Failed to process diamond: ' + error.message);
         }
     };
 
@@ -86,14 +146,24 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                                 required
                             />
                         </div>
+                       
+                        <div className="form-group">
+                            <label>Miner  Signature</label>
+                            <input
+                                type="text"
+                                name="minerSignature"
+                                value={formData.minerSignature}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
                         <div className="form-group">
                             <label>Weight (Carat)</label>
                             <input
-                                type="number"
+                                type="text"
                                 name="weight"
                                 value={formData.weight}
                                 onChange={handleInputChange}
-                                step="0.01"
                                 required
                             />
                         </div>
@@ -101,8 +171,8 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                             <label>Origin</label>
                             <input
                                 type="text"
-                                name="miningLocation"
-                                value={formData.miningLocation}
+                                name="origin"
+                                value={formData.origin}
                                 onChange={handleInputChange}
                                 required
                             />
@@ -111,8 +181,8 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                             <label>Color</label>
                             <input
                                 type="text"
-                                name="miningLocation"
-                                value={formData.miningLocation}
+                                name="color"
+                                value={formData.color}
                                 onChange={handleInputChange}
                                 required
                             />
@@ -121,8 +191,8 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                             <label>Price</label>
                             <input
                                 type="text"
-                                name="diamondId"
-                                value={formData.diamondId}
+                                name="price"
+                                value={formData.price}
                                 onChange={handleInputChange}
                                 required
                             />
@@ -131,8 +201,8 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                             <label>IPFS Hash</label>
                             <input
                                 type="text"
-                                name="diamondId"
-                                value={formData.diamondId}
+                                name="certificateIpfsHash"
+                                value={formData.certificateIpfsHash}
                                 onChange={handleInputChange}
                                 required
                             />
