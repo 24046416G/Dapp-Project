@@ -22,7 +22,7 @@ async function main() {
         }
 
         // 从事件日志中解析原石哈希
-        const diamondRegisteredTopic = ethers.id("DiamondRegistered(bytes32,bytes32,uint256)");
+        const diamondRegisteredTopic = ethers.id("DiamondRegistered(bytes32,uint256)");
         const relevantLog = receipt.logs.find(log => log.topics[0] === diamondRegisteredTopic);
         
         if (!relevantLog) {
