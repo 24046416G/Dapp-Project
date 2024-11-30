@@ -117,6 +117,26 @@ const AddRecordModal = ({ isOpen, onClose, onSubmit, userType }) => {
                                 required
                             />
                         </div>
+                        <div className="form-group">
+                            <label>Price</label>
+                            <input
+                                type="text"
+                                name="diamondId"
+                                value={formData.diamondId}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>IPFS Hash</label>
+                            <input
+                                type="text"
+                                name="diamondId"
+                                value={formData.diamondId}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
                     </>
                 );
             case USER_TYPES.CUTTING_COMPANY:

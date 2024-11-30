@@ -24,9 +24,8 @@ async function checkConfig() {
     // 检查必要的环境变量
     const requiredEnvVars = [
         'PRIVATE_KEY',
-        'ROOT_CA_PRIVATE_KEY',
-        'ROOT_CA_PUBLIC_KEY'
-    ];
+        'ROOT_CA_PRIVATE_KEY'
+        ];
 
     const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
     if (missingVars.length > 0) {
