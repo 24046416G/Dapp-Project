@@ -112,3 +112,10 @@ body, html {
 .switch-mode:hover {
     text-decoration: underline;
 }
+
+/* 删除 MetaMask 相关样式 */
+.metamask-status,
+.metamask-button,
+.metamask-status .connected {
+    display: none;
+}

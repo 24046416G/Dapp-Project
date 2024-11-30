@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../Common/Button/Index';
 import '../../css/login.css';
 import { USER_TYPES } from '../../constants/userTypes';
+
 const Login = ({ onLogin }) => {
     const [isLogin, setIsLogin] = useState(true);
     const [isCustomer, setIsCustomer] = useState(true);
@@ -46,8 +47,8 @@ const Login = ({ onLogin }) => {
 
                 if (response.ok) {
                     alert('Registration successful! Please login.');
-                    setIsLogin(true);  // 切换到登录界面
-                    setFormData({  // 清空表单
+                    setIsLogin(true);
+                    setFormData({
                         username: '',
                         email: '',
                         password: '',
@@ -77,16 +78,11 @@ const Login = ({ onLogin }) => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // 登录成功
-                    alert('Login successful!');
-                    // 保存用户信息到本地存储
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    // 更新登录状态
                     onLogin(data.user.role);
-                    // 跳转到首页
+                    alert('Login successful!');
                     navigate('/');
                 } else {
-                    // 登录失败
                     alert(data.message || 'Login failed');
                 }
             } catch (error) {

@@ -1,32 +1,297 @@
 import React, { useState } from 'react';
+import Button from '../Common/Button/Index.jsx';
 import '../../css/inventory.css';
 
 const productsData = [
-    { id: 1, name: 'Product 1', price: 10 },
-    { id: 2, name: 'Product 2', price: 20 },
-    { id: 3, name: 'Product 3', price: 30 },
-    { id: 4, name: 'Product 4', price: 40 },
-    { id: 5, name: 'Product 5', price: 50 },
-    { id: 6, name: 'Product 6', price: 60 },
-    { id: 7, name: 'Product 7', price: 70 },
-    { id: 8, name: 'Product 8', price: 80 },
-    { id: 9, name: 'Product 9', price: 90 },
-    { id: 10, name: 'Product 10', price: 100 },
-    { id: 11, name: 'Product 11', price: 10 },
-    { id: 12, name: 'Product 12', price: 20 },
-    { id: 13, name: 'Product 13', price: 30 },
-    { id: 14, name: 'Product 14', price: 40 },
-    { id: 15, name: 'Product 15', price: 50 },
-    { id: 16, name: 'Product 16', price: 60 },
-    { id: 17, name: 'Product 17', price: 70 },
-    { id: 18, name: 'Product 18', price: 80 },
-    { id: 19, name: 'Product 19', price: 90 },
-    { id: 20, name: 'Product 20', price: 100 },
+    { 
+        id: 1, 
+        name: 'Round Brilliant Diamond', 
+        price: 12999,
+        description: '2.1 Carat D Color VVS1 Clarity Excellent Cut',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.1,
+            color: 'D',
+            clarity: 'VVS1',
+            cut: 'Excellent',
+            polish: 'Excellent',
+            symmetry: 'Excellent',
+            origin: 'South Africa'
+        }
+    },
+    { 
+        id: 2, 
+        name: 'Oval Cut Diamond', 
+        price: 15499,
+        description: '2.5 Carat E Color VS1 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.5,
+            color: 'E',
+            clarity: 'VS1',
+            cut: 'Very Good',
+            polish: 'Excellent',
+            symmetry: 'Very Good',
+            origin: 'Botswana'
+        }
+    },
+    { 
+        id: 3, 
+        name: 'Princess Cut Diamond', 
+        price: 8999,
+        description: '1.5 Carat F Color VS2 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 1.5,
+            color: 'F',
+            clarity: 'VS2',
+            cut: 'Excellent',
+            polish: 'Very Good',
+            symmetry: 'Excellent',
+            origin: 'Canada'
+        }
+    },
+    { 
+        id: 4, 
+        name: 'Emerald Cut Diamond', 
+        price: 18999,
+        description: '3.0 Carat G Color VVS2 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 3.0,
+            color: 'G',
+            clarity: 'VVS2',
+            cut: 'Excellent',
+            polish: 'Excellent',
+            symmetry: 'Excellent',
+            origin: 'Russia'
+        }
+    },
+    { 
+        id: 5, 
+        name: 'Cushion Cut Diamond', 
+        price: 11499,
+        description: '2.0 Carat D Color VS1 Clarity',
+        status: 'GRADED',
+        metadata: {
+            carat: 2.0,
+            color: 'D',
+            clarity: 'VS1',
+            cut: 'Very Good',
+            polish: 'Excellent',
+            symmetry: 'Very Good',
+            origin: 'Australia'
+        }
+    }
 ];
+
+const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
+    const [formData, setFormData] = useState({
+        jewelryId: '',
+        name: '',
+        type: 'ring',
+        material: '18k_white_gold',
+        price: '',
+        description: '',
+        image: null
+    });
+    const [isDragging, setIsDragging] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+                setFormData(prev => ({
+                    ...prev,
+                    image: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageClick = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewUrl(reader.result);
+                    setFormData(prev => ({
+                        ...prev,
+                        image: reader.result
+                    }));
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    };
+
+    if (!isOpen) return null;
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({
+            ...formData,
+            diamonds: selectedDiamonds
+        });
+        onClose();
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <h2>Make New Jewelry</h2>
+                    <button className="close-button" onClick={onClose}>&times;</button>
+                </div>
+                <div className="modal-body">
+                    <form onSubmit={handleSubmit} className="form-grid">
+                        <div className="form-group">
+                            <label>Jewelry ID</label>
+                            <input
+                                type="text"
+                                name="jewelryId"
+                                value={formData.jewelryId}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Type</label>
+                            <select
+                                name="type"
+                                value={formData.type}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="ring">Ring</option>
+                                <option value="necklace">Necklace</option>
+                                <option value="earrings">Earrings</option>
+                                <option value="bracelet">Bracelet</option>
+                                <option value="pendant">Pendant</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Material</label>
+                            <select
+                                name="material"
+                                value={formData.material}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="18k_white_gold">18K White Gold</option>
+                                <option value="18k_yellow_gold">18K Yellow Gold</option>
+                                <option value="18k_rose_gold">18K Rose Gold</option>
+                                <option value="platinum">Platinum</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Price ($)</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group full-width">
+                            <label>Description</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                rows="4"
+                            />
+                        </div>
+                        <div className="form-group full-width">
+                            <label>Selected Diamonds</label>
+                            <div className="selected-diamonds">
+                                {selectedDiamonds.map(id => (
+                                    <span key={id} className="diamond-tag">Diamond {id}</span>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="form-group full-width">
+                            <label>Jewelry Image</label>
+                            <div 
+                                className={`image-upload-area ${isDragging ? 'dragging' : ''}`}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                onClick={handleImageClick}
+                            >
+                                {previewUrl ? (
+                                    <img 
+                                        src={previewUrl} 
+                                        alt="Preview" 
+                                        className="image-preview"
+                                    />
+                                ) : (
+                                    <div className="upload-placeholder">
+                                        <span>Drag and drop an image here or click to select</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <Button 
+                                type="primary"
+                                onClick={handleSubmit}
+                            >
+                                Create Jewelry
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const Inventory = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProducts, setSelectedProducts] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -42,8 +307,10 @@ const Inventory = () => {
         });
     };
 
-    const handleButtonClick = () => {
-        alert(`Selected products: ${selectedProducts.join(', ')}`);
+    const handleMakeJewelry = (formData) => {
+        console.log('Making jewelry with:', formData);
+        // 这里添加创建珠宝的逻辑
+        alert('Jewelry created successfully!');
     };
 
     const filteredProducts = productsData.filter((product) =>
@@ -52,10 +319,12 @@ const Inventory = () => {
 
     return (
         <div>
-            <h2>Inventory</h2>
+            <div className="inventory-header">
+                <h2>Diamond Inventory</h2>
+            </div>
             <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search diamonds..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="search-bar"
@@ -70,14 +339,34 @@ const Inventory = () => {
                                 onChange={() => handleCheckboxChange(product.id)}
                             />
                             <h3>{product.name}</h3>
-                            <p>Price: ${product.price}</p>
+                            <p className="price">Price: ${product.price.toLocaleString()}</p>
+                            <div className="diamond-specs">
+                                <p><strong>Carat:</strong> {product.metadata.carat}</p>
+                                <p><strong>Color:</strong> {product.metadata.color}</p>
+                                <p><strong>Clarity:</strong> {product.metadata.clarity}</p>
+                                <p><strong>Cut:</strong> {product.metadata.cut}</p>
+                                <p><strong>Origin:</strong> {product.metadata.origin}</p>
+                            </div>
+                            <p className="description">{product.description}</p>
+                            <span className="status-badge">{product.status}</span>
                         </div>
                     ))}
                 </div>
             </div>
-            <button onClick={handleButtonClick} className="make-jewelry-button">
-                Check Selected Diamonds
-            </button>
+            <Button 
+                onClick={() => setIsModalOpen(true)} 
+                className="make-jewelry-button"
+                disabled={selectedProducts.length === 0}
+            >
+                Make Jewelry
+            </Button>
+
+            <MakeJewelryModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                selectedDiamonds={selectedProducts}
+                onSubmit={handleMakeJewelry}
+            />
         </div>
     );
 };

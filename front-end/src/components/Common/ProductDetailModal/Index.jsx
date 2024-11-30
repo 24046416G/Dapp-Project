@@ -117,7 +117,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                     <div className="modal-image">
                         {product.image ? (
                             <img 
-                                src={product.image}
+                                src={"assets/jewelry/jewelry_01.png"}
                                 alt={product.name}
                             />
                         ) : (

@@ -52,7 +52,7 @@ module.exports = {
             directory: path.join(__dirname, 'public'),
         },
         hot: true,
-        port: 8080,
+        port: 9090,
         historyApiFallback: true,
         open: true,
         compress: true

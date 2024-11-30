@@ -18,12 +18,16 @@
     "express": "^4.21.1",
     "fs": "^0.0.1-security",
     "http-errors": "~1.6.3",
+    "pug": "^3.0.2",
     "ipfs-http-client": "^56.0.0",
     "jade": "^0.29.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.2",
     "morgan": "~1.9.1",
     "web3": "^4.15.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "main": "CAService.js",
   "directories": {

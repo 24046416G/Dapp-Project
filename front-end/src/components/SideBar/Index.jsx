@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
     FaChartLine, FaBoxes, FaUsers, FaCog, 
     FaGem, FaUser, FaHammer, FaShoppingCart,
@@ -27,8 +27,22 @@ const ICONS = {
 };
 
 const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {
+    const navigate = useNavigate();
     const location = useLocation();
     const menuItems = USER_ROUTES[userType] || [];
+
+    const handleLogout = () => {
+        try {
+            // 清除本地存储的用户信息
+            localStorage.clear();
+            
+            // 重定向到登录页面
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Error during logout. Please try again.');
+        }
+    };
 
     const getIcon = (iconName) => {
         const IconComponent = ICONS[iconName];
@@ -56,10 +70,10 @@ const Sidebar = ({ userType = USER_TYPES.CUSTOMER }) => {
                     ))}
                 </ul>
                 <div className="logout-container">
-                    <Link to="/login" className="logout-link">
+                    <button onClick={handleLogout} className="logout-link">
                         <FaSignOutAlt className="sidebar-icon" />
                         <span>Logout</span>
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>
