@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node test/caRegistration.test.js",
-    "deploy": "node scripts/deploy-ganache.js",
-    "generate-keys": "node scripts/generateCAKeys.js",
-    "test-registration": "node scripts/test-registration.js",
-    "test-query": "node scripts/test-query.js"
+    "init": "node scripts/init-project.js",
+    "check-config": "node scripts/check-config.js",
+    "start": "node scripts/check-config.js && node server/server.js",
+    "test": "node scripts/check-config.js && node test/caRegistration.test.js",
+    "deploy": "node scripts/check-config.js && node scripts/deploy-ganache.js",
+    "generate-keys": "node scripts/generateCAKeys.js"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
@@ -16,6 +17,8 @@
     "dotenv": "^16.4.5",
     "ethers": "^6.11.1",
     "hardhat": "^2.22.16",
-    "ipfs-http-client": "^60.0.1"
+    "ipfs-http-client": "^60.0.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
   }
 }

@@ -1,5 +1,5 @@
 import { create } from 'ipfs-http-client';
-import { CARegistration } from '../lib/CA/CARegistration.js';
+import { CARegistration } from '../lib/CA/CompanyRegistration.js';
 import { CAInfo } from '../lib/CA/CAinfo.js';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
@@ -23,20 +23,20 @@ const ipfs = create({
 
 async function testCARegistration() {
     try {
-        console.log("=== Starting CA Registration Test ===\n");
+        console.log("=== Starting company Registration Test ===\n");
 
         // 1. 生成测试用的公司密钥对
-        const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-            modulusLength: 2048,
-            publicKeyEncoding: {
-                type: 'spki',
-                format: 'pem'
-            },
-            privateKeyEncoding: {
-                type: 'pkcs8',
-                format: 'pem'
-            }
-        });
+        // const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        //     modulusLength: 2048,
+        //     publicKeyEncoding: {
+        //         type: 'spki',
+        //         format: 'pem'
+        //     },
+        //     privateKeyEncoding: {
+        //         type: 'pkcs8',
+        //         format: 'pem'
+        //     }
+        // });
 
         // 2. 准备注册请求
         const registrationRequest = {
