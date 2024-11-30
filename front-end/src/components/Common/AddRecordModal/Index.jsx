@@ -95,7 +95,7 @@ const AddRecordModal = ({ isOpen, onClose, userType }) => {
             const mineData = {
                 diamondId: submitData.diamondData.id,
                 diamondType: 'NATURAL',
-                currentOwner: '6745abc3e7833eee1ef7c997',
+                currentOwner: JSON.parse(localStorage.getItem("user")).id,
                 price: submitData.diamondData.price,
                 certificateHash: registerResult.data.diamondHash,
                 metadata: {
