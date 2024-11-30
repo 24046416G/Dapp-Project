@@ -3,11 +3,9 @@ import '../../css/modal.css';
 
 const CuttingModal = ({ stone, isOpen, onClose, onSubmit }) => {
     const [formData, setFormData] = useState({
-        cuttingTime: '',
         cuttingCompany: 'Diamond Cutting Corp',
         polishingTechnology: 'Traditional',
         cuttingTechnology: 'Laser',
-        notes: ''
     });
 
     const handleSubmit = (e) => {
@@ -38,45 +36,43 @@ const CuttingModal = ({ stone, isOpen, onClose, onSubmit }) => {
                         <h3>Raw Material Details</h3>
                         <div className="detail-grid">
                             <div className="detail-item">
+                                <span>Diamond Type:</span>
+                                <span>{stone.diamondType || 'Diamond'}</span>
+                            </div>
+                            <div className="detail-item">
                                 <span>Batch Number:</span>
-                                <span>{stone.batchNumber}</span>
+                                <span>{stone.diamondId}</span>
                             </div>
                             <div className="detail-item">
-                                <span>Mining Company:</span>
-                                <span>{stone.miningCompany}</span>
-                            </div>
-                            <div className="detail-item">
-                                <span>Mining Time:</span>
-                                <span>{new Date(stone.miningTime).toLocaleDateString()}</span>
-                            </div>
-                            <div className="detail-item">
-                                <span>Mining Position:</span>
-                                <span>{stone.miningPosition}</span>
-                            </div>
-                            <div className="detail-item">
-                                <span>Current Weight:</span>
-                                <span>{stone.weight} carats</span>
+                                <span>Weight:</span>
+                                <span>{stone.metadata?.carat || 'N/A'} carats</span>
                             </div>
                             <div className="detail-item">
                                 <span>Quality:</span>
-                                <span>{stone.quality}</span>
+                                <span>{stone.metadata?.quality || 'N/A'}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span>Mining Company:</span>
+                                <span>{stone.certificates?.miningCertificate?.companyId?.companyName || 'N/A'}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span>Mining Time:</span>
+                                <span>{stone.certificates?.miningCertificate?.timestamp ? 
+                                    new Date(stone.certificates.miningCertificate.timestamp).toLocaleDateString() : 
+                                    'N/A'}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span>Origin:</span>
+                                <span>{stone.metadata?.origin || 'N/A'}</span>
+                            </div>
+                            <div className="detail-item">
+                                <span>Price:</span>
+                                <span>${stone.price?.toLocaleString() || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
                     
                     <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label>Estimated Cutting Time (days)</label>
-                            <input
-                                type="number"
-                                name="cuttingTime"
-                                value={formData.cuttingTime}
-                                onChange={handleChange}
-                                required
-                                min="1"
-                            />
-                        </div>
-
                         <div className="form-group">
                             <label>Cutting Company</label>
                             <input
@@ -114,17 +110,6 @@ const CuttingModal = ({ stone, isOpen, onClose, onSubmit }) => {
                                 <option value="Ultrasonic">Ultrasonic Cutting</option>
                                 <option value="Plasma">Plasma Cutting</option>
                             </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Additional Notes</label>
-                            <textarea
-                                name="notes"
-                                value={formData.notes}
-                                onChange={handleChange}
-                                rows="3"
-                                placeholder="Add any cutting specifications or special requirements..."
-                            />
                         </div>
 
                         <div className="modal-actions">
