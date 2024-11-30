@@ -10,9 +10,48 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
     
     if (!isOpen) return null;
 
-    const handleBuy = () => {
-        console.log('Buying product:', product);
-        alert('Purchase functionality coming soon!');
+    const handleBuy = async () => {
+        try {
+            // 获取当前用户信息
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                alert('Please login first!');
+                return;
+            }
+            const user = JSON.parse(userStr);
+
+            // 准备转移请求数据
+            const transferData = {
+                newOwnerId: user.id,
+                price: product.price,
+                certificateHash: user.id
+            };
+
+            console.log('Transfer data:', transferData);
+
+            // 调用转移接口
+            const response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(transferData)
+            });
+            console.log("response",response)
+            if (!response.ok) {
+                throw new Error('Transfer failed');
+            }
+
+            const result = await response.json();
+            console.log('Transfer result:', result);
+
+            alert('Purchase successful!');
+            onClose();
+            // 可以添加回调函数来刷新商店列表
+        } catch (error) {
+            console.error('Purchase error:', error);
+            alert('Purchase failed: ' + error.message);
+        }
     };
 
     const renderContent = () => {
