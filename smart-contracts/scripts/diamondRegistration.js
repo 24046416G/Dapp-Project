@@ -1,10 +1,10 @@
 import { ethers } from 'ethers';
 import fs from 'fs';
-
-import { create } from 'ipfs-http-client';
-import { CertificateVerification } from '../lib/DiamondRecord/verify_success.js';
-import { DiamondManager } from '../lib/DiamondRecord/DiamondManager.js';
+import dotenv from 'dotenv';
 import { NETWORK_CONFIG } from '../config/network.js';
+import { CONTRACT_ADDRESS } from '../config/contract.js';
+
+dotenv.config();
 
 async function main() {
     console.log("=== Starting Diamond Registration Test ===\n");
@@ -19,26 +19,25 @@ async function main() {
     // 2. 连接到 Ganache
     const provider = new ethers.JsonRpcProvider(NETWORK_CONFIG.url);
     
-    // 获取 Ganache 的测试账户
-    const accounts = await provider.listAccounts();
-    // 使用第一个测试账户的私钥（这是 Ganache 默认的第一个账户）
-    const privateKey = "0x9efff87e39174b9b72f853c371a5834cd4bd0fec36b9712d518d89cc89c6c556"; // Ganache 默认的第一个账户私钥
+    // 从环境变量获取私钥
+    const privateKey = process.env.PRIVATE_KEY;
+    if (!privateKey) {
+        throw new Error("Please set PRIVATE_KEY in .env file");
+    }
+    
     const wallet = new ethers.Wallet(privateKey, provider);
-
     console.log("Using account:", wallet.address);
 
-    const contractPath = './artifacts/contracts/DiamondCertificate.sol/DiamondRegistry.json';
+    // 使用配置文件中的合约地址
+    console.log("\nUsing deployed contract at:", CONTRACT_ADDRESS);
 
     // 读取合约 ABI 和 Bytecode
+    const contractPath = './artifacts/contracts/DiamondCertificate.sol/DiamondRegistry.json';
     const contractJson = JSON.parse(fs.readFileSync(contractPath, 'utf8'));
-    
-    // 使用已部署的合约地址
-    const contractAddress = '0xa67BFff3fa48F5067043aD03F275C3E2DE42F01A'; // 替换为实际的合约地址
-    console.log("\nUsing deployed contract at:", contractAddress);
 
     // 创建一个新的合约实例
     const diamondContract = new ethers.Contract(
-        contractAddress,
+        CONTRACT_ADDRESS,
         contractJson.abi,
         wallet
     );

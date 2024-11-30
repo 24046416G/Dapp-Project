@@ -1,6 +1,15 @@
 // CA的公钥配置
 export const CA_CONFIG = {
-    publicKey: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAivfbJNYmWynKtI1poU79\nAW8sn00+E9znnzzIcDeCvxJrM7szsSclFDGAHdvKiwxicaUGmGKgoZwKHdxhRxAB\nUF14jMLB1MyS6FPH6BEKprSB/m6Yn9GudhPbGzNhqWR4D/Mzx73TTs+MWhe0vnwg\neNmkUikb1pfUj17Xc261DjTzAH73RVgVqHPIaKbFvJszezATwc1L8gXSEXR6gz4K\nsH6BXspFY17PN9Ig+iZk84IpT59oBYzdS7yxWzom+At9adLllrQUaszm+ty0TwhY\neAdTS3xXFIzle0+f62m0a086ULcmgITEbbDIaDQs6SKUPnfYyqizRjZm6syHd7lP\nNQIDAQAB\n-----END PUBLIC KEY-----\n`,
+    publicKey: `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgkg1jKznW9xJuv/ch+XD
+XeP/Z8bkg5ejRjmXn8tP+wQ9/b6G8loggrVNjzBf3/LKi2aBuSeqtil17PW8SbDB
+eay4uc5j7R3O7Q83mRUXQARs6feg1huJtRcFgrGLDc6IfMCFJ6XhWTbgycWZRtNz
+pDZxAIF0OFqqfKDIyxS8H/ZAwWGtaYd7AMh/7BRtfuwkToe0SvFOGsGJu/LK085G
+6pXg4O5XAuScRxpm2QgWozqgsYB+9gzPIm+fGvtVuy7gayR21MnyNOCaiJWav7zv
+lNMQI96tCqzc9+3JGoehnXCWM27IQ9gmMnsghJ+15EdZ/HVnx5NjqW4Tbjq0GdyZ
+AwIDAQAB
+-----END PUBLIC KEY-----
+`,
     algorithm: "RSA-SHA256",
     version: "1.0",
     issuer: "DiamondChainRootCA"
