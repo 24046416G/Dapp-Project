@@ -70,7 +70,6 @@ const ProductCard = ({ product, onClick, userType }) => {
                     <div className="diamond-specs">
                         <span>Carat: {diamond?.metadata?.carat}</span>
                         <span>Cut Type: {diamond?.metadata?.cut}</span>
-                        <span>Cut Quality: {diamond?.metadata?.cutQuality}</span>
                         <span>Polish: {diamond?.metadata?.polish}</span>
                         <span>Origin: {diamond?.metadata?.origin}</span>
                     </div>
