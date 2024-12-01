@@ -3,7 +3,7 @@ import Button from '../Button/Index.jsx';
 import { USER_TYPES } from '../../../constants/userTypes';
 import '../../../css/modal.css';
 
-const AddRecordModal = ({ isOpen, onClose, userType }) => {
+const AddRecordModal = ({ isOpen, onClose, userType, onSuccess }) => {
     const getInitialFormData = () => {
         switch(userType) {
             case USER_TYPES.MINING_COMPANY:
@@ -123,8 +123,10 @@ const AddRecordModal = ({ isOpen, onClose, userType }) => {
             const mineResult = await mineResponse.json();
             console.log('Mine API Response:', mineResult);
 
-            // 成功后关闭模态框
-            onClose();
+            // 成功后调用 onSuccess 回调
+            if (onSuccess) {
+                onSuccess();
+            }
         } catch (error) {
             console.error('Error processing diamond:', error);
             alert('Failed to process diamond: ' + error.message);
