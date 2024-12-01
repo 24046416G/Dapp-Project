@@ -4,6 +4,7 @@ import '../../../css/recordCard.css';
 
 const RecordCard = ({ record, onClick, userType }) => {
     const renderContent = () => {
+        console.log('record in record card',record);
         switch(userType) {
             case USER_TYPES.MINING_COMPANY:
                 return (
@@ -75,16 +76,12 @@ const RecordCard = ({ record, onClick, userType }) => {
                 return (
                     <div className="record-body">
                         <div className="record-detail">
-                            <span>Diamond ID:</span>
-                            <span>{record.diamondId}</span>
+                            <span>Jewelry ID:</span>
+                            <span>{record.jewelryId}</span>
                         </div>
                         <div className="record-detail">
-                            <span>Status:</span>
-                            <span>{record.status}</span>
-                        </div>
-                        <div className="record-detail">
-                            <span>From:</span>
-                            <span>{record.from}</span>
+                            <span>Jewelry Name</span>
+                            <span>{record.name}</span>
                         </div>
                         <div className="record-detail">
                             <span>Price:</span>

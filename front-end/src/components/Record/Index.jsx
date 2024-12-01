@@ -14,47 +14,76 @@ const Record = ({ userType }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    console.log('userType in record page',userType);
 
     useEffect(() => {
         const fetchRecords = async () => {
             try {
-                const response = await fetch('http://localhost:3000/diamonds/all/diamonds');
+                const userStr = localStorage.getItem('user');
+                if (!userStr) {
+                    throw new Error('User not found');
+                }
+                const user = JSON.parse(userStr);
+
+                let response;
+                // 根据用户类型调用不同的接口
+                switch(userType) {
+                    case USER_TYPES.JEWELRY_MAKER:
+                        response = await fetch('http://localhost:3000/jewelries/all');
+                        break;
+                    case USER_TYPES.MINING_COMPANY:
+                    case USER_TYPES.CUTTING_COMPANY:
+                    case USER_TYPES.GRADING_LAB:
+                    case USER_TYPES.CUSTOMER:
+                    default:
+                        response = await fetch('http://localhost:3000/diamonds/all/diamonds');
+                        break;
+                }
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch records');
                 }
+
                 const data = await response.json();
+                console.log('Raw data:', data);
 
                 // 根据用户类型筛选数据
-                let filteredData = data;
+                let filteredData;
                 switch(userType) {
+                    case USER_TYPES.JEWELRY_MAKER:
+                        // 珠宝制造商看到所有珠宝记录
+                        filteredData = data.jewelries || [];
+                        break;
                     case USER_TYPES.CUTTING_COMPANY:
-                        filteredData = data.filter(record => record.status === 'CUT');
+                        filteredData = data.filter(record => 
+                            record.status === 'CUT' && 
+                            (record.currentOwner?._id === user.id || 
+                            record.history.some(h => h.owner?._id === user.id))
+                        );
                         break;
                     case USER_TYPES.GRADING_LAB:
-                        filteredData = data.filter(record => record.status === 'GRADED');
-                        break;
-                    case USER_TYPES.JEWELRY_MAKER:
-                        filteredData = data.filter(record => record.status === 'JEWELRY');
+                        filteredData = data.filter(record => 
+                            record.status === 'GRADED' && 
+                            (record.currentOwner?._id === user.id || 
+                            record.history.some(h => h.owner?._id === user.id))
+                        );
                         break;
                     case USER_TYPES.MINING_COMPANY:
-                        filteredData = data.filter(record => record.status === 'MINED');
+                        filteredData = data.filter(record => 
+                            record.status === 'MINED' && 
+                            (record.currentOwner?._id === user.id || 
+                            record.history.some(h => h.owner?._id === user.id))
+                        );
                         break;
                     case USER_TYPES.CUSTOMER:
-                        filteredData = data.filter(record => record.status === 'SOLD');
+                        filteredData = data.filter(record => 
+                            record.status === 'SOLD' && 
+                            (record.currentOwner?._id === user.id || 
+                            record.history.some(h => h.owner?._id === user.id))
+                        );
                         break;
                     default:
                         filteredData = data;
-                }
-
-                // 获取当前用户ID
-                const userStr = localStorage.getItem('user');
-                if (userStr) {
-                    const user = JSON.parse(userStr);
-                    // 只显示属于当前用户的记录
-                    filteredData = filteredData.filter(record => 
-                        record.currentOwner?._id === user.id || 
-                        record.history.some(h => h.owner?._id === user.id)
-                    );
                 }
 
                 console.log('Filtered records:', filteredData);
@@ -167,6 +196,7 @@ const Record = ({ userType }) => {
 
             {selectedRecord && (
                 <RecordDetailModal
+                    userType={userType}
                     record={selectedRecord}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
@@ -174,9 +204,9 @@ const Record = ({ userType }) => {
             )}
 
             <AddRecordModal
+                userType={userType}
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                userType={userType}
             />
         </div>
     );
