@@ -12,6 +12,7 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
         price: '',
         image: null,
         diamonds: null,
+        certificateHash: ''
     });
     const [isDragging, setIsDragging] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -154,7 +155,17 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
                                 )}
                             </div>
                         </div>
-                        
+                        <div className="form-group">
+                            <label>IPFS Certificate Hash</label>
+                            <input
+                                type="text"
+                                name="certificateHash"
+                                value={formData.certificateHash}
+                                onChange={handleInputChange}
+                                placeholder="Enter IPFS hash for the certificate"
+                                required
+                            />
+                        </div>
                     </form>
                     <div className="modal-footer">
                         <Button 
@@ -263,7 +274,41 @@ const Inventory = () => {
                 throw new Error('Please select at least one diamond');
             }
 
-            console.log('formData in handleMakeJewelry',formData);
+            // 1. 首先调用区块链服务器的注册接口
+            const jewelryData = {
+                id: formData.jewelryId,
+                name: formData.name,
+                price: formData.price,
+                diamonds: formData.diamonds,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Preparing jewelry registration data:', {
+                jewelryData,
+                signature: user.id,
+                certificateIpfsHash: formData.certificateHash
+            });
+
+            const registerResponse = await fetch('http://localhost:3001/api/diamond/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jewelryData,
+                    signature: user.id,
+                    certificateIpfsHash: formData.certificateHash
+                })
+            });
+
+            if (!registerResponse.ok) {
+                throw new Error('Failed to register jewelry with blockchain');
+            }
+
+            const registerResult = await registerResponse.json();
+            console.log('Blockchain registration result:', registerResult);
+
+            // 2. 然后调用后端的珠宝创建接口
             const response = await fetch('http://localhost:3000/jewelries/make', {
                 method: 'POST',
                 headers: {
@@ -275,7 +320,7 @@ const Inventory = () => {
                     price: formData.price,
                     image: formData.image,
                     diamonds: formData.diamonds,
-                    authenticityCertificate: "ipfs_hash_here",
+                    authenticityCertificate: registerResult.data.infoHash,  // 使用返回的 infoHash
                     currentOwner: user.id
                 })
             });
@@ -286,6 +331,8 @@ const Inventory = () => {
             }
 
             const result = await response.json();
+            console.log('Backend create jewelry response:', result);
+            
             alert('Jewelry created successfully!');
             
             // 更新钻石列表，移除已用于制作珠宝的钻石
