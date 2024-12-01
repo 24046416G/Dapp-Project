@@ -22,14 +22,24 @@ const Store = ({ userType }) => {
         const fetchData = async () => {
             try {
                 let endpoint;
-                console.log('userType',userType);
-                if (userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY) {
-                    endpoint = 'http://localhost:3000/diamonds/all/diamonds';
-                } else if (userType === USER_TYPES.CUSTOMER) {
-                    endpoint = 'http://localhost:3000/jewelries/all';
-                } else {
-                    endpoint = '';
+                switch(userType) {
+                    case USER_TYPES.JEWELRY_MAKER:
+                    case USER_TYPES.GRADING_LAB:
+                    case USER_TYPES.CUTTING_COMPANY:
+                        endpoint = 'http://localhost:3000/diamonds/all/diamonds';
+                        break;
+                    case USER_TYPES.CUSTOMER:
+                        endpoint = 'http://localhost:3000/jewelries/all';
+                        break;
+                    default:
+                        endpoint = '';
+                        break;
                 }
+
+                if (!endpoint) {
+                    throw new Error('Invalid user type');
+                }
+
                 const response = await fetch(endpoint);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
