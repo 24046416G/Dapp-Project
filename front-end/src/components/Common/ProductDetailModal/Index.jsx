@@ -5,14 +5,13 @@ import { USER_TYPES } from '../../../constants/userTypes';
 import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
 
-const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false }) => {
+const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false, onPurchaseSuccess }) => {
     const [showQRCode, setShowQRCode] = useState(false);
     
     if (!isOpen) return null;
 
     const handleBuy = async () => {
         try {
-            // 获取当前用户信息
             const userStr = localStorage.getItem('user');
             if (!userStr) {
                 alert('Please login first!');
@@ -20,34 +19,55 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
             }
             const user = JSON.parse(userStr);
 
-            // 准备转移请求数据
-            const transferData = {
-                newOwnerId: user.id,
-                price: product.price,
-                certificateHash: user.id
-            };
+            let response;
+            switch (userType) {
+                case USER_TYPES.CUSTOMER:
+                    console.log('customer buy jewelry',product);
+                    response = await fetch(`http://localhost:3000/jewelries/${product._id}/transfer`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            newOwnerId: user.id
+                        })
+                    });
+                    break;
 
-            console.log('Transfer data:', transferData);
+                case USER_TYPES.JEWELRY_MAKER:
+                case USER_TYPES.GRADING_LAB:
+                case USER_TYPES.CUTTING_COMPANY:
+                    response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            newOwnerId: user.id,
+                            price: product.price,
+                            certificateHash: user.id
+                        })
+                    });
+                    break;
 
-            // 调用转移接口
-            const response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(transferData)
-            });
-            console.log("response",response)
+                default:
+                    throw new Error('Invalid user type');
+            }
+
             if (!response.ok) {
-                throw new Error('Transfer failed');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Transfer failed');
             }
 
             const result = await response.json();
             console.log('Transfer result:', result);
-
             alert('Purchase successful!');
             onClose();
-            // 可以添加回调函数来刷新商店列表
+            
+            if (onPurchaseSuccess) {
+                onPurchaseSuccess(result);
+            }
+
         } catch (error) {
             console.error('Purchase error:', error);
             alert('Purchase failed: ' + error.message);
@@ -111,10 +131,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                                             <div className="spec-row">
                                                 <span className="spec-label">Color:</span>
                                                 <span className="spec-value">{diamond.metadata?.color}</span>
-                                            </div>
-                                            <div className="spec-row">
-                                                <span className="spec-label">Clarity:</span>
-                                                <span className="spec-value">{diamond.metadata?.clarity}</span>
                                             </div>
                                             <div className="spec-row">
                                                 <span className="spec-label">Cut:</span>

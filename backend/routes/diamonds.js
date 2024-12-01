@@ -3,18 +3,18 @@ const router = express.Router();
 const Diamond = require('../models/Diamond');
 const User = require('../models/User');
 
-// 1. 矿业公司开采钻石
+// 1. Mining company mines diamonds
 router.post('/mine', async (req, res) => {
     try {
         const { diamondId, diamondType, currentOwner, price, certificateHash, metadata } = req.body;
 
-        // 验证当前用户是否为矿业公司
+        // Verify if the current user is a mining company
         const miningCompany = await User.findById(currentOwner);
         if (!miningCompany || miningCompany.role !== 'MINING_COMPANY') {
             return res.status(403).json({ message: "Only mining companies can mine diamonds" });
         }
 
-        // 创建新钻石
+        // Create a new diamond
         const diamond = new Diamond({
             diamondId,
             diamondType,
@@ -36,7 +36,7 @@ router.post('/mine', async (req, res) => {
             }
         });
 
-        // 添加到历史记录
+        // Add to history
         diamond.history.push({
             status: 'MINED',
             owner: currentOwner,
@@ -46,7 +46,7 @@ router.post('/mine', async (req, res) => {
 
         await diamond.save();
 
-        // 更新矿业公司的拥有钻石列表
+        // Update the mining company's owned diamonds list
         miningCompany.ownedDiamonds.push(diamond._id);
         await miningCompany.save();
 
@@ -56,7 +56,7 @@ router.post('/mine', async (req, res) => {
     }
 });
 
-// 2. 通过diamondId获取钻石信息
+// 2. Get diamond information by diamondId
 router.get('/:diamondId', async (req, res) => {
     try {
         const diamond = await Diamond.findOne({ diamondId: req.params.diamondId })
@@ -77,19 +77,19 @@ router.get('/:diamondId', async (req, res) => {
     }
 });
 
-// 3. 更新钻石状态和所有权
+// 3. Update diamond status and ownership
 router.patch('/:id/transfer', async (req, res) => {
     try {
         const { newOwnerId, price, certificateHash } = req.body;
 
-        // 验证请求参数
+        // Validate request parameters
         if (!newOwnerId || !certificateHash) {
             return res.status(400).json({ 
                 message: "newOwnerId and certificateHash are required" 
             });
         }
 
-        // 查找钻石
+        // Find the diamond
         const diamond = await Diamond.findById(req.params.id);
         if (!diamond) {
             return res.status(404).json({ 
@@ -97,7 +97,7 @@ router.patch('/:id/transfer', async (req, res) => {
             });
         }
 
-        // 验证新所有者
+        // Validate new owner
         const newOwner = await User.findById(newOwnerId);
         if (!newOwner) {
             return res.status(404).json({ 
@@ -105,19 +105,19 @@ router.patch('/:id/transfer', async (req, res) => {
             });
         }
 
-        // 保存当前所有者ID
+        // Save the current owner ID
         const currentOwnerId = diamond.currentOwner;
 
-        // 更新钻石信息
+        // Update diamond information
         diamond.currentOwner = newOwnerId;
         if (price) diamond.price = price;
 
-        // 更新证书状态
+        // Update certificate status
         if (newOwner.role === 'CUSTOMER') {
             diamond.status = 'SOLD';
         }
 
-        // 添加转移记录
+        // Add transfer record
         diamond.history.push({
             status: diamond.status,
             owner: newOwnerId,
@@ -127,7 +127,7 @@ router.patch('/:id/transfer', async (req, res) => {
 
         await diamond.save();
 
-        // 更新前任所有者的钻石列表
+        // Update the previous owner's diamond list
         const previousOwner = await User.findById(currentOwnerId);
         if (previousOwner) {
             previousOwner.ownedDiamonds = previousOwner.ownedDiamonds.filter(
@@ -136,13 +136,13 @@ router.patch('/:id/transfer', async (req, res) => {
             await previousOwner.save();
         }
 
-        // 更新新所有者的钻石列表
+        // Update the new owner's diamond list
         if (!newOwner.ownedDiamonds.includes(diamond._id)) {
             newOwner.ownedDiamonds.push(diamond._id);
             await newOwner.save();
         }
 
-        // 返回更新后的钻石信息
+        // Return the updated diamond information
         const updatedDiamond = await Diamond.findById(req.params.id)
             .populate('currentOwner')
             .populate('certificates.miningCertificate.companyId')
@@ -163,7 +163,7 @@ router.patch('/:id/transfer', async (req, res) => {
     }
 });
 
-// 4. 获取所有钻石列表
+// 4. Get all diamonds list
 router.get('/all/diamonds', async (req, res) => {
     try {
         const diamonds = await Diamond.find()
@@ -180,19 +180,19 @@ router.get('/all/diamonds', async (req, res) => {
     }
 });
 
-// 5. 更新钻石切割和抛光信息
+// 5. Update diamond cutting and polishing information
 router.patch('/:id/cut', async (req, res) => {
     try {
         const { cut, polish, userId, certificateHash } = req.body;
 
-        // 验证必要字段
+        // Validate necessary fields
         if (!cut || !polish || !userId || !certificateHash) {
             return res.status(400).json({ 
                 message: "Cut, polish, userId and certificateHash are required" 
             });
         }
 
-        // 查找钻石
+        // Find the diamond
         const diamond = await Diamond.findById(req.params.id);
         if (!diamond) {
             return res.status(404).json({ 
@@ -201,7 +201,7 @@ router.patch('/:id/cut', async (req, res) => {
             });
         }
 
-        // 验证用户是否存在且为切割公司
+        // Validate if the user exists and is a cutting company
         const user = await User.findById(userId);
         if (!user || user.role !== 'CUTTING_COMPANY') {
             return res.status(403).json({ 
@@ -209,7 +209,7 @@ router.patch('/:id/cut', async (req, res) => {
             });
         }
 
-        // 验证钻石状态是否为CUT
+        // Validate if the diamond status is CUT
         if (diamond.status !== 'CUT') {
             return res.status(400).json({ 
                 message: "Diamond must be in CUT status to update cut information",
@@ -217,21 +217,21 @@ router.patch('/:id/cut', async (req, res) => {
             });
         }
 
-        // 验证用户是否是钻石的当前所有者
+        // Validate if the user is the current owner of the diamond
         if (diamond.currentOwner.toString() !== userId) {
             return res.status(403).json({ 
                 message: "Only the current owner can update cut information" 
             });
         }
 
-        // 更新切割和抛光信息
+        // Update cutting and polishing information
         diamond.metadata.cut = cut;
         diamond.metadata.polish = polish;
         diamond.certificates.cuttingCertificate.certificateHash = certificateHash;
 
         await diamond.save();
 
-        // 返回更新后的钻石信息
+        // Return the updated diamond information
         const updatedDiamond = await Diamond.findById(req.params.id)
             .populate('currentOwner')
             .populate('certificates.miningCertificate.companyId')
@@ -254,10 +254,10 @@ router.patch('/:id/cut', async (req, res) => {
     }
 });
 
-// 6. 更新钻石评级信息
+// 6. Update diamond grading information
 router.patch('/:id/grade', async (req, res) => {
     try {
-        const { userId, grading, imageData, certificateHash } = req.body;  // imageData 是 Base64 编码的图片数据
+        const { userId, grading, imageData, certificateHash } = req.body;  // imageData is Base64 encoded image data
         console.log('Received request body:', {
             userId,
             grading,
@@ -266,25 +266,25 @@ router.patch('/:id/grade', async (req, res) => {
             imageDataLength: imageData ? imageData.length : 0
         });
 
-        // 验证必要字段
+        // Validate necessary fields
         if (!userId || !grading || !certificateHash) {
             return res.status(400).json({ 
                 message: "UserId and grading information are required" 
             });
         }
 
-        // 验证图片数据（如果提供）
+        // Validate image data (if provided)
         if (imageData) {
             console.log('Validating image data...');
-            // 验证是否是有效的 Base64 图片数据
+            // Validate if it is a valid Base64 image data
             if (!imageData.match(/^data:image\/(png|jpeg|jpg|gif);base64,/)) {
                 return res.status(400).json({ 
                     message: "Invalid image format. Must be a Base64 encoded image" 
                 });
             }
 
-            // 验证图片大小（Base64 字符串长度）
-            if (imageData.length > 5 * 1024 * 1024) {  // 5MB 限制
+            // Validate image size (Base64 string length)
+            if (imageData.length > 5 * 1024 * 1024) {  // 5MB limit
                 return res.status(400).json({ 
                     message: "Image size too large. Maximum size is 5MB" 
                 });
@@ -292,7 +292,7 @@ router.patch('/:id/grade', async (req, res) => {
             console.log('Image validation passed');
         }
 
-        // 查找钻石
+        // Find the diamond
         const diamond = await Diamond.findById(req.params.id);
         if (!diamond) {
             return res.status(404).json({ 
@@ -301,7 +301,7 @@ router.patch('/:id/grade', async (req, res) => {
             });
         }
 
-        // 验证用户是否存在且为评级实验室
+        // Validate if the user exists and is a grading lab
         const user = await User.findById(userId);
         if (!user || user.role !== 'GRADING_LAB') {
             return res.status(403).json({ 
@@ -309,7 +309,7 @@ router.patch('/:id/grade', async (req, res) => {
             });
         }
 
-        // 验证钻石状态是否为GRADED
+        // Validate if the diamond status is GRADED
         if (diamond.status !== 'GRADED') {
             return res.status(400).json({ 
                 message: "Diamond must be in GRADED status to update grading information",
@@ -317,26 +317,26 @@ router.patch('/:id/grade', async (req, res) => {
             });
         }
 
-        // 验证用户是否是钻石的当前所有者
+        // Validate if the user is the current owner of the diamond
         if (diamond.currentOwner.toString() !== userId) {
             return res.status(403).json({ 
                 message: "Only the current owner can update grading information" 
             });
         }
 
-        // 更新评级信息
+        // Update grading information
         console.log('Updating diamond metadata...');
         diamond.metadata.grading = grading;
         diamond.certificates.gradingCertificate.certificateHash = certificateHash;
         if (imageData) {
             console.log('Setting image data...');
-            diamond.metadata.images = imageData;  // 直接存储 Base64 图片数据
+            diamond.metadata.images = imageData;  // Directly store Base64 image data
         }
 
         await diamond.save();
         console.log('Diamond saved successfully');
 
-        // 返回更新后的钻石信息
+        // Return the updated diamond information
         const updatedDiamond = await Diamond.findById(req.params.id)
             .populate('currentOwner')
             .populate('certificates.miningCertificate.companyId')

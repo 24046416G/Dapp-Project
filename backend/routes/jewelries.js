@@ -4,7 +4,7 @@ const Jewelry = require('../models/Jewelry');
 const Diamond = require('../models/Diamond');
 const User = require('../models/User');
 
-// 创建新珠宝（仅限珠宝制造商）
+// Create a new jewelry (only for jewelry makers)
 router.post('/make', async (req, res) => {
     try {
         const { 
@@ -17,20 +17,20 @@ router.post('/make', async (req, res) => {
             image 
         } = req.body;
         
-        // 验证必要字段
+        // Validate required fields
         if (!jewelryId || !name || !diamonds || !currentOwner || !price) {
             return res.status(400).json({ 
                 message: "JewelryId, name, diamonds, currentOwner and price are required" 
             });
         }
 
-        // 验证当前用户是否为珠宝制造商
+        // Validate if the current user is a jewelry maker
         const user = await User.findById(currentOwner);
         if (!user || user.role !== 'JEWELRY_MAKER') {
             return res.status(403).json({ message: "Only jewelry makers can create jewelry" });
         }
 
-        // 验证所有钻石是否属于该制造商且状态正确
+        // Validate if all diamonds belong to the maker and are in the correct status
         for (let diamondId of diamonds) {
             const diamond = await Diamond.findById(diamondId);
             if (!diamond || 
@@ -42,17 +42,17 @@ router.post('/make', async (req, res) => {
             }
         }
 
-        // 验证图片数据（如果提供）
+        // Validate image data (if provided)
         if (image) {
-            // 验证是否是有效的 Base64 图片数据
+            // Validate if it is a valid Base64 image data
             if (!image.match(/^data:image\/(png|jpeg|jpg|gif);base64,/)) {
                 return res.status(400).json({ 
                     message: "Invalid image format. Must be a Base64 encoded image" 
                 });
             }
 
-            // 验证图片大小（Base64 字符串长度）
-            if (image.length > 5 * 1024 * 1024) {  // 5MB 限制
+            // Validate image size (Base64 string length)
+            if (image.length > 5 * 1024 * 1024) {  // 5MB limit
                 return res.status(400).json({ 
                     message: "Image size too large. Maximum size is 5MB" 
                 });
@@ -77,7 +77,7 @@ router.post('/make', async (req, res) => {
 
         await jewelry.save();
 
-        // 更新所有钻石的状态为JEWELRY并设置jewelryId
+        // Update the status of all diamonds to JEWELRY and set jewelryId
         await Diamond.updateMany(
             { _id: { $in: diamonds } },
             { 
@@ -86,13 +86,13 @@ router.post('/make', async (req, res) => {
             }
         );
 
-        // 更新用户的拥有珠宝列表
+        // Update the user's owned jewelries list
         if (!user.ownedJewelries.includes(jewelry._id)) {
             user.ownedJewelries.push(jewelry._id);
             await user.save();
         }
 
-        // 返回创建的珠宝信息（带 populate）
+        // Return the created jewelry information (with populate)
         const populatedJewelry = await Jewelry.findById(jewelry._id)
             .populate('currentOwner')
             .populate('diamonds')
@@ -112,7 +112,7 @@ router.post('/make', async (req, res) => {
     }
 });
 
-// 获取珠宝列表
+// Get jewelry list
 router.get('/all', async (req, res) => {
     try {
         const jewelries = await Jewelry.find()
@@ -135,16 +135,16 @@ router.get('/all', async (req, res) => {
     }
 });
 
-// 获取用户拥有的珠宝列表
+// Get user's owned jewelries list
 router.get('/user/:userId', async (req, res) => {
     try {
-        // 验证用户是否存在
+        // Validate if the user exists
         const user = await User.findById(req.params.userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // 查找用户拥有的所有珠宝
+        // Find all jewelries owned by the user
         const jewelries = await Jewelry.find({ currentOwner: req.params.userId })
             .populate('currentOwner')
             .populate('diamonds')
@@ -167,7 +167,7 @@ router.get('/user/:userId', async (req, res) => {
     }
 });
 
-// 获取珠宝详情
+// Get jewelry details
 router.get('/:id', async (req, res) => {
     try {
         const jewelry = await Jewelry.findById(req.params.id)
@@ -193,17 +193,17 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// 转移珠宝所有权（销售给客户或客户间转让）
+// Transfer jewelry ownership (sell to customers or transfer between customers)
 router.patch('/:id/transfer', async (req, res) => {
     try {
         const { newOwnerId } = req.body;
 
-        // 验证必要字段
+        // Validate required fields
         if (!newOwnerId) {
             return res.status(400).json({ message: "New owner ID is required" });
         }
 
-        // 查找珠宝
+        // Find the jewelry
         const jewelry = await Jewelry.findById(req.params.id)
             .populate('currentOwner')
             .populate('diamonds')
@@ -213,15 +213,15 @@ router.patch('/:id/transfer', async (req, res) => {
             return res.status(404).json({ message: "Jewelry not found" });
         }
 
-        // 验证新所有者
+        // Validate the new owner
         const newOwner = await User.findById(newOwnerId);
         if (!newOwner) {
             return res.status(404).json({ message: "New owner not found" });
         }
 
-        // 验证转让权限
-        // 1. 如果当前所有者是珠宝制造商，新所有者必须是客户
-        // 2. 如果当前所有者是客户，新所有者也必须是客户
+        // Validate transfer permission
+        // 1. If the current owner is a jewelry maker, the new owner must be a customer
+        // 2. If the current owner is a customer, the new owner must also be a customer
         if (jewelry.currentOwner.role === 'JEWELRY_MAKER' && newOwner.role !== 'CUSTOMER') {
             return res.status(403).json({ 
                 message: "Jewelry maker can only transfer to customers" 
@@ -234,10 +234,10 @@ router.patch('/:id/transfer', async (req, res) => {
             });
         }
 
-        // 保存当前所有者ID
+        // Save the current owner ID
         const currentOwnerId = jewelry.currentOwner._id;
 
-        // 更新珠宝所有权
+        // Update jewelry ownership
         jewelry.currentOwner = newOwnerId;
         jewelry.history.push({
             owner: newOwnerId,
@@ -248,7 +248,7 @@ router.patch('/:id/transfer', async (req, res) => {
 
         await jewelry.save();
 
-        // 如果是从珠宝制造商转让给客户，更新相关钻石状态为SOLD
+        // If transferring from a jewelry maker to a customer, update related diamond status to SOLD
         if (jewelry.currentOwner.role === 'JEWELRY_MAKER') {
             await Diamond.updateMany(
                 { _id: { $in: jewelry.diamonds } },
@@ -256,7 +256,7 @@ router.patch('/:id/transfer', async (req, res) => {
             );
         }
 
-        // 更新前任所有者的珠宝列表
+        // Update the previous owner's owned jewelries list
         const previousOwner = await User.findById(currentOwnerId);
         if (previousOwner) {
             previousOwner.ownedJewelries = previousOwner.ownedJewelries.filter(
@@ -265,13 +265,13 @@ router.patch('/:id/transfer', async (req, res) => {
             await previousOwner.save();
         }
 
-        // 更新新所有者的珠宝列表
+        // Update the new owner's owned jewelries list
         if (!newOwner.ownedJewelries.includes(jewelry._id)) {
             newOwner.ownedJewelries.push(jewelry._id);
             await newOwner.save();
         }
 
-        // 返回更新后的珠宝信息
+        // Return the updated jewelry information
         const updatedJewelry = await Jewelry.findById(req.params.id)
             .populate('currentOwner')
             .populate('diamonds')
