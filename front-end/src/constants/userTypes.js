@@ -63,7 +63,7 @@ export const USER_ROUTES = {
         {
             path: '/certificate',
             name: 'Verification',
-            icon: 'FaCertificate'
+            icon: 'FaGem'
         }
     ],
     [USER_TYPES.GRADING_LAB]: [
