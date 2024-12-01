@@ -171,6 +171,7 @@ const Store = ({ userType }) => {
     };
 
     const filterProducts = (products) => {
+        console.log('store filterProducts',products);
         switch(userType) {
             case USER_TYPES.JEWELRY_MAKER:
                 return products.filter(product => 
@@ -201,9 +202,18 @@ const Store = ({ userType }) => {
     };
 
     const handlePurchaseSuccess = (updatedProduct) => {
-        setProducts(prevProducts => 
-            prevProducts.filter(product => product._id !== updatedProduct._id)
-        );
+        switch(userType) {
+            case USER_TYPES.CUSTOMER:
+                setProducts(prevProducts => 
+                    prevProducts.filter(product => product._id !== updatedProduct._id)
+                );
+                break;
+            default:
+                setProducts(prevProducts => 
+                    prevProducts.filter(product => product.id !== updatedProduct.id)
+                );
+                break;
+        }
     };
 
     const { title, description, searchPlaceholder } = renderHeader();

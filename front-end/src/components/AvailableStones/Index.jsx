@@ -43,6 +43,7 @@ const AvailableStones = () => {
                 );
 
                 console.log('Filtered stones:', stonesToCut);
+                console.log('userid',user.id);
                 setAvailableStones(stonesToCut);
                 setLoading(false);
             } catch (error) {

@@ -37,6 +37,8 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                 case USER_TYPES.JEWELRY_MAKER:
                 case USER_TYPES.GRADING_LAB:
                 case USER_TYPES.CUTTING_COMPANY:
+                    console.log('other user buy diamond',product);
+                    console.log('user',user.id);
                     response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
                         method: 'PATCH',
                         headers: {
