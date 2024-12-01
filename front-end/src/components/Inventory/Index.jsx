@@ -356,18 +356,18 @@ const Inventory = () => {
                 onPriceChange={handlePriceChange}
             />
 
-            <div className="products-container">
-                <div className="products">
+            <div className="inventory-container">
+                <div className="inventory-grid">
                     {filteredProducts.map((product) => (
-                        <div key={product.id} className="product-card">
+                        <div key={product.id} className="inventory-card">
                             <input
                                 type="checkbox"
                                 checked={selectedProducts.includes(product.id)}
                                 onChange={() => handleCheckboxChange(product.id)}
                             />
                             <h3>{product.name}</h3>
-                            <p className="price">Price: ${product.price.toLocaleString()}</p>
-                            <div className="diamond-specs">
+                            <p className="inventory-price">Price: ${product.price.toLocaleString()}</p>
+                            <div className="inventory-specs">
                                 <p><strong>Carat:</strong> {product.metadata.carat}</p>
                                 <p><strong>Color:</strong> {product.metadata.color}</p>
                                 <p><strong>Clarity:</strong> {product.metadata.clarity}</p>
@@ -375,7 +375,7 @@ const Inventory = () => {
                                 <p><strong>Origin:</strong> {product.metadata.origin}</p>
                             </div>
                             <p className="description">{product.description}</p>
-                            <span className="status-badge">{product.status}</span>
+                            <span className="inventory-status">{product.status}</span>
                         </div>
                     ))}
                 </div>
@@ -383,8 +383,8 @@ const Inventory = () => {
 
             <Button 
                 onClick={() => setIsModalOpen(true)} 
-                className="make-jewelry-button"
                 disabled={selectedProducts.length === 0}
+                className="inventory-make-button"
             >
                 Make Jewelry
             </Button>
