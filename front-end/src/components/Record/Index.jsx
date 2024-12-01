@@ -58,7 +58,8 @@ const Record = ({ userType }) => {
                         filteredData = data.filter(record => 
                             record.status === 'CUT' && 
                             (record.currentOwner?._id === user.id || 
-                            record.history.some(h => h.owner?._id === user.id))
+                            record.history.some(h => h.owner?._id === user.id)) &&
+                            record.metadata.cut && record.metadata.polish
                         );
                         break;
                     case USER_TYPES.GRADING_LAB:
