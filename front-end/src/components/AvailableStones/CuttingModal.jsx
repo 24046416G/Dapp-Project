@@ -6,10 +6,15 @@ const CuttingModal = ({ stone, isOpen, onClose, onSubmit }) => {
         cuttingCompany: 'Diamond Cutting Corp',
         polishingTechnology: 'Traditional',
         cuttingTechnology: 'Laser',
+        certificateHash: ''
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!formData.certificateHash.trim()) {
+            alert('Please enter the IPFS Certificate Hash');
+            return;
+        }
         onSubmit(formData);
         onClose();
     };
@@ -81,6 +86,18 @@ const CuttingModal = ({ stone, isOpen, onClose, onSubmit }) => {
                                 value={formData.cuttingCompany}
                                 onChange={handleChange}
                                 disabled
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>IPFS Certificate Hash</label>
+                            <input
+                                type="text"
+                                name="certificateHash"
+                                value={formData.certificateHash}
+                                onChange={handleChange}
+                                placeholder="Enter IPFS hash for the certificate"
+                                required
                             />
                         </div>
 

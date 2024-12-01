@@ -65,7 +65,7 @@ const AvailableStones = () => {
     };
 
     const handleCuttingSubmit = async (formData) => {
-        console.log('formData', formData);
+        console.log('Received form data:', formData);
         try {
             // 获取当前用户信息
             const userStr = localStorage.getItem('user');
@@ -74,7 +74,40 @@ const AvailableStones = () => {
             }
             const user = JSON.parse(userStr);
 
-            // 更新钻石的切割信息
+            // 1. 首先调用区块链服务器的注册接口
+            const diamondData = {
+                id: selectedStone.diamondId,
+                cut: formData.cuttingTechnology,
+                polish: formData.polishingTechnology,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Preparing diamond registration data:', {
+                diamondData,
+                signature: user.id,
+                certificateIpfsHash: formData.certificateHash
+            });
+
+            const registerResponse = await fetch('http://localhost:3001/api/diamond/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    diamondData,
+                    signature: user.id,
+                    certificateIpfsHash: formData.certificateHash
+                })
+            });
+
+            if (!registerResponse.ok) {
+                throw new Error('Failed to register diamond with blockchain');
+            }
+
+            const registerResult = await registerResponse.json();
+            console.log('Blockchain registration result:', registerResult);
+
+            // 2. 然后调用后端的切割更新接口
             const response = await fetch(`http://localhost:3000/diamonds/${selectedStone._id}/cut`, {
                 method: 'PATCH',
                 headers: {
@@ -82,10 +115,13 @@ const AvailableStones = () => {
                 },
                 body: JSON.stringify({
                     userId: user.id,
-                    cut: formData.cuttingTechnology,
-                    polish: formData.polishingTechnology
+                    cut: diamondData.cut,
+                    polish: diamondData.polish,
+                    certificateHash: registerResult.data.infoHash // 使用返回的 infoHash
                 })
             });
+
+            console.log('Backend update response:', await response.json());
 
             if (!response.ok) {
                 throw new Error('Failed to update diamond cutting information');
@@ -102,7 +138,7 @@ const AvailableStones = () => {
 
             alert('Cutting process started successfully!');
         } catch (error) {
-            console.error('Error updating cutting information:', error);
+            console.error('Error in cutting process:', error);
             alert('Failed to start cutting process: ' + error.message);
         }
     };
