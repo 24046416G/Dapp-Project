@@ -88,12 +88,12 @@ app.post('/api/company/register', async (req, res) => {
 // 钻石注册API
 app.post('/api/diamond/register', async (req, res) => {
     try {
-        const { diamondData, minerSignature, certificateIpfsHash } = req.body;
+        const { diamondData, signature, certificateIpfsHash } = req.body;
         
         // 验证并生成哈希
         const verificationResult = await diamondManager.verifyAndHashDiamond(
             diamondData,
-            minerSignature,
+            signature,
             certificateIpfsHash
         );
 
