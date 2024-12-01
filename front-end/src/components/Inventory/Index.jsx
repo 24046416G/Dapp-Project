@@ -1,92 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../Common/Button/Index.jsx';
 import SearchBar from '../Common/SearchBar/Index.jsx';
 import '../../css/inventory.css';
 import '../../css/layout.css';
 import '../../css/modal.css';
-
-const productsData = [
-    { 
-        id: 1, 
-        name: 'Round Brilliant Diamond', 
-        price: 12999,
-        description: '2.1 Carat D Color VVS1 Clarity Excellent Cut',
-        status: 'GRADED',
-        metadata: {
-            carat: 2.1,
-            color: 'D',
-            clarity: 'VVS1',
-            cut: 'Excellent',
-            polish: 'Excellent',
-            symmetry: 'Excellent',
-            origin: 'South Africa'
-        }
-    },
-    { 
-        id: 2, 
-        name: 'Oval Cut Diamond', 
-        price: 15499,
-        description: '2.5 Carat E Color VS1 Clarity',
-        status: 'GRADED',
-        metadata: {
-            carat: 2.5,
-            color: 'E',
-            clarity: 'VS1',
-            cut: 'Very Good',
-            polish: 'Excellent',
-            symmetry: 'Very Good',
-            origin: 'Botswana'
-        }
-    },
-    { 
-        id: 3, 
-        name: 'Princess Cut Diamond', 
-        price: 8999,
-        description: '1.5 Carat F Color VS2 Clarity',
-        status: 'GRADED',
-        metadata: {
-            carat: 1.5,
-            color: 'F',
-            clarity: 'VS2',
-            cut: 'Excellent',
-            polish: 'Very Good',
-            symmetry: 'Excellent',
-            origin: 'Canada'
-        }
-    },
-    { 
-        id: 4, 
-        name: 'Emerald Cut Diamond', 
-        price: 18999,
-        description: '3.0 Carat G Color VVS2 Clarity',
-        status: 'GRADED',
-        metadata: {
-            carat: 3.0,
-            color: 'G',
-            clarity: 'VVS2',
-            cut: 'Excellent',
-            polish: 'Excellent',
-            symmetry: 'Excellent',
-            origin: 'Russia'
-        }
-    },
-    { 
-        id: 5, 
-        name: 'Cushion Cut Diamond', 
-        price: 11499,
-        description: '2.0 Carat D Color VS1 Clarity',
-        status: 'GRADED',
-        metadata: {
-            carat: 2.0,
-            color: 'D',
-            clarity: 'VS1',
-            cut: 'Very Good',
-            polish: 'Excellent',
-            symmetry: 'Very Good',
-            origin: 'Australia'
-        }
-    }
-];
 
 const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
     const [formData, setFormData] = useState({
@@ -298,6 +215,47 @@ const Inventory = () => {
     const [priceRange, setPriceRange] = useState([0, 30000]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [diamonds, setDiamonds] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // 获取钻石数据
+    useEffect(() => {
+        const fetchDiamonds = async () => {
+            try {
+                // 获取当前用户信息
+                const userStr = localStorage.getItem('user');
+                if (!userStr) {
+                    throw new Error('User not found');
+                }
+                const user = JSON.parse(userStr);
+
+                const response = await fetch('http://localhost:3000/diamonds/all/diamonds');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch diamonds');
+                }
+
+                const data = await response.json();
+                console.log('raw data in jewelry inventory page',data);
+                console.log('user in jewelry inventory page',user);
+                // 筛选状态为 JEWELRY_MAKER 且属于当前用户的钻石
+                const filteredDiamonds = data.filter(diamond => 
+                    diamond.status === 'JEWELRY' && 
+                    diamond.currentOwner?._id === user.id
+                );
+
+                console.log('Filtered diamonds:', filteredDiamonds);
+                setDiamonds(filteredDiamonds);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching diamonds:', error);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchDiamonds();
+    }, []);
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -335,11 +293,19 @@ const Inventory = () => {
         alert('Jewelry created successfully!');
     };
 
-    const filteredProducts = productsData.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (selectedFilter === 'all' || product.metadata?.cut === selectedFilter) &&
-        product.price <= priceRange[1]
+    const filteredProducts = diamonds.filter((diamond) =>
+        diamond.diamondId.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedFilter === 'all' || diamond.metadata?.cut === selectedFilter) &&
+        diamond.price <= priceRange[1]
     );
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
         <div className="container">
@@ -360,24 +326,24 @@ const Inventory = () => {
 
             <div className="inventory-container">
                 <div className="inventory-grid">
-                    {filteredProducts.map((product) => (
-                        <div key={product.id} className="inventory-card">
+                    {filteredProducts.map((diamond) => (
+                        <div key={diamond._id} className="inventory-card">
                             <input
                                 type="checkbox"
-                                checked={selectedProducts.includes(product.id)}
-                                onChange={() => handleCheckboxChange(product.id)}
+                                checked={selectedProducts.includes(diamond._id)}
+                                onChange={() => handleCheckboxChange(diamond._id)}
                             />
-                            <h3>{product.name}</h3>
-                            <p className="inventory-price">Price: ${product.price.toLocaleString()}</p>
+                            <h3>Diamond {diamond.diamondId}</h3>
+                            <p className="inventory-price">Price: ${diamond.price?.toLocaleString()}</p>
                             <div className="inventory-specs">
-                                <p><strong>Carat:</strong> {product.metadata.carat}</p>
-                                <p><strong>Color:</strong> {product.metadata.color}</p>
-                                <p><strong>Clarity:</strong> {product.metadata.clarity}</p>
-                                <p><strong>Cut:</strong> {product.metadata.cut}</p>
-                                <p><strong>Origin:</strong> {product.metadata.origin}</p>
+                                <p><strong>Carat:</strong> {diamond.metadata?.carat}</p>
+                                <p><strong>Color:</strong> {diamond.metadata?.color}</p>
+                                <p><strong>Clarity:</strong> {diamond.metadata?.clarity}</p>
+                                <p><strong>Cut:</strong> {diamond.metadata?.cut}</p>
+                                <p><strong>Origin:</strong> {diamond.metadata?.origin}</p>
                             </div>
-                            <p className="description">{product.description}</p>
-                            <span className="inventory-status">{product.status}</span>
+                            <p className="description">{diamond.description}</p>
+                            <span className="inventory-status">{diamond.status}</span>
                         </div>
                     ))}
                 </div>
@@ -390,8 +356,6 @@ const Inventory = () => {
             >
                 Make Jewelry
             </Button>
-
-            
 
             <MakeJewelryModal
                 isOpen={isModalOpen}
