@@ -85,49 +85,56 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                 </div>
 
                 <div className="info-section">
-                    <h3>Diamond Details</h3>
-                    {product.diamonds?.map((diamond, index) => (
-                        <div key={index} className="diamond-section">
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Diamond ID:</span>
-                                    <span>{diamond.diamondId}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Carat:</span>
-                                    <span>{diamond.metadata?.carat}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Color:</span>
-                                    <span>{diamond.metadata?.color}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Clarity:</span>
-                                    <span>{diamond.metadata?.clarity}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="info-section">
-                    <h3>Certificates</h3>
-                    <div className="certificate-grid">
+                    <h3>Diamonds</h3>
+                    <div className="diamonds-grid">
                         {product.diamonds?.map((diamond, index) => (
-                            <div key={index} className="certificate-section">
-                                <p>Diamond {diamond.diamondId} Certificates:</p>
-                                <div className="detail-grid">
-                                    <div className="detail-item">
-                                        <span>Mining:</span>
-                                        <span>{diamond.certificates?.miningCertificate?.status}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <span>Cutting:</span>
-                                        <span>{diamond.certificates?.cuttingCertificate?.status}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <span>Grading:</span>
-                                        <span>{diamond.certificates?.gradingCertificate?.status}</span>
+                            <div key={index} className="diamond-card">
+                                <div className="diamond-card-content">
+                                    {diamond.metadata?.images && (
+                                        <div className="diamond-image-wrapper">
+                                            <img 
+                                                src={diamond.metadata?.images} 
+                                                alt={`Diamond ${diamond.diamondId}`}
+                                                className="diamond-thumbnail"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="diamond-info">
+                                        <div className="diamond-header">
+                                            <h4>Diamond {diamond.diamondId}</h4>
+                                        </div>
+                                        <div className="diamond-specs">
+                                            <div className="spec-row">
+                                                <span className="spec-label">Carat:</span>
+                                                <span className="spec-value">{diamond.metadata?.carat}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Color:</span>
+                                                <span className="spec-value">{diamond.metadata?.color}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Clarity:</span>
+                                                <span className="spec-value">{diamond.metadata?.clarity}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Cut:</span>
+                                                <span className="spec-value">{diamond.metadata?.cut}</span>
+                                            </div>
+                                        </div>
+                                        <div className="diamond-certificates">
+                                            <div className="cert-row">
+                                                <span className="cert-label">Mining:</span>
+                                                <span className="cert-value">{diamond.certificates?.miningCertificate?.status}</span>
+                                            </div>
+                                            <div className="cert-row">
+                                                <span className="cert-label">Cutting:</span>
+                                                <span className="cert-value">{diamond.certificates?.cuttingCertificate?.status}</span>
+                                            </div>
+                                            <div className="cert-row">
+                                                <span className="cert-label">Grading:</span>
+                                                <span className="cert-value">{diamond.certificates?.gradingCertificate?.status}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
