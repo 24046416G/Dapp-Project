@@ -197,11 +197,11 @@ const WaitToGrade = () => {
                             </div>
                             <div className="detail-row">
                                 <span>Cut:</span>
-                                <span>{diamond.certificates?.cuttingCertificate?.cut || 'N/A'}</span>
+                                <span>{diamond.metadata?.cut || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Polish:</span>
-                                <span>{diamond.certificates?.cuttingCertificate?.polish || 'N/A'}</span>
+                                <span>{diamond.metadata?.polish || 'N/A'}</span>
                             </div>
                         </div>
 
