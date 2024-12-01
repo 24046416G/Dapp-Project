@@ -12,7 +12,7 @@ const ProductCard = ({ product, onClick, userType }) => {
             <div className="card-body">
                 {product.image ? (
                     <img 
-                        src={"assets/jewelry/jewelry_01.png"}
+                        src={product.image}
                         alt={product.name}
                         className="product-image"
                     />
