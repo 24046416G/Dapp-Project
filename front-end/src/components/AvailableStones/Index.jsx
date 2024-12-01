@@ -43,6 +43,7 @@ const AvailableStones = () => {
                 );
 
                 console.log('Filtered stones:', stonesToCut);
+                console.log('userid',user.id);
                 setAvailableStones(stonesToCut);
                 setLoading(false);
             } catch (error) {
@@ -117,7 +118,7 @@ const AvailableStones = () => {
                     userId: user.id,
                     cut: diamondData.cut,
                     polish: diamondData.polish,
-                    certificateHash: registerResult.data.infoHash // 使用返回的 infoHash
+                    certificateHash: registerResult.data.transactionHash
                 })
             });
 

@@ -291,4 +291,34 @@ router.patch('/:id/transfer', async (req, res) => {
     }
 });
 
+// 添加新的路由处理证书查询
+router.get('/query/:certificateHash', async (req, res) => {
+    try {
+        const { certificateHash } = req.params;
+
+        const jewelry = await Jewelry.findOne({ 
+            authenticityCertificate: certificateHash 
+        })
+        .populate('currentOwner')
+        .populate('diamonds');
+
+        if (!jewelry) {
+            return res.status(404).json({ 
+                message: "No jewelry found with this certificate" 
+            });
+        }
+
+        res.json({
+            message: "Jewelry found successfully",
+            jewelry
+        });
+    } catch (error) {
+        console.error('Query jewelry error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+});
+
 module.exports = router; 

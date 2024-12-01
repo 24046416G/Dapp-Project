@@ -98,7 +98,7 @@ const AddRecordModal = ({ isOpen, onClose, userType }) => {
                 diamondType: 'NATURAL',
                 currentOwner: JSON.parse(localStorage.getItem("user")).id,
                 price: submitData.diamondData.price,
-                certificateHash: registerResult.data.diamondHash,
+                certificateHash: registerResult.data.transactionHash,
                 metadata: {
                     origin: submitData.diamondData.origin,
                     color: submitData.diamondData.color,
