@@ -77,88 +77,238 @@ router.get('/:diamondId', async (req, res) => {
     }
 });
 
-// 3. Update diamond status and ownership
+// // 3. Update diamond status and ownership
+// router.patch('/:id/transfer', async (req, res) => {
+//     try {
+//         const { newOwnerId, price, certificateHash } = req.body;
+
+//         // Validate request parameters
+//         if (!newOwnerId || !certificateHash) {
+//             return res.status(400).json({ 
+//                 message: "newOwnerId and certificateHash are required" 
+//             });
+//         }
+
+//         // Find the diamond
+//         const diamond = await Diamond.findById(req.params.id);
+//         if (!diamond) {
+//             return res.status(404).json({ 
+//                 message: "Diamond not found" 
+//             });
+//         }
+
+//         // Validate new owner
+//         const newOwner = await User.findById(newOwnerId);
+//         if (!newOwner) {
+//             return res.status(404).json({ 
+//                 message: "New owner not found" 
+//             });
+//         }
+
+//         // Save the current owner ID
+//         const currentOwnerId = diamond.currentOwner;
+
+//         // Update diamond information
+//         diamond.currentOwner = newOwnerId;
+//         if (price) diamond.price = price;
+
+//         // Update certificate status
+//         if (newOwner.role === 'CUSTOMER') {
+//             diamond.status = 'SOLD';
+//         }
+
+//         // Add transfer record
+//         diamond.history.push({
+//             status: diamond.status,
+//             owner: newOwnerId,
+//             timestamp: new Date(),
+//             transaction: certificateHash
+//         });
+
+//         await diamond.save();
+
+//         // Update the previous owner's diamond list
+//         const previousOwner = await User.findById(currentOwnerId);
+//         if (previousOwner) {
+//             previousOwner.ownedDiamonds = previousOwner.ownedDiamonds.filter(
+//                 d => d.toString() !== diamond._id.toString()
+//             );
+//             await previousOwner.save();
+//         }
+
+//         // Update the new owner's diamond list
+//         if (!newOwner.ownedDiamonds.includes(diamond._id)) {
+//             newOwner.ownedDiamonds.push(diamond._id);
+//             await newOwner.save();
+//         }
+
+//         // Return the updated diamond information
+//         const updatedDiamond = await Diamond.findById(req.params.id)
+//             .populate('currentOwner')
+//             .populate('certificates.miningCertificate.companyId')
+//             .populate('certificates.cuttingCertificate.companyId')
+//             .populate('certificates.gradingCertificate.companyId')
+//             .populate('history.owner');
+
+//         res.json({
+//             message: "Diamond transferred successfully",
+//             diamond: updatedDiamond
+//         });
+//     } catch (error) {
+//         console.error('Transfer error:', error);
+//         res.status(500).json({ 
+//             message: "Internal server error",
+//             error: error.message
+//         });
+//     }
+// });
+
 router.patch('/:id/transfer', async (req, res) => {
     try {
         const { newOwnerId, price, certificateHash } = req.body;
 
-        // Validate request parameters
+        // 验证请求参数
         if (!newOwnerId || !certificateHash) {
             return res.status(400).json({ 
                 message: "newOwnerId and certificateHash are required" 
             });
         }
 
-        // Find the diamond
+        // 使用 MongoDB _id 查找钻石，不使用 populate
         const diamond = await Diamond.findById(req.params.id);
         if (!diamond) {
             return res.status(404).json({ 
-                message: "Diamond not found" 
+                message: "Diamond not found",
+                providedId: req.params.id 
             });
         }
 
-        // Validate new owner
+        // 验证新所有者
         const newOwner = await User.findById(newOwnerId);
         if (!newOwner) {
             return res.status(404).json({ 
-                message: "New owner not found" 
+                message: "New owner not found",
+                providedNewOwnerId: newOwnerId 
             });
         }
 
-        // Save the current owner ID
-        const currentOwnerId = diamond.currentOwner;
-
-        // Update diamond information
-        diamond.currentOwner = newOwnerId;
-        if (price) diamond.price = price;
-
-        // Update certificate status
-        if (newOwner.role === 'CUSTOMER') {
-            diamond.status = 'SOLD';
+        // 确定新状态
+        const statusMap = {
+            'CUTTING_COMPANY': 'CUT',
+            'GRADING_LAB': 'GRADED',
+            'JEWELRY_MAKER': 'JEWELRY',
+            'CUSTOMER': 'SOLD'
+        };
+        const newStatus = statusMap[newOwner.role];
+        
+        if (!newStatus) {
+            return res.status(400).json({ 
+                message: `Invalid owner role: ${newOwner.role}`,
+                validRoles: Object.keys(statusMap)
+            });
         }
 
-        // Add transfer record
+        // 验证状态转换
+        const validStatusTransitions = {
+            'MINED': ['CUT'],
+            'CUT': ['GRADED'],
+            'GRADED': ['JEWELRY'],
+            'JEWELRY': ['SOLD'],
+            'SOLD': []
+        };
+
+        console.log('Current status:', diamond.status);
+        console.log('Attempted new status:', newStatus);
+        console.log('Valid transitions:', validStatusTransitions[diamond.status]);
+
+        if (!validStatusTransitions[diamond.status]?.includes(newStatus)) {
+            return res.status(400).json({ 
+                message: `Invalid status transition from ${diamond.status} to ${newStatus}`,
+                currentStatus: diamond.status,
+                attemptedNewStatus: newStatus,
+                validTransitions: validStatusTransitions[diamond.status]
+            });
+        }
+
+        // 更新证书
+        const certificateTypeMap = {
+            'CUT': 'cuttingCertificate',
+            'GRADED': 'gradingCertificate',
+            'JEWELRY': 'jewelryCertificate'
+        };
+
+        if (certificateTypeMap[newStatus]) {
+            diamond.certificates[certificateTypeMap[newStatus]] = {
+                companyId: newOwnerId,
+                certificateHash,
+                timestamp: new Date(),
+                status: 'VERIFIED'
+            };
+        }
+
+        // 保存当前所有者ID
+        const currentOwnerId = diamond.currentOwner;
+
+        // 更新基本信息
+        diamond.currentOwner = newOwnerId;
+        diamond.status = newStatus;
+        if (price) diamond.price = price;
+
+        // 如果状态不是 JEWELRY 或 SOLD，清除 jewelryId
+        if (newStatus !== 'JEWELRY' && newStatus !== 'SOLD') {
+            diamond.jewelryId = undefined;
+        }
+
+        // 添加到历史记录
         diamond.history.push({
-            status: diamond.status,
+            status: newStatus,
             owner: newOwnerId,
             timestamp: new Date(),
             transaction: certificateHash
         });
 
-        await diamond.save();
-
-        // Update the previous owner's diamond list
-        const previousOwner = await User.findById(currentOwnerId);
-        if (previousOwner) {
-            previousOwner.ownedDiamonds = previousOwner.ownedDiamonds.filter(
-                d => d.toString() !== diamond._id.toString()
-            );
-            await previousOwner.save();
+        // 更新前任所有者的钻石列表
+        if (currentOwnerId) {
+            const previousOwner = await User.findById(currentOwnerId);
+            if (previousOwner) {
+                previousOwner.ownedDiamonds = previousOwner.ownedDiamonds.filter(
+                    d => d.toString() !== diamond._id.toString()
+                );
+                await previousOwner.save();
+            }
         }
 
-        // Update the new owner's diamond list
+        // 更新新所有者的钻石列表
         if (!newOwner.ownedDiamonds.includes(diamond._id)) {
             newOwner.ownedDiamonds.push(diamond._id);
             await newOwner.save();
         }
 
-        // Return the updated diamond information
-        const updatedDiamond = await Diamond.findById(req.params.id)
-            .populate('currentOwner')
-            .populate('certificates.miningCertificate.companyId')
-            .populate('certificates.cuttingCertificate.companyId')
-            .populate('certificates.gradingCertificate.companyId')
-            .populate('history.owner');
+        // 保存钻石更新
+        const updatedDiamond = await Diamond.findByIdAndUpdate(
+            req.params.id,
+            diamond.toObject(),
+            { 
+                new: true, 
+                runValidators: false  // 禁用验证器，因为 jewelryId 会在后续的珠宝创建时设置
+            }
+        ).populate('currentOwner')
+         .populate('certificates.miningCertificate.companyId')
+         .populate('certificates.cuttingCertificate.companyId')
+         .populate('certificates.gradingCertificate.companyId')
+         .populate('certificates.jewelryCertificate.companyId')
+         .populate('history.owner');
 
         res.json({
             message: "Diamond transferred successfully",
             diamond: updatedDiamond
         });
     } catch (error) {
-        console.error('Transfer error:', error);
+        console.error('Diamond transfer error:', error);
         res.status(500).json({ 
             message: "Internal server error",
-            error: error.message
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 });
