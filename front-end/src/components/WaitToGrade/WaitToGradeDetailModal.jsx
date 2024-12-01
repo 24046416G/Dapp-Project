@@ -4,7 +4,8 @@ import '../../css/modal.css';
 const WaitToGradeDetailModal = ({ diamond, isOpen, onClose, onSubmit }) => {
     const [gradingData, setGradingData] = useState({
         grading: '',
-        imageData: null
+        imageData: null,
+        certificateHash: ''
     });
 
     const handleImageUpload = (e) => {
@@ -23,6 +24,10 @@ const WaitToGradeDetailModal = ({ diamond, isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!gradingData.certificateHash.trim()) {
+            alert('Please enter the IPFS Certificate Hash');
+            return;
+        }
         onSubmit(gradingData);
     };
 
@@ -54,6 +59,19 @@ const WaitToGradeDetailModal = ({ diamond, isOpen, onClose, onSubmit }) => {
                                 <option value="III">Grade III</option>
                                 <option value="IV">Grade IV</option>
                             </select>
+                        </div>
+                        <div className="form-group">
+                            <label>IPFS Certificate Hash:</label>
+                            <input
+                                type="text"
+                                value={gradingData.certificateHash}
+                                onChange={(e) => setGradingData(prev => ({
+                                    ...prev,
+                                    certificateHash: e.target.value
+                                }))}
+                                placeholder="Enter IPFS hash for the certificate"
+                                required
+                            />
                         </div>
                         <div className="form-group">
                             <label>Upload Images:</label>

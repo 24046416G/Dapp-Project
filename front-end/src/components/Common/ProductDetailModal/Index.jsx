@@ -5,14 +5,13 @@ import { USER_TYPES } from '../../../constants/userTypes';
 import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
 
-const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false }) => {
+const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false, onPurchaseSuccess }) => {
     const [showQRCode, setShowQRCode] = useState(false);
     
     if (!isOpen) return null;
 
     const handleBuy = async () => {
         try {
-            // 获取当前用户信息
             const userStr = localStorage.getItem('user');
             if (!userStr) {
                 alert('Please login first!');
@@ -20,34 +19,55 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
             }
             const user = JSON.parse(userStr);
 
-            // 准备转移请求数据
-            const transferData = {
-                newOwnerId: user.id,
-                price: product.price,
-                certificateHash: user.id
-            };
+            let response;
+            switch (userType) {
+                case USER_TYPES.CUSTOMER:
+                    console.log('customer buy jewelry',product);
+                    response = await fetch(`http://localhost:3000/jewelries/${product._id}/transfer`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            newOwnerId: user.id
+                        })
+                    });
+                    break;
 
-            console.log('Transfer data:', transferData);
+                case USER_TYPES.JEWELRY_MAKER:
+                case USER_TYPES.GRADING_LAB:
+                case USER_TYPES.CUTTING_COMPANY:
+                    response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            newOwnerId: user.id,
+                            price: product.price,
+                            certificateHash: user.id
+                        })
+                    });
+                    break;
 
-            // 调用转移接口
-            const response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(transferData)
-            });
-            console.log("response",response)
+                default:
+                    throw new Error('Invalid user type');
+            }
+
             if (!response.ok) {
-                throw new Error('Transfer failed');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Transfer failed');
             }
 
             const result = await response.json();
             console.log('Transfer result:', result);
-
             alert('Purchase successful!');
             onClose();
-            // 可以添加回调函数来刷新商店列表
+            
+            if (onPurchaseSuccess) {
+                onPurchaseSuccess(result);
+            }
+
         } catch (error) {
             console.error('Purchase error:', error);
             alert('Purchase failed: ' + error.message);
@@ -58,7 +78,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
         <>
             <div className="modal-image">
                 <img 
-                    src={"assets/jewelry/jewelry_01.png"}
+                    src={product.image}
                     alt={product.name}
                     className="product-image"
                 />
@@ -78,14 +98,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                             <span>{product.name}</span>
                         </div>
                         <div className="detail-item">
-                            <span>Type:</span>
-                            <span>{product.type}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span>Material:</span>
-                            <span>{product.material}</span>
-                        </div>
-                        <div className="detail-item">
                             <span>Price:</span>
                             <span>${product.price?.toLocaleString()}</span>
                         </div>
@@ -93,49 +105,56 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                 </div>
 
                 <div className="info-section">
-                    <h3>Diamond Details</h3>
-                    {product.diamonds?.map((diamond, index) => (
-                        <div key={index} className="diamond-section">
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Diamond ID:</span>
-                                    <span>{diamond.diamondId}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Carat:</span>
-                                    <span>{diamond.metadata?.carat}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Color:</span>
-                                    <span>{diamond.metadata?.color}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Clarity:</span>
-                                    <span>{diamond.metadata?.clarity}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="info-section">
-                    <h3>Certificates</h3>
-                    <div className="certificate-grid">
+                    <h3>Diamonds</h3>
+                    <div className="diamonds-grid">
                         {product.diamonds?.map((diamond, index) => (
-                            <div key={index} className="certificate-section">
-                                <p>Diamond {diamond.diamondId} Certificates:</p>
-                                <div className="detail-grid">
-                                    <div className="detail-item">
-                                        <span>Mining:</span>
-                                        <span>{diamond.certificates?.miningCertificate?.status}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <span>Cutting:</span>
-                                        <span>{diamond.certificates?.cuttingCertificate?.status}</span>
-                                    </div>
-                                    <div className="detail-item">
-                                        <span>Grading:</span>
-                                        <span>{diamond.certificates?.gradingCertificate?.status}</span>
+                            <div key={index} className="diamond-card">
+                                <div className="diamond-card-content">
+                                    {diamond.metadata?.images && (
+                                        <div className="diamond-image-wrapper">
+                                            <img 
+                                                src={diamond.metadata?.images} 
+                                                alt={`Diamond ${diamond.diamondId}`}
+                                                className="diamond-thumbnail"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="diamond-info">
+                                        <div className="diamond-header">
+                                            <h4>Diamond {diamond.diamondId}</h4>
+                                        </div>
+                                        <div className="diamond-specs">
+                                            <div className="spec-row">
+                                                <span className="spec-label">Carat:</span>
+                                                <span className="spec-value">{diamond.metadata?.carat}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Color:</span>
+                                                <span className="spec-value">{diamond.metadata?.color}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Clarity:</span>
+                                                <span className="spec-value">{diamond.metadata?.clarity}</span>
+                                            </div>
+                                            <div className="spec-row">
+                                                <span className="spec-label">Cut:</span>
+                                                <span className="spec-value">{diamond.metadata?.cut}</span>
+                                            </div>
+                                        </div>
+                                        <div className="diamond-certificates">
+                                            <div className="cert-row">
+                                                <span className="cert-label">Mining:</span>
+                                                <span className="cert-value">{diamond.certificates?.miningCertificate?.status}</span>
+                                            </div>
+                                            <div className="cert-row">
+                                                <span className="cert-label">Cutting:</span>
+                                                <span className="cert-value">{diamond.certificates?.cuttingCertificate?.status}</span>
+                                            </div>
+                                            <div className="cert-row">
+                                                <span className="cert-label">Grading:</span>
+                                                <span className="cert-value">{diamond.certificates?.gradingCertificate?.status}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

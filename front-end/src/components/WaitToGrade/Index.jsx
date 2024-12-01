@@ -77,6 +77,39 @@ const WaitToGrade = () => {
             }
             const user = JSON.parse(userStr);
 
+            // 1. 首先调用区块链服务器的注册接口
+            const diamondData = {
+                id: selectedDiamondForGrading.diamondId,
+                grading: gradingData.grading,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Preparing diamond registration data:', {
+                diamondData,
+                signature: user.id,
+                certificateIpfsHash: gradingData.certificateHash
+            });
+
+            const registerResponse = await fetch('http://localhost:3001/api/diamond/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    diamondData,
+                    signature: user.id,
+                    certificateIpfsHash: gradingData.certificateHash
+                })
+            });
+
+            if (!registerResponse.ok) {
+                throw new Error('Failed to register diamond with blockchain');
+            }
+
+            const registerResult = await registerResponse.json();
+            console.log('Blockchain registration result:', registerResult);
+
+            // 2. 然后调用后端的评级更新接口
             const response = await fetch(`http://localhost:3000/diamonds/${selectedDiamondForGrading._id}/grade`, {
                 method: 'PATCH',
                 headers: {
@@ -85,9 +118,12 @@ const WaitToGrade = () => {
                 body: JSON.stringify({
                     userId: user.id,
                     grading: gradingData.grading,
-                    imageData: gradingData.imageData
+                    imageData: gradingData.imageData,
+                    certificateHash: registerResult.data.infoHash
                 })
             });
+
+            console.log('Backend update response:', await response.json());
 
             if (!response.ok) {
                 throw new Error('Failed to submit grading');
@@ -106,7 +142,7 @@ const WaitToGrade = () => {
             setSelectedDiamondForGrading(null);
             alert('Grading submitted successfully');
         } catch (error) {
-            console.error('Error submitting grading:', error);
+            console.error('Error in grading process:', error);
             alert('Failed to submit grading: ' + error.message);
         }
     };

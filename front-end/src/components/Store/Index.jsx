@@ -200,6 +200,12 @@ const Store = ({ userType }) => {
         }
     };
 
+    const handlePurchaseSuccess = (updatedProduct) => {
+        setProducts(prevProducts => 
+            prevProducts.filter(product => product._id !== updatedProduct._id)
+        );
+    };
+
     const { title, description, searchPlaceholder } = renderHeader();
     const filterOptions = getFilterOptions();
     const filteredProducts = filterProducts(products);
@@ -249,6 +255,7 @@ const Store = ({ userType }) => {
                     onClose={() => setIsModalOpen(false)}
                     userType={userType}
                     showBuyButton={true}
+                    onPurchaseSuccess={handlePurchaseSuccess}
                 />
             )}
         </div>
