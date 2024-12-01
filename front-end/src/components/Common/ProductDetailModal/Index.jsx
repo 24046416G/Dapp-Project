@@ -105,6 +105,10 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                             <span>${product.price?.toLocaleString()}</span>
                         </div>
                     </div>
+                    <CertificateHash 
+                        label="Authenticity Certificate:"
+                        hash={product?.authenticityCertificate}
+                    />
                 </div>
 
                 <div className="info-section">
