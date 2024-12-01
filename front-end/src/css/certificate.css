@@ -185,4 +185,51 @@
 
 .verification-close-button:hover {
     background-color: #5a6268;
+}
+
+.diamond-certificates {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.diamond-certificates h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.certificate-section {
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 3px solid #4a90e2;
+}
+
+.certificate-section h5 {
+    color: #4a90e2;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+}
+
+.certificate-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.certificate-info .info-item {
+    padding: 0.3rem 0;
+}
+
+.certificate-info .info-item span:first-child {
+    color: #666;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.certificate-info .info-item span:last-child {
+    color: #333;
+    word-break: break-all;
 } 
