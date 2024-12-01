@@ -241,7 +241,8 @@ const Inventory = () => {
                 // 筛选状态为 JEWELRY_MAKER 且属于当前用户的钻石
                 const filteredDiamonds = data.filter(diamond => 
                     diamond.status === 'JEWELRY' && 
-                    diamond.currentOwner?._id === user.id
+                    diamond.currentOwner?._id === user.id &&
+                    !diamond.jewelryId
                 );
 
                 console.log('Filtered diamonds:', filteredDiamonds);
@@ -326,26 +327,32 @@ const Inventory = () => {
 
             <div className="inventory-container">
                 <div className="inventory-grid">
-                    {filteredProducts.map((diamond) => (
-                        <div key={diamond._id} className="inventory-card">
-                            <input
-                                type="checkbox"
-                                checked={selectedProducts.includes(diamond._id)}
-                                onChange={() => handleCheckboxChange(diamond._id)}
-                            />
-                            <h3>Diamond {diamond.diamondId}</h3>
-                            <p className="inventory-price">Price: ${diamond.price?.toLocaleString()}</p>
-                            <div className="inventory-specs">
-                                <p><strong>Carat:</strong> {diamond.metadata?.carat}</p>
-                                <p><strong>Color:</strong> {diamond.metadata?.color}</p>
-                                <p><strong>Clarity:</strong> {diamond.metadata?.clarity}</p>
-                                <p><strong>Cut:</strong> {diamond.metadata?.cut}</p>
-                                <p><strong>Origin:</strong> {diamond.metadata?.origin}</p>
+                    {filteredProducts.length > 0 ? (
+                        filteredProducts.map((diamond) => (
+                            <div key={diamond._id} className="inventory-card">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedProducts.includes(diamond._id)}
+                                    onChange={() => handleCheckboxChange(diamond._id)}
+                                />
+                                <h3>Diamond {diamond.diamondId}</h3>
+                                <p className="inventory-price">Price: ${diamond.price?.toLocaleString()}</p>
+                                <div className="inventory-specs">
+                                    <p><strong>Carat:</strong> {diamond.metadata?.carat}</p>
+                                    <p><strong>Color:</strong> {diamond.metadata?.color}</p>
+                                    <p><strong>Clarity:</strong> {diamond.metadata?.clarity}</p>
+                                    <p><strong>Cut:</strong> {diamond.metadata?.cut}</p>
+                                    <p><strong>Origin:</strong> {diamond.metadata?.origin}</p>
+                                </div>
+                                <p className="description">{diamond.description}</p>
+                                <span className="inventory-status">{diamond.status}</span>
                             </div>
-                            <p className="description">{diamond.description}</p>
-                            <span className="inventory-status">{diamond.status}</span>
+                        ))
+                    ) : (
+                        <div className="no-diamonds-message">
+                            No available diamonds for jewelry making. Diamonds may be already used in jewelry or not in the correct status.
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
             
