@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Button from '../Common/Button/Index.jsx';
+import SearchBar from '../Common/SearchBar/Index.jsx';
 import '../../css/inventory.css';
+import '../../css/layout.css';
 
 const productsData = [
     { 
@@ -290,12 +292,31 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
 
 const Inventory = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState('all');
+    const [priceRange, setPriceRange] = useState([0, 30000]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
     };
+
+    const handleFilterChange = (e) => {
+        setSelectedFilter(e.target.value);
+    };
+
+    const handlePriceChange = (e) => {
+        setPriceRange([0, e.target.value]);
+    };
+
+    const filterOptions = [
+        { value: 'all', label: 'All Diamonds' },
+        { value: 'round', label: 'Round Cut' },
+        { value: 'princess', label: 'Princess Cut' },
+        { value: 'emerald', label: 'Emerald Cut' },
+        { value: 'oval', label: 'Oval Cut' },
+        { value: 'cushion', label: 'Cushion Cut' }
+    ];
 
     const handleCheckboxChange = (productId) => {
         setSelectedProducts((prevSelectedProducts) => {
@@ -309,26 +330,32 @@ const Inventory = () => {
 
     const handleMakeJewelry = (formData) => {
         console.log('Making jewelry with:', formData);
-        // 这里添加创建珠宝的逻辑
         alert('Jewelry created successfully!');
     };
 
     const filteredProducts = productsData.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedFilter === 'all' || product.metadata?.cut === selectedFilter) &&
+        product.price <= priceRange[1]
     );
 
     return (
-        <div>
+        <div className="container">
             <div className="inventory-header">
                 <h2>Diamond Inventory</h2>
             </div>
-            <input
-                type="text"
-                placeholder="Search diamonds..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="search-bar"
+
+            <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                placeholder="Search diamonds by ID or specifications..."
+                selectedFilter={selectedFilter}
+                onFilterChange={handleFilterChange}
+                filterOptions={filterOptions}
+                priceRange={priceRange}
+                onPriceChange={handlePriceChange}
             />
+
             <div className="products-container">
                 <div className="products">
                     {filteredProducts.map((product) => (
@@ -353,6 +380,7 @@ const Inventory = () => {
                     ))}
                 </div>
             </div>
+
             <Button 
                 onClick={() => setIsModalOpen(true)} 
                 className="make-jewelry-button"

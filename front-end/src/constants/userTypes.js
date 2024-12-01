@@ -34,11 +34,6 @@ export const USER_ROUTES = {
     ],
     [USER_TYPES.JEWELRY_MAKER]: [
         {
-            path: '/jewelry-inventory',
-            name: 'Jewelry',
-            icon: 'FaGem'
-        },
-        {
             path: '/inventory',
             name: 'Diamond',
             icon: 'FaBoxes'

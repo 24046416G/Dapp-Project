@@ -24,8 +24,41 @@ const Record = ({ userType }) => {
                 }
                 const data = await response.json();
 
-                setRecords(data);
-                console.log('records',records);
+                // 根据用户类型筛选数据
+                let filteredData = data;
+                switch(userType) {
+                    case USER_TYPES.CUTTING_COMPANY:
+                        filteredData = data.filter(record => record.status === 'CUT');
+                        break;
+                    case USER_TYPES.GRADING_LAB:
+                        filteredData = data.filter(record => record.status === 'GRADED');
+                        break;
+                    case USER_TYPES.JEWELRY_MAKER:
+                        filteredData = data.filter(record => record.status === 'JEWELRY');
+                        break;
+                    case USER_TYPES.MINING_COMPANY:
+                        filteredData = data.filter(record => record.status === 'MINED');
+                        break;
+                    case USER_TYPES.CUSTOMER:
+                        filteredData = data.filter(record => record.status === 'SOLD');
+                        break;
+                    default:
+                        filteredData = data;
+                }
+
+                // 获取当前用户ID
+                const userStr = localStorage.getItem('user');
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    // 只显示属于当前用户的记录
+                    filteredData = filteredData.filter(record => 
+                        record.currentOwner?._id === user.id || 
+                        record.history.some(h => h.owner?._id === user.id)
+                    );
+                }
+
+                console.log('Filtered records:', filteredData);
+                setRecords(filteredData);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching records:', error);
@@ -35,7 +68,7 @@ const Record = ({ userType }) => {
         };
 
         fetchRecords();
-    }, []);
+    }, [userType]);
 
     const renderHeader = () => {
         console.log('userType', userType);

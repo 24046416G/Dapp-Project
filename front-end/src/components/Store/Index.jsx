@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ProductDetailModal from '../Common/ProductDetailModal/Index.jsx';
 import ProductCard from '../Common/ProductCard/Index.jsx';
+import SearchBar from '../Common/SearchBar/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/layout.css';
-import '../../css/search.css';
 import '../../css/filter.css';
 import '../../css/productCard.css';
 import '../../css/store.css';
@@ -88,35 +88,111 @@ const Store = ({ userType }) => {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = products.filter((product) => {
-        const matchesPrice = product.price <= priceRange[1];
-        let matchedStatus = false;
-        console.log('productstatus',product.status);
+    const renderHeader = () => {
+        switch(userType) {
+            case USER_TYPES.CUSTOMER:
+                return {
+                    title: "Jewelry Market",
+                    description: "Find your perfect diamond jewelry",
+                    searchPlaceholder: "Search by jewelry name or ID..."
+                };
+            case USER_TYPES.JEWELRY_MAKER:
+                return {
+                    title: "Diamond Market",
+                    description: "Purchase graded diamonds for jewelry making",
+                    searchPlaceholder: "Search diamonds by ID or specifications..."
+                };
+            case USER_TYPES.GRADING_LAB:
+                return {
+                    title: "Cut Diamond Market",
+                    description: "Find cut diamonds ready for grading",
+                    searchPlaceholder: "Search by diamond ID or cut type..."
+                };
+            case USER_TYPES.CUTTING_COMPANY:
+                return {
+                    title: "Raw Diamond Market",
+                    description: "Purchase raw diamonds for cutting",
+                    searchPlaceholder: "Search by diamond ID or origin..."
+                };
+            default:
+                return {
+                    title: "Diamond Store",
+                    description: "Browse available diamonds",
+                    searchPlaceholder: "Search products..."
+                };
+        }
+    };
+
+    const getFilterOptions = () => {
+        switch(userType) {
+            case USER_TYPES.CUSTOMER:
+                return [
+                    { value: 'all', label: 'All Jewelry' },
+                    { value: 'rings', label: 'Rings' },
+                    { value: 'necklaces', label: 'Necklaces' },
+                    { value: 'earrings', label: 'Earrings' },
+                    { value: 'bracelets', label: 'Bracelets' }
+                ];
+            case USER_TYPES.JEWELRY_MAKER:
+                return [
+                    { value: 'all', label: 'All Diamonds' },
+                    { value: 'round', label: 'Round Cut' },
+                    { value: 'princess', label: 'Princess Cut' },
+                    { value: 'emerald', label: 'Emerald Cut' },
+                    { value: 'oval', label: 'Oval Cut' }
+                ];
+            case USER_TYPES.GRADING_LAB:
+                return [
+                    { value: 'all', label: 'All Cut Types' },
+                    { value: 'excellent', label: 'Excellent Cut' },
+                    { value: 'very_good', label: 'Very Good Cut' },
+                    { value: 'good', label: 'Good Cut' }
+                ];
+            case USER_TYPES.CUTTING_COMPANY:
+                return [
+                    { value: 'all', label: 'All Origins' },
+                    { value: 'africa', label: 'Africa' },
+                    { value: 'russia', label: 'Russia' },
+                    { value: 'australia', label: 'Australia' }
+                ];
+            default:
+                return [];
+        }
+    };
+
+    const filterProducts = (products) => {
         switch(userType) {
             case USER_TYPES.JEWELRY_MAKER:
-                // 珠宝商只能看到经过切割和抛光的钻石
-                matchedStatus = product.status == "GRADED"
-                console.log('matchedStatus',matchedStatus);
-                return matchesPrice && matchedStatus
-
-            case USER_TYPES.CUTTING_COMPANY:
-                // 切割公司只能看到未切割的钻石
-                matchedStatus = product.status == "MINED"
-                console.log('matchedStatus',matchedStatus);
-                return matchesPrice && matchedStatus
-
+                return products.filter(product => 
+                    product.status === 'GRADED' &&
+                    product.price <= priceRange[1] &&
+                    (selectedFilter === 'all' || product.metadata?.cut === selectedFilter)
+                );
             case USER_TYPES.GRADING_LAB:
-                // 评级机构只能看到已切割但未评级的钻石
-                matchedStatus = product.status == "CUT"
-                console.log('matchedStatus',matchedStatus);
-                return matchesPrice && matchedStatus
-
+                return products.filter(product => 
+                    product.status === 'CUT' &&
+                    product.price <= priceRange[1] &&
+                    (selectedFilter === 'all' || product.metadata?.cutQuality === selectedFilter)
+                );
+            case USER_TYPES.CUTTING_COMPANY:
+                return products.filter(product => 
+                    product.status === 'MINED' &&
+                    product.price <= priceRange[1] &&
+                    (selectedFilter === 'all' || product.metadata?.origin === selectedFilter)
+                );
+            case USER_TYPES.CUSTOMER:
+                return products.filter(product => 
+                    product.price <= priceRange[1] &&
+                    (selectedFilter === 'all' || product.type === selectedFilter)
+                );
             default:
-                return true;
+                return products;
         }
-    });
+    };
 
-    console.log('Filtered products:', filteredProducts);
+    const { title, description, searchPlaceholder } = renderHeader();
+    const filterOptions = getFilterOptions();
+    const filteredProducts = filterProducts(products);
 
     if (loading) {
         return <div className="loading">Loading...</div>;
@@ -129,64 +205,25 @@ const Store = ({ userType }) => {
     return (
         <div className="container">
             <div className="store-header">
-                <h2>
-                    {userType === USER_TYPES.CUSTOMER ? 'Jewelry Market' : 
-                     userType === USER_TYPES.JEWELRY_MAKER || userType === USER_TYPES.GRADING_LAB || userType === USER_TYPES.CUTTING_COMPANY ? 'Diamond Market' : 
-                     'Store'}
-                </h2>
-                <p>
-                    {userType === USER_TYPES.CUSTOMER ? 'Find your perfect diamond jewelry' : 
-                     userType === USER_TYPES.JEWELRY_MAKER ? 'Choose your favorite diamonds' : 
-                     'description'}
-                </p>
+                <h2>{title}</h2>
+                <p>{description}</p>
             </div>
             
-            <div className="store-filters">
-                <input
-                    type="text"
-                    placeholder={userType === USER_TYPES.CUSTOMER ? 
-                        "Search by diamond ID or carat..." : 
-                        userType === USER_TYPES.JEWELRY_MAKER ? 
-                        "Search inventory..." : 
-                        "Search products..."}
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="search-bar"
-                />
-                
-                <div className="filter-controls">
-                    <select 
-                        value={selectedFilter}
-                        onChange={handleFilterChange}
-                        className="filter-select"
-                    >
-                        <option value="all">All Products</option>
-                        <option value="rings">Rings</option>
-                        <option value="necklaces">Necklaces</option>
-                        <option value="earrings">Earrings</option>
-                    </select>
-
-                    {userType !== USER_TYPES.COMPANY && (
-                        <div className="price-filter">
-                            <span>Max Price: ${priceRange[1]}</span>
-                            <input
-                                type="range"
-                                min="0"
-                                max="30000"
-                                value={priceRange[1]}
-                                onChange={handlePriceChange}
-                                className="price-range"
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
+            <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                placeholder={searchPlaceholder}
+                selectedFilter={selectedFilter}
+                onFilterChange={handleFilterChange}
+                filterOptions={filterOptions}
+                priceRange={priceRange}
+                onPriceChange={handlePriceChange}
+            />
 
             <div className="data-grid">
                 {filteredProducts.map((product) => (
                     <div key={product.id} className="data-grid-item">
                         <ProductCard
-                            key={product.id}
                             product={product}
                             onClick={handleProductClick}
                             userType={userType}

@@ -76,6 +76,8 @@ const Login = ({ onLogin }) => {
                 });
 
                 const data = await response.json();
+                console.log("login data",data)
+                
 
                 if (response.ok) {
                     localStorage.setItem('user', JSON.stringify(data.user));
