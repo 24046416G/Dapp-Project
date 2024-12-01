@@ -12,7 +12,7 @@ const ProductCard = ({ product, onClick, userType }) => {
             <div className="card-body">
                 {product.image ? (
                     <img 
-                        src={"assets/jewelry/jewelry_01.png"}
+                        src={product.image}
                         alt={product.name}
                         className="product-image"
                     />
@@ -93,7 +93,6 @@ const ProductCard = ({ product, onClick, userType }) => {
                     <div className="diamond-specs">
                         <span>Carat: {diamond?.metadata?.carat}</span>
                         <span>Origin: {diamond?.metadata?.origin}</span>
-                        <span>Quality: {diamond?.metadata?.quality}</span>
                     </div>
                     <div className="certificate-info">
                         <p>Mining Certificate: {diamond?.certificates?.miningCertificate?.status}</p>

@@ -9,11 +9,9 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
     const [formData, setFormData] = useState({
         jewelryId: '',
         name: '',
-        type: 'ring',
-        material: '18k_white_gold',
         price: '',
-        description: '',
-        image: null
+        image: null,
+        diamonds: null,
     });
     const [isDragging, setIsDragging] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -115,35 +113,7 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
                                 required
                             />
                         </div>
-                        <div className="form-group">
-                            <label>Type</label>
-                            <select
-                                name="type"
-                                value={formData.type}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="ring">Ring</option>
-                                <option value="necklace">Necklace</option>
-                                <option value="earrings">Earrings</option>
-                                <option value="bracelet">Bracelet</option>
-                                <option value="pendant">Pendant</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Material</label>
-                            <select
-                                name="material"
-                                value={formData.material}
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="18k_white_gold">18K White Gold</option>
-                                <option value="18k_yellow_gold">18K Yellow Gold</option>
-                                <option value="18k_rose_gold">18K Rose Gold</option>
-                                <option value="platinum">Platinum</option>
-                            </select>
-                        </div>
+                        
                         <div className="form-group">
                             <label>Price ($)</label>
                             <input
@@ -152,15 +122,6 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
                                 value={formData.price}
                                 onChange={handleInputChange}
                                 required
-                            />
-                        </div>
-                        <div className="form-group full-width">
-                            <label>Description</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                rows="4"
                             />
                         </div>
                         <div className="form-group full-width">
@@ -289,9 +250,56 @@ const Inventory = () => {
         });
     };
 
-    const handleMakeJewelry = (formData) => {
-        console.log('Making jewelry with:', formData);
-        alert('Jewelry created successfully!');
+    const handleMakeJewelry = async (formData) => {
+        try {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                throw new Error('User not found');
+            }
+            const user = JSON.parse(userStr);
+
+            // 确保钻石数组不为空
+            if (!formData.diamonds || formData.diamonds.length === 0) {
+                throw new Error('Please select at least one diamond');
+            }
+
+            console.log('formData in handleMakeJewelry',formData);
+            const response = await fetch('http://localhost:3000/jewelries/make', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jewelryId: formData.jewelryId,
+                    name: formData.name,
+                    price: formData.price,
+                    image: formData.image,
+                    diamonds: formData.diamonds,
+                    authenticityCertificate: "ipfs_hash_here",
+                    currentOwner: user.id
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create jewelry');
+            }
+
+            const result = await response.json();
+            alert('Jewelry created successfully!');
+            
+            // 更新钻石列表，移除已用于制作珠宝的钻石
+            setDiamonds(prevDiamonds => 
+                prevDiamonds.filter(diamond => !formData.diamonds.includes(diamond._id))
+            );
+            
+            // 清空选中的产品
+            setSelectedProducts([]);
+            
+        } catch (error) {
+            console.error('Error creating jewelry:', error);
+            alert('Failed to create jewelry: ' + error.message);
+        }
     };
 
     const filteredProducts = diamonds.filter((diamond) =>

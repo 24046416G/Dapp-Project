@@ -58,7 +58,7 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
         <>
             <div className="modal-image">
                 <img 
-                    src={"assets/jewelry/jewelry_01.png"}
+                    src={product.image}
                     alt={product.name}
                     className="product-image"
                 />
@@ -76,14 +76,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                         <div className="detail-item">
                             <span>Name:</span>
                             <span>{product.name}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span>Type:</span>
-                            <span>{product.type}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span>Material:</span>
-                            <span>{product.material}</span>
                         </div>
                         <div className="detail-item">
                             <span>Price:</span>
