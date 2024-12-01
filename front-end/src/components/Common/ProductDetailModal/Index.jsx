@@ -178,10 +178,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                                 <span>{diamond?.metadata?.color}</span>
                             </div>
                             <div className="detail-item">
-                                <span>Clarity:</span>
-                                <span>{diamond?.metadata?.clarity}</span>
-                            </div>
-                            <div className="detail-item">
                                 <span>Cut:</span>
                                 <span>{diamond?.metadata?.cut}</span>
                             </div>
