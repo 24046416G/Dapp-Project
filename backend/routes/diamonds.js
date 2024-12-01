@@ -183,12 +183,12 @@ router.get('/all/diamonds', async (req, res) => {
 // 5. 更新钻石切割和抛光信息
 router.patch('/:id/cut', async (req, res) => {
     try {
-        const { cut, polish, userId } = req.body;
+        const { cut, polish, userId, certificateHash } = req.body;
 
         // 验证必要字段
-        if (!cut || !polish || !userId) {
+        if (!cut || !polish || !userId || !certificateHash) {
             return res.status(400).json({ 
-                message: "Cut, polish and userId are required" 
+                message: "Cut, polish, userId and certificateHash are required" 
             });
         }
 
@@ -227,6 +227,7 @@ router.patch('/:id/cut', async (req, res) => {
         // 更新切割和抛光信息
         diamond.metadata.cut = cut;
         diamond.metadata.polish = polish;
+        diamond.certificates.cuttingCertificate.certificateHash = certificateHash;
 
         await diamond.save();
 
@@ -256,16 +257,17 @@ router.patch('/:id/cut', async (req, res) => {
 // 6. 更新钻石评级信息
 router.patch('/:id/grade', async (req, res) => {
     try {
-        const { userId, grading, imageData } = req.body;  // imageData 是 Base64 编码的图片数据
+        const { userId, grading, imageData, certificateHash } = req.body;  // imageData 是 Base64 编码的图片数据
         console.log('Received request body:', {
             userId,
             grading,
+            certificateHash,
             hasImageData: !!imageData,
             imageDataLength: imageData ? imageData.length : 0
         });
 
         // 验证必要字段
-        if (!userId || !grading) {
+        if (!userId || !grading || !certificateHash) {
             return res.status(400).json({ 
                 message: "UserId and grading information are required" 
             });
@@ -325,6 +327,7 @@ router.patch('/:id/grade', async (req, res) => {
         // 更新评级信息
         console.log('Updating diamond metadata...');
         diamond.metadata.grading = grading;
+        diamond.certificates.gradingCertificate.certificateHash = certificateHash;
         if (imageData) {
             console.log('Setting image data...');
             diamond.metadata.images = imageData;  // 直接存储 Base64 图片数据
