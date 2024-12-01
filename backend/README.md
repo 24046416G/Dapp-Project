@@ -13,27 +13,29 @@ Before you begin, ensure you have the following:
 
 ### Steps to Set Up the Backend
 
-1. **Register an Account on MongoDB Atlas**
-   - Create your account [here](https://www.mongodb.com/cloud/atlas/register).
-   - ![MongoDB Atlas Registration](/backend/guide/image.png)
+1. **Register an Account on MongoDB Atlas** - Create your account [here](https://www.mongodb.com/cloud/atlas/register).
+
+   ![MongoDB Atlas Registration](/backend/guide/image.png)
 
 2. **Enter Basic Information**
-   - ![Basic Information](/backend/guide/image-1.png)
 
-3. **Choose the Free Plan**
-   - Click on "Create Deployment":
-   - ![Free Plan Selection](/backend/guide/image-2.png)
+   ![Basic Information](/backend/guide/image-1.png)
+
+3. **Choose the Free Plan** - Click on "Create Deployment":
+
+   ![Free Plan Selection](/backend/guide/image-2.png)
 
 4. **Create a Database User**
-   - ![Database User Creation](/backend/guide/image-3.png)
 
-5. **Choose a Connection Method**
-   - Select "Drivers" under "Connect to your application":
-   - ![Connection Method](/backend/guide/image-4.png)
+   ![Database User Creation](/backend/guide/image-3.png)
 
-6. **Copy the Connection String**
-   - Go back to our project:
-   - ![Connection String](/backend/guide/image-5.png)
+5. **Choose a Connection Method** - Select "Drivers" under "Connect to your application":
+
+   ![Connection Method](/backend/guide/image-4.png)
+
+6. **Copy the Connection String** - Go back to our project:
+
+   ![Connection String](/backend/guide/image-5.png)
 
 7. **Navigate to the Backend Folder**
    ```bash
