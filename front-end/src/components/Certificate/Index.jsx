@@ -164,7 +164,6 @@ const Certificate = () => {
                 {jewelryInfo && (
                     <div className="result-section">
                         {jewelryInfo.type === 'jewelry' ? (
-                            // 显示珠宝信息的现有代码...
                             <div className="result-section">
                                 <h3>Jewelry Information</h3>
                                 <div className="jewelry-info">
@@ -197,10 +196,6 @@ const Certificate = () => {
                                                 <h5>Mining Certificate</h5>
                                                 <div className="certificate-info">
                                                     <div className="info-item">
-                                                        <span>Company:</span>
-                                                        <span>{diamond.certificates.miningCertificate.companyId?.companyName || 'N/A'}</span>
-                                                    </div>
-                                                    <div className="info-item">
                                                         <span>Certificate Hash:</span>
                                                         <span>{diamond.certificates.miningCertificate.certificateHash || 'N/A'}</span>
                                                     </div>
@@ -218,10 +213,6 @@ const Certificate = () => {
                                                 <h5>Cutting Certificate</h5>
                                                 <div className="certificate-info">
                                                     <div className="info-item">
-                                                        <span>Company:</span>
-                                                        <span>{diamond.certificates.cuttingCertificate.companyId?.companyName || 'N/A'}</span>
-                                                    </div>
-                                                    <div className="info-item">
                                                         <span>Certificate Hash:</span>
                                                         <span>{diamond.certificates.cuttingCertificate.certificateHash || 'N/A'}</span>
                                                     </div>
@@ -238,10 +229,6 @@ const Certificate = () => {
                                             <div className="certificate-section">
                                                 <h5>Grading Certificate</h5>
                                                 <div className="certificate-info">
-                                                    <div className="info-item">
-                                                        <span>Company:</span>
-                                                        <span>{diamond.certificates.gradingCertificate.companyId?.companyName || 'N/A'}</span>
-                                                    </div>
                                                     <div className="info-item">
                                                         <span>Certificate Hash:</span>
                                                         <span>{diamond.certificates.gradingCertificate.certificateHash || 'N/A'}</span>
