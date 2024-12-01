@@ -32,7 +32,11 @@ const Record = ({ userType }) => {
             let filteredData = data;
             switch(userType) {
                 case USER_TYPES.CUTTING_COMPANY:
-                    filteredData = data.filter(record => record.status === 'CUT');
+                    filteredData = data.filter(record => 
+                        record.status === 'CUT' && 
+                        record.metadata?.cut &&    // 确保 cut 值存在
+                        record.metadata?.polish    // 确保 polish 值存在
+                    );
                     break;
                 case USER_TYPES.GRADING_LAB:
                     filteredData = data.filter(record => record.status === 'GRADED');
