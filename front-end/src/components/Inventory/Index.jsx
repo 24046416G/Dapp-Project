@@ -3,6 +3,7 @@ import Button from '../Common/Button/Index.jsx';
 import SearchBar from '../Common/SearchBar/Index.jsx';
 import '../../css/inventory.css';
 import '../../css/layout.css';
+import '../../css/modal.css';
 
 const productsData = [
     { 
@@ -275,15 +276,16 @@ const MakeJewelryModal = ({ isOpen, onClose, selectedDiamonds, onSubmit }) => {
                                 )}
                             </div>
                         </div>
-                        <div className="modal-footer">
-                            <Button 
-                                type="primary"
-                                onClick={handleSubmit}
-                            >
-                                Create Jewelry
-                            </Button>
-                        </div>
+                        
                     </form>
+                    <div className="modal-footer">
+                        <Button 
+                            type="primary"
+                            onClick={handleSubmit}
+                        >
+                            Create Jewelry
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -380,7 +382,7 @@ const Inventory = () => {
                     ))}
                 </div>
             </div>
-
+            
             <Button 
                 onClick={() => setIsModalOpen(true)} 
                 disabled={selectedProducts.length === 0}
@@ -388,6 +390,8 @@ const Inventory = () => {
             >
                 Make Jewelry
             </Button>
+
+            
 
             <MakeJewelryModal
                 isOpen={isModalOpen}
