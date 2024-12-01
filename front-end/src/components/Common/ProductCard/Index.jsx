@@ -21,8 +21,8 @@ const ProductCard = ({ product, onClick, userType }) => {
                 )}
                 <p className="description">{product.description}</p>
                 <div className="jewelry-specs">
-                    <span>Type: {product.type}</span>
-                    <span>Material: {product.material}</span>
+                    <span>Diamond Used: {product.diamonds?.length}</span>
+                    <span>Jewelry ID: {product.jewelryId}</span>
                 </div>
             </div>
         </>

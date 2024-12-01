@@ -86,17 +86,15 @@ const Record = ({ userType }) => {
                         filteredData = data;
                 }
 
-            console.log('Filtered records:', filteredData);
-            setRecords(filteredData);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching records:', error);
-            setError('Failed to load records');
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
+                console.log('Filtered records:', filteredData);
+                setRecords(filteredData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching records:', error);
+                setError('Failed to load records');
+                setLoading(false);
+            }
+        };
         fetchRecords();
     }, [userType]);
 
@@ -213,4 +211,4 @@ const Record = ({ userType }) => {
     );
 };
 
-export default Record; 
+export default Record;

@@ -59,14 +59,6 @@ const RecordDetailModal = ({ record, isOpen, onClose, userType }) => {
                         <span>{record.name}</span>
                     </div>
                     <div className="detail-item">
-                        <span>Type:</span>
-                        <span>{record.type}</span>
-                    </div>
-                    <div className="detail-item">
-                        <span>Material:</span>
-                        <span>{record.material}</span>
-                    </div>
-                    <div className="detail-item">
                         <span>Price:</span>
                         <span>${record.price?.toLocaleString()}</span>
                     </div>
@@ -88,10 +80,6 @@ const RecordDetailModal = ({ record, isOpen, onClose, userType }) => {
                         <div className="detail-item">
                             <span>Color:</span>
                             <span>{diamond.metadata?.color}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span>Clarity:</span>
-                            <span>{diamond.metadata?.clarity}</span>
                         </div>
                     </div>
                 ))}
