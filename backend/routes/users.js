@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 
-// 用户注册
+// User registration
 router.post('/register', async (req, res) => {
     try {
         const { 
@@ -16,14 +16,14 @@ router.post('/register', async (req, res) => {
             customerId
         } = req.body;
 
-        // 检查必填字段
+        // Check required fields
         if (!role || !password) {
             return res.status(400).json({ 
                 message: "Role and password are required" 
             });
         }
 
-        // 根据角色验证必填字段
+        // Validate required fields based on role
         if (role !== 'CUSTOMER' && (!companyName || !companyId || !certificate)) {
             return res.status(400).json({ message: "Company details are required for business roles" });
         }
@@ -32,10 +32,10 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: "Customer details are required" });
         }
 
-        // 哈希密码
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 创建新用户实例
+        // Create new user instance
         const user = new User({
             role,
             password: hashedPassword,
@@ -46,7 +46,7 @@ router.post('/register', async (req, res) => {
             customerId
         });
 
-        // 保存用户
+        // Save user
         await user.save();
 
         res.status(201).json({
@@ -60,33 +60,33 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// 新增：连接钱包
+// New: Connect wallet
 router.patch('/:id/connect', async (req, res) => {
     try {
         const { walletAddress, publicKey, balance } = req.body;
         const userId = req.params.id;
 
-        // 验证必要字段
+        // Validate required fields
         if (!walletAddress || !publicKey) {
             return res.status(400).json({ 
                 message: "Wallet address and public key are required" 
             });
         }
 
-        // 使用 MongoDB 的 _id 查找用户
+        // Use MongoDB's _id to find user
         const user = await User.findById(userId);
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // 检查钱包地址是否已被使用
+        // Check if wallet address is already in use
         const existingWallet = await User.findOne({ walletAddress });
         if (existingWallet && existingWallet._id.toString() !== user._id.toString()) {
             return res.status(400).json({ message: "Wallet address already in use" });
         }
 
-        // 更新用户信息
+        // Update user information
         user.walletAddress = walletAddress;
         user.publicKey = publicKey;
         if (balance !== undefined) {
@@ -110,10 +110,10 @@ router.patch('/:id/connect', async (req, res) => {
     }
 });
 
-// 获取所有用户列表
+// Get all user list
 router.get('/all', async (req, res) => {
     try {
-        // 排除敏感信息
+        // Exclude sensitive information
         const users = await User.find()
             .select('-password')
             .populate('ownedDiamonds')
@@ -138,7 +138,7 @@ router.get('/all', async (req, res) => {
     }
 });
 
-// 获取特定用户信息（通过ID）
+// Get specific user information (by ID)
 router.get('/:id', async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
@@ -169,7 +169,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// 通过角色查找用户
+// Find users by role
 router.get('/role/:role', async (req, res) => {
     try {
         const users = await User.find({ role: req.params.role })
@@ -196,19 +196,19 @@ router.get('/role/:role', async (req, res) => {
     }
 });
 
-// 用户登录
+// User login
 router.post('/login', async (req, res) => {
     try {
         const { companyId, customerId, password } = req.body;
 
-        // 验证必要字段
+        // Validate required fields
         if ((!companyId && !customerId) || !password) {
             return res.status(400).json({ 
                 message: "Either companyId or customerId, and password are required" 
             });
         }
 
-        // 根据 companyId 或 customerId 查找用户
+        // Find user by companyId or customerId
         let user;
         if (companyId) {
             user = await User.findOne({ companyId });
@@ -216,18 +216,18 @@ router.post('/login', async (req, res) => {
             user = await User.findOne({ customerId });
         }
 
-        // 验证用户是否存在
+        // Validate user existence
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        // 验证密码
+        // Validate password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        // 返回用户信息
+        // Return user information
         res.json({
             message: "Login successful",
             user: {
@@ -249,7 +249,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// 用户登出
+// User logout
 router.post('/logout', (req, res) => {
     try {
         res.json({ message: "Logged out successfully" });

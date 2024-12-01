@@ -96,7 +96,7 @@ const diamondSchema = new mongoose.Schema({
         grading: String,
         images: {
             type: String,
-            maxLength: 5 * 1024 * 1024  // 允许最大 5MB 的 Base64 字符串
+            maxLength: 5 * 1024 * 1024  // Allows a maximum 5MB Base64 string
         }
     },
     history: [{
@@ -110,7 +110,7 @@ const diamondSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-// 状态变更前的验证
+// Validation before status change
 diamondSchema.pre('save', function(next) {
     if (!this.isModified('status')) {
         return next();
@@ -121,23 +121,23 @@ diamondSchema.pre('save', function(next) {
         'CUT': ['GRADED'],
         'GRADED': ['JEWELRY'],
         'JEWELRY': ['SOLD'],
-        'SOLD': [] // 终态，不能再改变
+        'SOLD': [] // Terminal state, cannot be changed again
     };
 
-    // 如果是新文档，且初始状态为MINED，允许
+    // If it's a new document and the initial status is MINED, allow
     if (this.isNew && this.status === 'MINED') {
         return next();
     }
 
-    // 获取之前的状态
+    // Get the previous status
     const previousStatus = this._previousStatus || this.status;
     
-    // 检查状态转换是否有效
+    // Check if the status transition is valid
     // if (!validStatusTransitions[previousStatus].includes(this.status)) {
     //     return next(new Error(`Invalid status transition from ${previousStatus} to ${this.status}`));
     // }
 
-    // 检查必要的证书是否存在
+    // Check if the necessary certificates exist
     const requiredCertificates = {
         'CUT': 'miningCertificate',
         'GRADED': 'cuttingCertificate',
@@ -150,20 +150,20 @@ diamondSchema.pre('save', function(next) {
         return next(new Error(`${requiredCert} is required for status ${this.status}`));
     }
 
-    // 保存当前状态用于下次比较
+    // Save the current status for comparison next time
     this._previousStatus = this.status;
     next();
 });
 
-// 添加证书的方法
+// Method to add certificates
 diamondSchema.methods.addCertificate = async function(companyId, certificateHash, certificateType) {
-    // 验证证书类型
+    // Validate certificate type
     const validCertTypes = ['miningCertificate', 'cuttingCertificate', 'gradingCertificate', 'jewelryCertificate'];
     if (!validCertTypes.includes(certificateType)) {
         throw new Error('Invalid certificate type');
     }
 
-    // 验证公司角色
+    // Validate company role
     const company = await mongoose.model('User').findById(companyId);
     if (!company) {
         throw new Error('Company not found');
@@ -180,7 +180,7 @@ diamondSchema.methods.addCertificate = async function(companyId, certificateHash
         throw new Error(`Invalid company role for ${certificateType}`);
     }
 
-    // 更新证书
+    // Update certificate
     if (!this.certificates) {
         this.certificates = {};
     }
@@ -192,7 +192,7 @@ diamondSchema.methods.addCertificate = async function(companyId, certificateHash
         status: 'VERIFIED'
     };
 
-    // 添加到历史记录
+    // Add to history
     this.history.push({
         status: this.status,
         owner: this.currentOwner,
@@ -203,7 +203,7 @@ diamondSchema.methods.addCertificate = async function(companyId, certificateHash
     return this.save();
 };
 
-// 验证证书的方法
+// Method to verify certificates
 diamondSchema.methods.verifyCertificate = async function(certificateType) {
     if (!this.certificates || !this.certificates[certificateType]) {
         return false;
