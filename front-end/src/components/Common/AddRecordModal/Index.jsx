@@ -3,7 +3,7 @@ import Button from '../Button/Index.jsx';
 import { USER_TYPES } from '../../../constants/userTypes';
 import '../../../css/modal.css';
 
-const AddRecordModal = ({ isOpen, onClose, userType, onSuccess }) => {
+const AddRecordModal = ({ isOpen, onClose, userType }) => {
     const getInitialFormData = () => {
         switch(userType) {
             case USER_TYPES.MINING_COMPANY:
@@ -58,6 +58,7 @@ const AddRecordModal = ({ isOpen, onClose, userType, onSuccess }) => {
         e.preventDefault();
         console.log("Submitting form data for user type:", userType);
 
+        // 整理数据格式用于注册
         const submitData = {
             diamondData: {
                 id: formData.diamondId,
@@ -123,10 +124,8 @@ const AddRecordModal = ({ isOpen, onClose, userType, onSuccess }) => {
             const mineResult = await mineResponse.json();
             console.log('Mine API Response:', mineResult);
 
-            // 成功后调用 onSuccess 回调
-            if (onSuccess) {
-                onSuccess();
-            }
+            // 成功后关闭模态框
+            onClose();
         } catch (error) {
             console.error('Error processing diamond:', error);
             alert('Failed to process diamond: ' + error.message);
