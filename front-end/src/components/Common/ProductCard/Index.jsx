@@ -93,7 +93,6 @@ const ProductCard = ({ product, onClick, userType }) => {
                     <div className="diamond-specs">
                         <span>Carat: {diamond?.metadata?.carat}</span>
                         <span>Origin: {diamond?.metadata?.origin}</span>
-                        <span>Quality: {diamond?.metadata?.quality}</span>
                     </div>
                     <div className="certificate-info">
                         <p>Mining Certificate: {diamond?.certificates?.miningCertificate?.status}</p>
