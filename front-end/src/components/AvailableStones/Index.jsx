@@ -117,7 +117,7 @@ const AvailableStones = () => {
                     userId: user.id,
                     cut: diamondData.cut,
                     polish: diamondData.polish,
-                    certificateHash: registerResult.data.infoHash // 使用返回的 infoHash
+                    certificateHash: registerResult.data.transactionHash
                 })
             });
 

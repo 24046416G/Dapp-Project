@@ -119,7 +119,7 @@ const WaitToGrade = () => {
                     userId: user.id,
                     grading: gradingData.grading,
                     imageData: gradingData.imageData,
-                    certificateHash: registerResult.data.infoHash
+                    certificateHash: registerResult.data.transactionHash
                 })
             });
 

@@ -104,6 +104,7 @@ app.post('/api/diamond/register', async (req, res) => {
             success: true,
             data: registrationResult
         });
+
     } catch (error) {
         console.error('Diamond registration failed:', error);
         res.status(500).json({
@@ -126,8 +127,9 @@ app.get('/api/diamond/tx/:txHash', async (req, res) => {
 
         // 解析事件日志
         const diamondRegisteredTopic = ethers.id("DiamondRegistered(bytes32,uint256)");
-        const relevantLog = receipt.logs.find(log => log.topics[0] === diamondRegisteredTopic);
-        
+        const relevantLog = await receipt.logs.find(log => log.topics[0] === diamondRegisteredTopic);
+
+        console.log('relevantLog',relevantLog);
         if (!relevantLog) {
             throw new Error("No diamond registration event found in this transaction");
         }
