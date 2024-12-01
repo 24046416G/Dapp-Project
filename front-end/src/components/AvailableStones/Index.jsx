@@ -65,6 +65,7 @@ const AvailableStones = () => {
     };
 
     const handleCuttingSubmit = async (formData) => {
+        console.log('formData', formData);
         try {
             // 获取当前用户信息
             const userStr = localStorage.getItem('user');
