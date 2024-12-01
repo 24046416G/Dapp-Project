@@ -320,7 +320,7 @@ const Inventory = () => {
                     price: formData.price,
                     image: formData.image,
                     diamonds: formData.diamonds,
-                    authenticityCertificate: registerResult.data.infoHash,  // 使用返回的 infoHash
+                    authenticityCertificate: registerResult.data.transactionHash,  // 使用返回的 infoHash
                     currentOwner: user.id
                 })
             });
