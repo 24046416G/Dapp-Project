@@ -1,22 +1,23 @@
 /* inventory.css */
-.products-container {
-    height: calc(100vh - 250px);
-    overflow-y: auto;
+.inventory-container {
     border-radius: 12px;
     border: 1px solid #eaeaea;
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  }
+    width: 100%;
+    box-sizing: border-box;
+}
 
-  .products {
+.inventory-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     padding: 4px;
-  }
-  
-  .product-card {
+    width: 100%;
+}
+
+.inventory-card {
     position: relative;
     border: 1px solid #eaeaea;
     border-radius: 10px;
@@ -24,25 +25,28 @@
     background-color: #ffffff;
     transition: all 0.3s ease;
     padding-top: 48px;
-  }
-  
-  .product-card:hover {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.inventory-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  }
-  
-  .product-card h3 {
+}
+
+.inventory-card h3 {
     margin: 10px 0;
     color: #333;
     font-size: 18px;
-  }
+}
 
-  .product-card p {
+.inventory-card p {
     color: #666;
     margin: 8px 0;
-  }
+}
 
-  .product-card input[type="checkbox"] {
+.inventory-card input[type="checkbox"] {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -50,9 +54,42 @@
     height: 20px;
     cursor: pointer;
     accent-color: #4a90e2;
-  }
+}
 
-  .make-jewelry-button {
+.inventory-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.inventory-specs p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.inventory-price {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.inventory-status {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #4a90e2;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.inventory-make-button {
     position: fixed;
     bottom: 32px;
     right: 32px;
@@ -66,38 +103,31 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
     transition: all 0.3s ease;
-  }
-  
-  .make-jewelry-button:hover {
+    z-index: 100;
+}
+
+.inventory-make-button:hover {
     background-color: #357abd;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
-  }
+}
 
-  .make-jewelry-button:active {
+.inventory-make-button:active {
     transform: translateY(0);
-  }
+}
 
-  /* 添加滚动条样式 */
-  .products-container::-webkit-scrollbar {
-    width: 8px;
-  }
+.inventory-make-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
 
-  .products-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
+.products-container::-webkit-scrollbar {
+    display: none;
+}
 
-  .products-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-  }
-
-  .products-container::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-  }
-
-  .selected-diamonds {
+.selected-diamonds {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -105,54 +135,74 @@
     background: #f8f9fa;
     border-radius: 4px;
     min-height: 40px;
-  }
+}
 
-  .diamond-tag {
+.diamond-tag {
     background: #e9ecef;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 14px;
     color: #495057;
-  }
+}
 
-  .description {
+.description {
     font-size: 0.9em;
     color: #666;
     margin-top: 8px;
-  }
+}
 
-  .form-grid {
+.form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 16px;
-  }
+    gap: 24px;
+    padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-  .form-group.full-width {
+.form-group {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group.full-width {
     grid-column: 1 / -1;
-  }
+}
 
-  .form-group label {
+.form-group label {
     display: block;
     margin-bottom: 8px;
     color: #495057;
-  }
+    font-weight: 500;
+}
 
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
-    padding: 8px;
+    padding: 10px 12px;
     border: 1px solid #ced4da;
-    border-radius: 4px;
-  }
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
 
-  .form-group textarea {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.form-group textarea {
     resize: vertical;
-    min-height: 80px;
-  }
+    min-height: 100px;
+}
 
-  .image-upload-area {
+.image-upload-area {
     width: 100%;
     height: 200px;
     border: 2px dashed #ced4da;
@@ -165,35 +215,34 @@
     background: #f8f9fa;
     position: relative;
     overflow: hidden;
-  }
+}
 
-  .image-upload-area.dragging {
+.image-upload-area.dragging {
     border-color: #4a90e2;
     background: rgba(74, 144, 226, 0.1);
-  }
+}
 
-  .image-upload-area:hover {
+.image-upload-area:hover {
     border-color: #4a90e2;
-  }
+}
 
-  .upload-placeholder {
+.upload-placeholder {
     text-align: center;
     color: #6c757d;
     padding: 20px;
-  }
+}
 
-  .image-preview {
+.image-preview {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-  }
+}
 
-  .image-preview:hover {
+.image-preview:hover {
     opacity: 0.8;
-  }
+}
 
-  /* 添加一个删除按钮 */
-  .image-upload-area .remove-image {
+.image-upload-area .remove-image {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -209,54 +258,20 @@
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.3s ease;
-  }
+}
 
-  .image-upload-area:hover .remove-image {
+.image-upload-area:hover .remove-image {
     opacity: 1;
-  }
+}
 
-  /* 添加标题样式 */
-  .inventory-header {
+.inventory-header {
     text-align: center;
     margin-bottom: 32px;
-  }
+}
 
-  .inventory-header h2 {
+.inventory-header h2 {
     font-size: 28px;
     color: #2c3e50;
     margin: 0;
     padding: 20px 0;
-  }
-
-  .diamond-specs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin: 12px 0;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 4px;
-  }
-
-  .diamond-specs p {
-    margin: 0;
-    font-size: 0.9em;
-  }
-
-  .price {
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 1.1em;
-  }
-
-  .product-card .status-badge {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: #4a90e2;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: 500;
-  }
+}
