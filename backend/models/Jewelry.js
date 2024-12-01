@@ -11,7 +11,7 @@ const jewelrySchema = new mongoose.Schema({
         required: true
     },
     authenticityCertificate: {
-        type: String,  // IPFS哈希
+        type: String,  // IPFS Hash
     },
     diamonds: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -36,7 +36,7 @@ const jewelrySchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        maxLength: 5 * 1024 * 1024  // 允许最大 5MB 的 Base64 字符串
+        maxLength: 5 * 1024 * 1024  // Allows a maximum 5MB Base64 string
     },
     history: [{
         owner: {
