@@ -5,7 +5,7 @@ import { USER_TYPES } from '../../../constants/userTypes';
 import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
 
-const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false }) => {
+const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton = false, onPurchaseSuccess }) => {
     const [showQRCode, setShowQRCode] = useState(false);
     
     if (!isOpen) return null;
@@ -23,7 +23,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
             switch (userType) {
                 case USER_TYPES.CUSTOMER:
                     console.log('customer buy jewelry',product);
-                    // 客户购买珠宝，只需要 newOwnerId
                     response = await fetch(`http://localhost:3000/jewelries/${product._id}/transfer`, {
                         method: 'PATCH',
                         headers: {
@@ -38,7 +37,6 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                 case USER_TYPES.JEWELRY_MAKER:
                 case USER_TYPES.GRADING_LAB:
                 case USER_TYPES.CUTTING_COMPANY:
-                    // 其他用户购买钻石，需要完整的转移数据
                     response = await fetch(`http://localhost:3000/diamonds/${product.id}/transfer`, {
                         method: 'PATCH',
                         headers: {
@@ -65,7 +63,10 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
             console.log('Transfer result:', result);
             alert('Purchase successful!');
             onClose();
-            window.location.reload();
+            
+            if (onPurchaseSuccess) {
+                onPurchaseSuccess(result);
+            }
 
         } catch (error) {
             console.error('Purchase error:', error);
