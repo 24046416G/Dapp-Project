@@ -11,7 +11,7 @@ import '../../css/store.css';
 const Store = ({ userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [priceRange, setPriceRange] = useState([0, 30000]);
+    const [priceRange, setPriceRange] = useState([0, 100000]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState([]);

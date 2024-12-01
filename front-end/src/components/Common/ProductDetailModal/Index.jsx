@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaQrcode } from 'react-icons/fa';
 import QRCodeModal from '../QRCodeModal/Index.jsx';
+import CertificateHash from '../CertificateHash/Index.jsx';
 import { USER_TYPES } from '../../../constants/userTypes';
 import Button from '../Button/Index.jsx';
 import '../../../css/modal.css';
@@ -140,18 +141,18 @@ const ProductDetailModal = ({ product, isOpen, onClose, userType, showBuyButton 
                                             </div>
                                         </div>
                                         <div className="diamond-certificates">
-                                            <div className="cert-row">
-                                                <span className="cert-label">Mining:</span>
-                                                <span className="cert-value">{diamond.certificates?.miningCertificate?.status}</span>
-                                            </div>
-                                            <div className="cert-row">
-                                                <span className="cert-label">Cutting:</span>
-                                                <span className="cert-value">{diamond.certificates?.cuttingCertificate?.status}</span>
-                                            </div>
-                                            <div className="cert-row">
-                                                <span className="cert-label">Grading:</span>
-                                                <span className="cert-value">{diamond.certificates?.gradingCertificate?.status}</span>
-                                            </div>
+                                            <CertificateHash 
+                                                label="Mining Certificate:"
+                                                hash={diamond.certificates?.miningCertificate?.certificateHash}
+                                            />
+                                            <CertificateHash 
+                                                label="Cutting Certificate:"
+                                                hash={diamond.certificates?.cuttingCertificate?.certificateHash}
+                                            />
+                                            <CertificateHash 
+                                                label="Grading Certificate:"
+                                                hash={diamond.certificates?.gradingCertificate?.certificateHash}
+                                            />
                                         </div>
                                     </div>
                                 </div>

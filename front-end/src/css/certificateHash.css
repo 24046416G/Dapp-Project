@@ -1,0 +1,49 @@
+.cert-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.cert-label {
+    color: #64748b;
+    font-size: 0.9em;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.cert-value {
+    color: #334155;
+    font-weight: 500;
+}
+
+.hash-value {
+    cursor: pointer;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+.hash-value:hover {
+    background: #e2e8f0;
+}
+
+.hash-value[title]:hover::after {
+    content: 'Click to copy';
+    position: absolute;
+    background: #334155;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+} 

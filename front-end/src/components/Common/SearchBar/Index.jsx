@@ -43,7 +43,7 @@ const SearchBar = ({
                         <input
                             type="range"
                             min="0"
-                            max="30000"
+                            max="100000"
                             value={priceRange[1]}
                             onChange={onPriceChange}
                             className="price-range"
