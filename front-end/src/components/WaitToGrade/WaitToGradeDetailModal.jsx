@@ -1,76 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../css/modal.css';
 
-const WaitToGradeDetailModal = ({ diamond, isOpen, onClose }) => {
+const WaitToGradeDetailModal = ({ diamond, isOpen, onClose, onSubmit }) => {
+    const [gradingData, setGradingData] = useState({
+        grading: '',
+        imageData: null
+    });
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setGradingData(prev => ({
+                    ...prev,
+                    imageData: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(gradingData);
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>{diamond.mineralType}</h2>
+                    <h2>Grade Diamond: {diamond.diamondId}</h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
                 <div className="modal-body">
-                    <div className="modal-info">
-                        <div className="info-section">
-                            <h3>Basic Information</h3>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Batch Number:</span>
-                                    <span>{diamond.batchNumber}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>From Company:</span>
-                                    <span>{diamond.fromCompany}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Received Date:</span>
-                                    <span>{new Date(diamond.receivedDate).toLocaleDateString()}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Weight:</span>
-                                    <span>{diamond.weight} carats</span>
-                                </div>
-                            </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>Grading Level:</label>
+                            <select
+                                value={gradingData.grading}
+                                onChange={(e) => setGradingData(prev => ({
+                                    ...prev,
+                                    grading: e.target.value
+                                }))}
+                                required
+                                className="grading-select"
+                            >
+                                <option value="">Select a grade</option>
+                                <option value="I">Grade I</option>
+                                <option value="II">Grade II</option>
+                                <option value="III">Grade III</option>
+                                <option value="IV">Grade IV</option>
+                            </select>
                         </div>
-
-                        <div className="info-section">
-                            <h3>Cutting Information</h3>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Cutting Date:</span>
-                                    <span>{new Date(diamond.cuttingDate).toLocaleDateString()}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Cutting Tech:</span>
-                                    <span>{diamond.cuttingTech}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Polishing Tech:</span>
-                                    <span>{diamond.polishingTech}</span>
-                                </div>
-                            </div>
+                        <div className="form-group">
+                            <label>Upload Images:</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                required
+                            />
                         </div>
-
-                        <div className="info-section">
-                            <h3>Mining Information</h3>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <span>Mining Company:</span>
-                                    <span>{diamond.miningInfo.company}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Mining Date:</span>
-                                    <span>{new Date(diamond.miningInfo.date).toLocaleDateString()}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <span>Mining Position:</span>
-                                    <span>{diamond.miningInfo.position}</span>
-                                </div>
-                            </div>
+                        <div className="modal-actions">
+                            <button type="button" onClick={onClose}>Cancel</button>
+                            <button type="submit">Submit Grading</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

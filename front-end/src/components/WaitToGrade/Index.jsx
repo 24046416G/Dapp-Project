@@ -5,11 +5,11 @@ import WaitToGradeDetailModal from './WaitToGradeDetailModal.jsx';
 const WaitToGrade = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('date');
-    const [selectedDiamond, setSelectedDiamond] = useState(null);
-    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [waitingDiamonds, setWaitingDiamonds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isGradingModalOpen, setIsGradingModalOpen] = useState(false);
+    const [selectedDiamondForGrading, setSelectedDiamondForGrading] = useState(null);
 
     useEffect(() => {
         const fetchDiamonds = async () => {
@@ -64,34 +64,33 @@ const WaitToGrade = () => {
         setSortBy(event.target.value);
     };
 
-    const handleDiamondClick = (diamond) => {
-        setSelectedDiamond(diamond);
-        setIsDetailModalOpen(true);
+    const startGrading = (diamond) => {
+        setSelectedDiamondForGrading(diamond);
+        setIsGradingModalOpen(true);
     };
 
-    const startGrading = async (diamond) => {
+    const handleGradingSubmit = async (gradingData) => {
         try {
-            // 获取当前用户信息
             const userStr = localStorage.getItem('user');
             if (!userStr) {
                 throw new Error('User not found');
             }
             const user = JSON.parse(userStr);
 
-            // 更新钻石的评级信息
-            const response = await fetch(`http://localhost:3000/diamonds/${diamond._id}/grade`, {
+            const response = await fetch(`http://localhost:3000/diamonds/${selectedDiamondForGrading._id}/grade`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     userId: user.id,
-                    grading: 'In Progress'  // 初始评级状态
+                    grading: gradingData.grading,
+                    imageData: gradingData.imageData
                 })
             });
 
             if (!response.ok) {
-                throw new Error('Failed to start grading process');
+                throw new Error('Failed to submit grading');
             }
 
             // 刷新钻石列表
@@ -103,10 +102,12 @@ const WaitToGrade = () => {
             );
             setWaitingDiamonds(updatedDiamondsToGrade);
 
-            alert(`Started grading process for ${diamond.diamondId}`);
+            setIsGradingModalOpen(false);
+            setSelectedDiamondForGrading(null);
+            alert('Grading submitted successfully');
         } catch (error) {
-            console.error('Error starting grading process:', error);
-            alert('Failed to start grading process: ' + error.message);
+            console.error('Error submitting grading:', error);
+            alert('Failed to submit grading: ' + error.message);
         }
     };
 
@@ -171,16 +172,12 @@ const WaitToGrade = () => {
                     <div 
                         key={diamond._id} 
                         className="diamond-card"
-                        onClick={() => handleDiamondClick(diamond)}
                     >
                         <div className="diamond-main-info">
                             <div>
                                 <h3>{diamond.diamondType || 'Diamond'}</h3>
                                 <p className="batch-number">{diamond.diamondId}</p>
                             </div>
-                            <span className="status-badge pending">
-                                {diamond.status}
-                            </span>
                         </div>
 
                         <div className="diamond-details">
@@ -200,24 +197,15 @@ const WaitToGrade = () => {
                             </div>
                             <div className="detail-row">
                                 <span>Cut:</span>
-                                <span>{diamond.metadata?.cut || 'N/A'}</span>
+                                <span>{diamond.certificates?.cuttingCertificate?.cut || 'N/A'}</span>
                             </div>
                             <div className="detail-row">
                                 <span>Polish:</span>
-                                <span>{diamond.metadata?.polish || 'N/A'}</span>
+                                <span>{diamond.certificates?.cuttingCertificate?.polish || 'N/A'}</span>
                             </div>
                         </div>
 
                         <div className="diamond-actions">
-                            <button 
-                                className="action-button view"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDiamondClick(diamond);
-                                }}
-                            >
-                                View Details
-                            </button>
                             <button 
                                 className="action-button start-grading"
                                 onClick={(e) => {
@@ -232,11 +220,15 @@ const WaitToGrade = () => {
                 ))}
             </div>
 
-            {selectedDiamond && (
+            {isGradingModalOpen && selectedDiamondForGrading && (
                 <WaitToGradeDetailModal
-                    diamond={selectedDiamond}
-                    isOpen={isDetailModalOpen}
-                    onClose={() => setIsDetailModalOpen(false)}
+                    diamond={selectedDiamondForGrading}
+                    isOpen={isGradingModalOpen}
+                    onClose={() => {
+                        setIsGradingModalOpen(false);
+                        setSelectedDiamondForGrading(null);
+                    }}
+                    onSubmit={handleGradingSubmit}
                 />
             )}
         </div>
