@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ProductDetailModal from '../Common/ProductDetailModal/Index.jsx';
 import ProductCard from '../Common/ProductCard/Index.jsx';
+import SearchBar from '../Common/SearchBar/Index.jsx';
 import { USER_TYPES } from '../../constants/userTypes';
 import '../../css/layout.css';
-import '../../css/search.css';
 import '../../css/filter.css';
 import '../../css/productCard.css';
 import '../../css/store.css';
@@ -123,48 +123,40 @@ const Store = ({ userType }) => {
         }
     };
 
-    const renderFilters = () => {
+    const getFilterOptions = () => {
         switch(userType) {
             case USER_TYPES.CUSTOMER:
-                return (
-                    <select value={selectedFilter} onChange={handleFilterChange}>
-                        <option value="all">All Jewelry</option>
-                        <option value="rings">Rings</option>
-                        <option value="necklaces">Necklaces</option>
-                        <option value="earrings">Earrings</option>
-                        <option value="bracelets">Bracelets</option>
-                    </select>
-                );
+                return [
+                    { value: 'all', label: 'All Jewelry' },
+                    { value: 'rings', label: 'Rings' },
+                    { value: 'necklaces', label: 'Necklaces' },
+                    { value: 'earrings', label: 'Earrings' },
+                    { value: 'bracelets', label: 'Bracelets' }
+                ];
             case USER_TYPES.JEWELRY_MAKER:
-                return (
-                    <select value={selectedFilter} onChange={handleFilterChange}>
-                        <option value="all">All Diamonds</option>
-                        <option value="round">Round Cut</option>
-                        <option value="princess">Princess Cut</option>
-                        <option value="emerald">Emerald Cut</option>
-                        <option value="oval">Oval Cut</option>
-                    </select>
-                );
+                return [
+                    { value: 'all', label: 'All Diamonds' },
+                    { value: 'round', label: 'Round Cut' },
+                    { value: 'princess', label: 'Princess Cut' },
+                    { value: 'emerald', label: 'Emerald Cut' },
+                    { value: 'oval', label: 'Oval Cut' }
+                ];
             case USER_TYPES.GRADING_LAB:
-                return (
-                    <select value={selectedFilter} onChange={handleFilterChange}>
-                        <option value="all">All Cut Types</option>
-                        <option value="excellent">Excellent Cut</option>
-                        <option value="very_good">Very Good Cut</option>
-                        <option value="good">Good Cut</option>
-                    </select>
-                );
+                return [
+                    { value: 'all', label: 'All Cut Types' },
+                    { value: 'excellent', label: 'Excellent Cut' },
+                    { value: 'very_good', label: 'Very Good Cut' },
+                    { value: 'good', label: 'Good Cut' }
+                ];
             case USER_TYPES.CUTTING_COMPANY:
-                return (
-                    <select value={selectedFilter} onChange={handleFilterChange}>
-                        <option value="all">All Origins</option>
-                        <option value="africa">Africa</option>
-                        <option value="russia">Russia</option>
-                        <option value="australia">Australia</option>
-                    </select>
-                );
+                return [
+                    { value: 'all', label: 'All Origins' },
+                    { value: 'africa', label: 'Africa' },
+                    { value: 'russia', label: 'Russia' },
+                    { value: 'australia', label: 'Australia' }
+                ];
             default:
-                return null;
+                return [];
         }
     };
 
@@ -199,6 +191,7 @@ const Store = ({ userType }) => {
     };
 
     const { title, description, searchPlaceholder } = renderHeader();
+    const filterOptions = getFilterOptions();
     const filteredProducts = filterProducts(products);
 
     if (loading) {
@@ -216,31 +209,16 @@ const Store = ({ userType }) => {
                 <p>{description}</p>
             </div>
             
-            <div className="store-filters">
-                <input
-                    type="text"
-                    placeholder={searchPlaceholder}
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="search-bar"
-                />
-                
-                <div className="filter-controls">
-                    {renderFilters()}
-                    
-                    <div className="price-filter">
-                        <span>Max Price: ${priceRange[1]}</span>
-                        <input
-                            type="range"
-                            min="0"
-                            max="30000"
-                            value={priceRange[1]}
-                            onChange={handlePriceChange}
-                            className="price-range"
-                        />
-                    </div>
-                </div>
-            </div>
+            <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                placeholder={searchPlaceholder}
+                selectedFilter={selectedFilter}
+                onFilterChange={handleFilterChange}
+                filterOptions={filterOptions}
+                priceRange={priceRange}
+                onPriceChange={handlePriceChange}
+            />
 
             <div className="data-grid">
                 {filteredProducts.map((product) => (
